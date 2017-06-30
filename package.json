@@ -21,11 +21,14 @@
   },
   "homepage": "https://github.com/Noxs/SmashJsServerless#readme",
   "devDependencies": {
+    "aws-sdk": "^2.78.0",
     "chai": "^4.0.2",
     "mocha": "^3.4.2",
     "sinon": "^2.3.5"
   },
   "dependencies": {
-    "glob": "^7.1.2"
+    "dynamodb-data-types": "^3.0.0",
+    "glob": "^7.1.2",
+    "nconf": "^0.8.4"
   }
 }
