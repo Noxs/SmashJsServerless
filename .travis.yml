@@ -9,3 +9,6 @@ deploy:
     all_branches: true
   api_key:
     secure: VOw6ssn0K33LA1UoBvF63lwRgTz3/q9l7Yzl2Vns+El+RH2oC/hOb6BThYiHHAxG5Z3gSLP1EAmtfNfp2i2lDKqsblKkSGTL2WmJ9IMNvgEjelnLlxtjNQaDDhWe/DZ75TfuBLXz9U0Z0/zRTJI2Mdxh6g8qDbibOrvTrxriu/4z+DmmirrGK4CxkHH56nX9eY/KzKZe7Pu2pWlMZFgAe5FnC573+jRbrLk4ZxEs780CxLXkoO34OqpmCpPr0xiUPvK6CaqTn6+OK2lC6WbPyJJY/cOYwWPce2OOKA+AR0tII5T8Tnp2aKxIWhBUr81io5iQm2xhDGitQ7+fawqxMlMHYNpOhDiyWzwakdpa5wn1e3peM+lv4cHRJ1BsjTjr3cPBVOzxraEPQaKfJfDpnXMOLx8k3lJPhHBLrl4V3/S3FUpSNN1u5gInYsHyIg8A5NhL3OkfCghhHW6MQUo6fy+ZNiEgml8amgPy++ej8J87GGlI5r+p/KtTqiDhyssO2pLnQpMz7funy+q2+rpN8B9ucJ5dPfXlKx7F1c9VNCarcbeeR+JyJcHk8Gh4Hn9l6NbTqGJlDA9qf28mfomZpgDk+TU7dJ5fz6oq28TMgBBzQpxPSEbiEizibjp0g4MtY8cxSg+uzU9r0x0drg6fSz8YyBnIALDA3ufOQdJXOTI=
+script:
+  - npm run coverage
+  - node ./node_modules/.bin/codecov
