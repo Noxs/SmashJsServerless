@@ -1,3 +1,8 @@
 language: node_js
 node_js:
   - "node"
+deploy:
+  on:
+    tags: true
+    branch: master
+    branch: develop
