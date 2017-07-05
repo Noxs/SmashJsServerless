@@ -1,4 +1,4 @@
-# SmashJsServerless [![Build Status](https://travis-ci.org/Noxs/SmashJsServerless.svg?branch=master)](https://travis-ci.org/Noxs/SmashJsServerless) [![Coverage Status](https://coveralls.io/repos/github/Noxs/SmashJsServerless/badge.svg?branch=master)](https://coveralls.io/github/Noxs/SmashJsServerless?branch=master)
+# SmashJsServerless [![Build Status](https://travis-ci.org/Noxs/SmashJsServerless.svg?branch=master)](https://travis-ci.org/Noxs/SmashJsServerless) [![codecov](https://codecov.io/gh/Noxs/SmashJsServerless/branch/master/graph/badge.svg)](https://codecov.io/gh/Noxs/SmashJsServerless)
 //TODO
 //DOC
 //CHANGELOG
