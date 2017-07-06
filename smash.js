@@ -209,10 +209,10 @@ function smash() {
         return that;
     };
     that.handleRequest = function (request, response) {
-        requestMiddleware.setNext(userProvider.handleRequest, responseMiddleware);
-        userProvider.setNext(router.handleRequest, responseMiddleware);
-        router.setNext(authorization.handleRequest, responseMiddleware);
-        authorization.setNext(executeController, responseMiddleware);
+        requestMiddleware.setNext(userProvider.handleRequest, responseMiddleware.handleResponse);
+        userProvider.setNext(router.handleRequest, responseMiddleware.handleResponse);
+        router.setNext(authorization.handleRequest, responseMiddleware.handleResponse);
+        authorization.setNext(executeController, responseMiddleware.handleResponse);
         responseMiddleware.setNext(response);
         var response = responseFactory.createResponse();
         requestMiddleware.handleRequest(request, response);
