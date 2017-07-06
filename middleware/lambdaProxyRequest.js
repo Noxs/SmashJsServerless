@@ -11,7 +11,7 @@ function lambdaProxyRequest() {
             return null;
         }
         var request = requestFactory.createRequest();
-        if (event.requestContext.authorizer.username) {
+        if (event.requestContext && event.requestContext.authorizer && event.requestContext.authorizer.username) {
             request.user = {username: event.requestContext.authorizer.username, roles: null};
         }
         request.method = event.httpMethod;

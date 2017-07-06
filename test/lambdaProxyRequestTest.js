@@ -109,4 +109,5 @@ describe('LambdaProxyRequest', function () {
         assert.isFalse(result);
         assert.isOk(next.notCalled);
     });
+    //TODO test when no request context, no username
 });
