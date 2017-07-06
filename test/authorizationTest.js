@@ -30,6 +30,9 @@ var request = {
 function createNext() {
     return sinon.spy();
 }
+function createFail() {
+    return sinon.spy();
+}
 function createResponse() {
     return {
         forbidden: sinon.spy()
@@ -48,40 +51,48 @@ describe('Authorization', function () {
     });
     it('Test handle request', function () {
         var next = createNext();
+        var fail = createFail();
         var response = createResponse();
         request.user = null;
         request.route.authorizations = null;
         authorization.setNext(function (request, response) {
             assert.isObject(request);
             assert.equal(request, request);
-        });
+        }, fail);
+        assert.isOk(fail.notCalled);
         assert.isTrue(authorization.handleRequest(request, response));
 
         request.user = null;
         request.route.authorizations = ["ROLE_USER"];
         response = createResponse();
         next = createNext();
-        authorization.setNext(next);
+        fail = createFail();
+        authorization.setNext(next, fail);
         assert.isFalse(authorization.handleRequest(request, response));
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
         assert.isOk(response.forbidden.called);
 
         request.user = null;
         request.route.authorizations = ["ROLE_TROLL"];
         response = createResponse();
         next = createNext();
-        authorization.setNext(next);
+        fail = createFail();
+        authorization.setNext(next, fail);
         assert.isFalse(authorization.handleRequest(request, response));
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
         assert.isOk(response.forbidden.called);
 
         request.user = {roles: ["ROLE_TROLL"]};
         request.route.authorizations = ["ROLE_USER"];
         response = createResponse();
         next = createNext();
-        authorization.setNext(next);
+        fail = createFail();
+        authorization.setNext(next, fail);
         assert.isFalse(authorization.handleRequest(request, response));
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
         assert.isOk(response.forbidden.called);
 
         //TODO
@@ -91,59 +102,74 @@ describe('Authorization', function () {
         request.route.authorizations = ["ROLE_TROLL"];
         response = createResponse();
         next = createNext();
-        authorization.setNext(next);
+        fail = createFail();
+        authorization.setNext(next, fail);
         assert.isFalse(authorization.handleRequest(request, response));
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
         assert.isOk(response.forbidden.called);
 
 
+        fail = createFail();
         request.user = {roles: ["ROLE_USER"]};
         request.route.authorizations = ["ROLE_USER"];
         authorization.setNext(function (request, response) {
             assert.isObject(request);
             assert.equal(request, request);
-        });
+        }, fail);
+        assert.isOk(fail.notCalled);
         assert.isTrue(authorization.handleRequest(request, response));
 
+        fail = createFail();
         request.user = {roles: ["ROLE_USER", "ROLE_ADMIN"]};
         request.route.authorizations = ["ROLE_USER"];
         authorization.setNext(function (request, response) {
             assert.isObject(request);
             assert.equal(request, request);
-        });
+        }, fail);
+        assert.isOk(fail.notCalled);
         assert.isTrue(authorization.handleRequest(request, response));
 
+        fail = createFail();
         request.user = {roles: ["ROLE_USER", "ROLE_ADMIN"]};
         request.route.authorizations = ["ROLE_USER", "ROLE_ADMIN"];
         authorization.setNext(function (request, response) {
             assert.isObject(request);
             assert.equal(request, request);
-        });
+        }, fail);
+        assert.isOk(fail.notCalled);
         assert.isTrue(authorization.handleRequest(request, response));
 
+        fail = createFail();
         request.user = {roles: ["ROLE_USER"]};
         request.route.authorizations = ["ROLE_USER", "ROLE_ADMIN"];
         authorization.setNext(function (request, response) {
             assert.isObject(request);
             assert.equal(request, request);
-        });
+        }, fail);
+        assert.isOk(fail.notCalled);
         assert.isTrue(authorization.handleRequest(request, response));
 
         request.user = {roles: ["ROLE_USER"]};
         request.route.authorizations = ["ROLE_ADMIN"];
         response = createResponse();
         next = createNext();
-        authorization.setNext(next);
+        fail = createFail();
+        assert.isOk(fail.notCalled);
+        authorization.setNext(next, fail);
         assert.isFalse(authorization.handleRequest(request, response));
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
         assert.isOk(response.forbidden.called);
 
+        fail = createFail();
         request.user = {roles: ["ROLE_ADMIN"]};
         request.route.authorizations = ["ROLE_USER"];
         authorization.setNext(function (request, response) {
             assert.isObject(request);
             assert.equal(request, request);
-        });
+        }, fail);
+        assert.isOk(fail.notCalled);
         assert.isTrue(authorization.handleRequest(request, response));
 
     });

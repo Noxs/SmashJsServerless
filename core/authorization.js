@@ -3,6 +3,7 @@ function authorization() {
     const confKeyword = "authorization";
     var that = this;
     var next = null;
+    var fail = null;
     var roles = {};
     var conf = null;
     var goDownInRole = function (roles, role, childrens, list) {
@@ -20,7 +21,6 @@ function authorization() {
             goDownInRole(roles, key, conf.roles[key].childrens, authorizedRole);
             roles[key] = {authorized: authorizedRole};
         }
-
         return that;
     };
     var isAuthorized = function (routeRole, userRole) {
@@ -30,8 +30,9 @@ function authorization() {
             return false;
         }
     };
-    that.setNext = function (extNext) {
+    that.setNext = function (extNext, extFail) {
         next = extNext;
+        fail = extFail;
         return that;
     };
     that.getConfKeyword = function () {
@@ -57,9 +58,11 @@ function authorization() {
                     }
                 }
                 response.forbidden("not authorized");
+                fail(response);
                 return false;
             } else {
                 response.forbidden("not authorized");
+                fail(response);
                 return false;
             }
         }

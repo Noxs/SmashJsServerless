@@ -59,6 +59,9 @@ function createResponse() {
 function createNext() {
     return sinon.spy();
 }
+function createFail() {
+    return sinon.spy();
+}
 function createLogger() {
     return {
         error: sinon.spy()
@@ -84,46 +87,54 @@ describe('UserProvider', function () {
         smash.registerLogger(logger);
         userProvider.setDynamodbTypes(dynamodbTypes);
         var next = createNext();
+        var fail = createFail();
         var response = createResponse();
         userProvider.setDynamodb(dynamodbFailed);
-        userProvider.setNext(next);
+        userProvider.setNext(next, fail);
         userProvider.handleRequest(request, response);
         assert.isOk(next.called);
         assert.isOk(response.internalServerError.notCalled);
         assert.isOk(response.forbidden.notCalled);
+        assert.isOk(fail.notCalled);
 
         next = createNext();
+        fail = createFail();
         response = createResponse();
         request.user = {};
         request.user.username = "test@test.com";
         userProvider.setDynamodb(dynamodbFailed);
-        userProvider.setNext(next);
+        userProvider.setNext(next, fail);
         userProvider.handleRequest(request, response);
         assert.isOk(next.notCalled);
         assert.isOk(response.internalServerError.called);
         assert.isOk(response.forbidden.notCalled);
+        assert.isOk(fail.called);
 
 
         next = createNext();
+        fail = createFail();
         response = createResponse();
         request.user = {};
         request.user.username = "test@test.com";
         userProvider.setDynamodb(dynamodbNotFound);
-        userProvider.setNext(next);
+        userProvider.setNext(next, fail);
         userProvider.handleRequest(request, response);
         assert.isOk(next.notCalled);
         assert.isOk(response.internalServerError.notCalled);
         assert.isOk(response.forbidden.called);
+        assert.isOk(fail.called);
 
         next = createNext();
+        fail = createFail();
         response = createResponse();
         request.user = {};
         request.user.username = "test@test.com";
         userProvider.setDynamodb(dynamodbSuccess);
-        userProvider.setNext(next);
+        userProvider.setNext(next, fail);
         userProvider.handleRequest(request, response);
         assert.isOk(next.called);
         assert.isOk(response.internalServerError.notCalled);
         assert.isOk(response.forbidden.notCalled);
+        assert.isOk(fail.notCalled);
     });
 });

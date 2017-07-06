@@ -6,6 +6,7 @@ var requestFactory = require('../core/request.js');
 function lambdaProxyRequest() {
     var that = this;
     var next = null;
+    var fail = null;
     var buildRequest = function (event) {
         if (!event.httpMethod || !event.path) {
             return null;
@@ -23,8 +24,9 @@ function lambdaProxyRequest() {
         }
         return request;
     };
-    that.setNext = function (extNext) {
+    that.setNext = function (extNext, extFail) {
         next = extNext;
+        fail = extFail;
         return that;
     };
     that.handleRequest = function (inputRequest, response) {
@@ -33,6 +35,7 @@ function lambdaProxyRequest() {
             next(request, response);
             return true;
         } else {
+            fail(response);
             return false;
         }
     };

@@ -6,6 +6,7 @@ function userProvider() {
     var that = this;
     const confKeyword = "user_provider";
     var next = null;
+    var fail = null;
     var conf = null;
     var dynamodb = null;
     var dynamodbTypes = null;
@@ -46,18 +47,24 @@ function userProvider() {
         queryTable(request.user.username, function (err, data) {
             if (err) {
                 response.internalServerError("failed to load user");
+                fail(response);
+                return false;
             } else {
                 if (data.Items.length === 0) {
                     response.forbidden("user not found");
+                    fail(response);
+                    return false;
                 } else {
                     request.user = data.Items[0];
                     next(request, response);
+                    return true;
                 }
             }
         });
     };
-    that.setNext = function (extNext) {
+    that.setNext = function (extNext, extFail) {
         next = extNext;
+        fail = extFail;
         return that;
     };
     that.setDynamodb = function (extDynamodb) {
@@ -77,9 +84,10 @@ function userProvider() {
     };
     that.handleRequest = function (request, response) {
         if (request.user) {
-            loadUser(request, response);
+            return loadUser(request, response);
         } else {
             next(request, response);
+            return true;
         }
     };
 }

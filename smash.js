@@ -209,18 +209,13 @@ function smash() {
         return that;
     };
     that.handleRequest = function (request, response) {
-        requestMiddleware.setNext(userProvider.handleRequest);
-        userProvider.setNext(router.handleRequest);
-        router.setNext(authorization.handleRequest);
-        authorization.setNext(executeController);
+        requestMiddleware.setNext(userProvider.handleRequest, responseMiddleware);
+        userProvider.setNext(router.handleRequest, responseMiddleware);
+        router.setNext(authorization.handleRequest, responseMiddleware);
+        authorization.setNext(executeController, responseMiddleware);
         responseMiddleware.setNext(response);
         var response = responseFactory.createResponse();
-        if (requestMiddleware.handleRequest(request, response) === false) {
-            if (logEnable) {
-                logger.log("Middleware has not been able to process the request.");
-            }
-            response.badRequest("bad request");
-        }
+        requestMiddleware.handleRequest(request, response);
         return that;
     };
     that.getEnv = function () {

@@ -5,6 +5,7 @@ function router() {
     const slash = "/";
     const regexp = "[^\/.]+";
     var next = null;
+    var fail = null;
     var interpolation = defaultInterpolation;
     //TODO optimize this with one array for each method
     var routes = [];
@@ -95,10 +96,12 @@ function router() {
             }
         }
         response.notFound("not found");
+        fail(response);
         return false;
     };
-    that.setNext = function (extNext) {
+    that.setNext = function (extNext, extFail) {
         next = extNext;
+        fail = extFail;
         return that;
     };
     that.get = function (route, callback) {
