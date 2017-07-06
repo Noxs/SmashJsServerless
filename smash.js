@@ -46,18 +46,18 @@ var execute = function () {
         //find a solution to apply push config in an array of core module
         if (that.config) {
             that.config.load(that.rootPath);
-        }
-        if (that.logger.getConfKeyword) {
-            that.pushConfig(that.logger, that.logger.getConfKeyword());
-        }
-        if (that.userProvider.getConfKeyword) {
-            that.pushConfig(that.userProvider, that.userProvider.getConfKeyword());
-        }
-        if (that.router.getConfKeyword) {
-            that.pushConfig(that.router, that.router.getConfKeyword());
-        }
-        if (that.authorization.getConfKeyword) {
-            that.pushConfig(that.authorization, that.authorization.getConfKeyword());
+            if (that.logger && typeof that.logger.getConfKeyword === 'function') {
+                that.pushConfig(that.logger, that.logger.getConfKeyword());
+            }
+            if (that.userProvider && typeof that.userProvider.getConfKeyword === 'function') {
+                that.pushConfig(that.userProvider, that.userProvider.getConfKeyword());
+            }
+            if (that.router && typeof that.router.getConfKeyword === 'function') {
+                that.pushConfig(that.router, that.router.getConfKeyword());
+            }
+            if (that.authorization && typeof that.authorization.getConfKeyword === 'function') {
+                that.pushConfig(that.authorization, that.authorization.getConfKeyword());
+            }
         }
         //TODO
         //note that request and response are not here,

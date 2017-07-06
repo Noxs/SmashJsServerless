@@ -216,6 +216,14 @@ describe('Smash', function () {
     it('Test boot', function () {
         smash.resetRootPath();
         expect(smash.boot).to.not.throw();
+        smash.registerLogger(null);
+        expect(smash.boot).to.not.throw();
+        smash.registerRouter(null);
+        expect(smash.boot).to.not.throw();
+        smash.registerAuthorization(null);
+        expect(smash.boot).to.not.throw();
+        smash.registerUserProvider(null);
+        expect(smash.boot).to.not.throw();
     });
     it('Test register request middleware', function () {
         var fakeLambdaProxyRequest = createFakeLambdaProxyRequest();
