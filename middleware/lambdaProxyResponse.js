@@ -1,3 +1,4 @@
+var smash = require("../smash.js");
 var execute = function () {
     var that = this;
     that.next = null;
@@ -21,5 +22,6 @@ var execute = function () {
     };
 };
 
-var lambdaProxyRequest = execute();
-module.exports = lambdaProxyRequest;
+var lambdaProxyResponse = execute();
+module.exports = lambdaProxyResponse;
+smash.registerRequestMiddleware(lambdaProxyResponse);

@@ -1,3 +1,4 @@
+var smash = require("../smash.js");
 var requestFactory = require('../core/request.js');
 
 //TODO
@@ -42,3 +43,4 @@ var execute = function () {
 
 var lambdaProxyRequest = execute();
 module.exports = lambdaProxyRequest;
+smash.registerRequestMiddleware(lambdaProxyRequest);

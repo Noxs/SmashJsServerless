@@ -3,5 +3,9 @@
 //DOC
 //CHANGELOG
 
-This is not ready for production
+Not ready for production
+
+Bin are not ready
+
+Need to improve tests
 
