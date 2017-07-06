@@ -35,8 +35,13 @@ var execute = function () {
     that.controllerPath = defaultControllerPath;
     that.requestMiddleware = null;
     that.responseMiddleware = null;
+
     that.loadCore = function () {
-        glob.sync(corePath).forEach(function (file) {
+        var files = glob.sync(corePath);
+        if (that.logEnable) {
+            that.logger.log(files.length + " files loaded in the core directory.");
+        }
+        files.forEach(function (file) {
             require(path.resolve(file));
         });
         return that;
@@ -66,7 +71,11 @@ var execute = function () {
         return that;
     };
     that.loadDefaultMiddleware = function () {
-        glob.sync(middlewarePath).forEach(function (file) {
+        var files = glob.sync(middlewarePath);
+        if (that.logEnable) {
+            that.logger.log(files.length + " files loaded in the middleware directory.");
+        }
+        files.forEach(function (file) {
             require(path.resolve(file));
         });
         return that;
@@ -76,7 +85,11 @@ var execute = function () {
         return that;
     };
     that.loadControllers = function () {
-        glob.sync(that.rootPath + that.controllerPath).forEach(function (file) {
+        var files = glob.sync(that.rootPath + that.controllerPath);
+        if (that.logEnable) {
+            that.logger.log(files.length + " files loaded in the controllers directory.");
+        }
+        files.forEach(function (file) {
             require(path.resolve(file));
         });
         return that;
