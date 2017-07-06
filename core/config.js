@@ -1,30 +1,28 @@
 var smash = require("../smash.js");
 var nconf = require('nconf');
 var path = require('path');
-var execute = function () {
+function smashConfig() {
     var that = this;
     const defaultFile = "/config.json";
-    that.file = null;
-    that.rootPath = null;
-    that.conf = null;
-    return {
-        load: function (rootPath, file) {
-            if (!rootPath) {
-                throw new Error("Config file path is required.");
-            }
-            that.rootPath = rootPath;
-            that.file = defaultFile;
-            if (file) {
-                that.file = file;
-            }
-            that.conf = nconf.file(path.resolve(that.rootPath + that.file));
-            return that;
-        },
-        get: function () {
-            return that.conf;
+    var file = null;
+    var rootPath = null;
+    var conf = null;
+    that.load = function (extRootPath, extFile) {
+        if (!extRootPath) {
+            throw new Error("Config file path is required.");
         }
+        rootPath = extRootPath;
+        file = defaultFile;
+        if (extFile) {
+            file = extFile;
+        }
+        conf = nconf.file(path.resolve(rootPath + file));
+        return that;
     };
-};
-var smashConfig = execute();
-module.exports = smashConfig;
-smash.registerConfig(smashConfig);
+    that.get = function () {
+        return conf;
+    };
+}
+
+smash.registerConfig(new smashConfig());
+module.exports = smash.getConfig();

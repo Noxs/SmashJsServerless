@@ -2,33 +2,33 @@ var smash = require("../smash.js");
 var aws = require('aws-sdk');
 var attr = require('dynamodb-data-types').AttributeValue;
 
-var execute = function () {
+function userProvider() {
     var that = this;
     const confKeyword = "user_provider";
-    that.next = null;
-    that.conf = null;
-    that.dynamodb = null;
-    that.dynamodbTypes = null;
-    that.queryTable = function (username, callback) {
-        if (that.dynamodb === null) {
-            if (that.conf.region) {
-                that.dynamodb = new aws.DynamoDB({region: that.conf.region});
+    var next = null;
+    var conf = null;
+    var dynamodb = null;
+    var dynamodbTypes = null;
+    var queryTable = function (username, callback) {
+        if (dynamodb === null) {
+            if (conf.region) {
+                dynamodb = new aws.DynamoDB({region: conf.region});
             } else {
-                that.dynamodb = new aws.DynamoDB();
+                dynamodb = new aws.DynamoDB();
             }
         }
-        if (that.dynamodbTypes === null) {
-            that.dynamodbTypes = attr.AttributeValue;
+        if (dynamodbTypes === null) {
+            dynamodbTypes = attr.AttributeValue;
         }
         var params = {
-            TableName: that.conf.dynamodb_table,
-            KeyConditionExpression: that.conf.primary + " = :username",
+            TableName: conf.dynamodb_table,
+            KeyConditionExpression: conf.primary + " = :username",
             ExpressionAttributeValues: {
                 ":username": username
             }
         };
         params.ExpressionAttributeValues = that.dynamodbTypes.wrap(params.ExpressionAttributeValues);
-        that.dynamodb.query(params, function (err, data) {
+        dynamodb.query(params, function (err, data) {
             if (err) {
                 if (smash.getLogger()) {
                     smash.getLogger().error("Query on " + params.TableName + ": " + err, err.stack);
@@ -36,14 +36,14 @@ var execute = function () {
                 callback(err);
             } else {
                 for (var i = 0, length = data.Items.length; i < length; i++) {
-                    data.Items[i] = that.dynamodbTypes.unwrap(data.Items[i]);
+                    data.Items[i] = dynamodbTypes.unwrap(data.Items[i]);
                 }
                 callback(null, data);
             }
         });
     };
-    that.loadUser = function (request, response) {
-        that.queryTable(request.user.username, function (err, data) {
+    var loadUser = function (request, response) {
+        queryTable(request.user.username, function (err, data) {
             if (err) {
                 response.internalServerError("failed to load user");
             } else {
@@ -51,41 +51,39 @@ var execute = function () {
                     response.forbidden("user not found");
                 } else {
                     request.user = data.Items[0];
-                    that.next(request, response);
+                    next(request, response);
                 }
             }
         });
     };
-    return {
-        setNext: function (next) {
-            that.next = next;
-        },
-        setDynamodb: function (dynamodb) {
-            that.dynamodb = dynamodb;
-            return that;
-        },
-        setDynamodbTypes: function (dynamodbTypes) {
-            that.dynamodbTypes = dynamodbTypes;
-            return that;
-        },
-        getConfKeyword: function () {
-            return confKeyword;
-        },
-        applyConfig: function (conf) {
-            that.conf = conf;
-            return that;
-        },
-        handleRequest: function (request, response) {
-            if (request.user) {
-                that.loadUser(request, response);
-            } else {
-                that.next(request, response);
-            }
+    that.setNext = function (extNext) {
+        next = extNext;
+        return that;
+    };
+    that.setDynamodb = function (extDynamodb) {
+        dynamodb = extDynamodb;
+        return that;
+    };
+    that.setDynamodbTypes = function (extDynamodbTypes) {
+        that.Types = extDynamodbTypes;
+        return that;
+    };
+    that.getConfKeyword = function () {
+        return confKeyword;
+    };
+    that.applyConfig = function (extConf) {
+        conf = extConf;
+        return that;
+    };
+    that.handleRequest = function (request, response) {
+        if (request.user) {
+            loadUser(request, response);
+        } else {
+            next(request, response);
         }
     };
+}
 
-};
 
-var userProvider = execute();
-module.exports = userProvider;
-smash.registerUserProvider(userProvider);
+smash.registerUserProvider(new userProvider());
+module.exports = smasgetUserProvider();

@@ -297,4 +297,5 @@ describe('Smash', function () {
         //TODO improve test 
         //add case
     });
+    //TODO test module loading better
 });

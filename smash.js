@@ -1,7 +1,6 @@
 var glob = require("glob");
 var path = require('path');
 var responseFactory = require('./core/response.js');
-
 //TODO
 //core module can be explicitly replaced by custom module
 //add method call verification everywhere
@@ -16,52 +15,51 @@ var responseFactory = require('./core/response.js');
 
 //TODO
 //create abstraction for module
-var execute = function () {
+function smash() {
     var that = this;
-    const corePath = "./core/*.js";
-    const middlewarePath = "./middleware/*.js";
+    const corePath = __dirname + "/core/*.js";
+    const middlewarePath = __dirname + "/middleware/*.js";
     const defaultControllerPath = "/controller/*.js";
-    that.logger = null;
-    that.userProvider = null;
-    that.router = null;
-    that.authorization = null;
-    that.config = null;
+    var logger = null;
+    var userProvider = null;
+    var router = null;
+    var authorization = null;
+    var config = null;
     //TODO maybe env are not usefull
-    that.envList = ["prod", "dev", "test"]; //useless?????
-    that.env = null;//Not used
-    that.debug = false;
-    that.logEnable = false;
-    that.rootPath = process.cwd();
-    that.controllerPath = defaultControllerPath;
-    that.requestMiddleware = null;
-    that.responseMiddleware = null;
-
-    that.loadCore = function () {
+    var envList = ["prod", "dev", "test"]; //useless?????
+    var env = null; //Not used
+    var debug = false;
+    var logEnable = false;
+    var rootPath = process.cwd();
+    var controllerPath = defaultControllerPath;
+    var requestMiddleware = null;
+    var responseMiddleware = null;
+    var loadCore = function () {
         var files = glob.sync(corePath);
-        if (that.logEnable) {
-            that.logger.log(files.length + " files loaded in the core directory.");
-        }
         files.forEach(function (file) {
             require(path.resolve(file));
         });
+        if (logEnable) {
+            logger.log(files.length + " files loaded in the core directory.");
+        }
         return that;
     };
-    that.loadConfig = function () {
+    var loadConfig = function () {
         //TODO the problem here is this is not really DRY
         //find a solution to apply push config in an array of core module
-        if (that.config) {
-            that.config.load(that.rootPath);
-            if (that.logger && typeof that.logger.getConfKeyword === 'function') {
-                that.pushConfig(that.logger, that.logger.getConfKeyword());
+        if (config) {
+            config.load(rootPath);
+            if (logger && typeof logger.getConfKeyword === 'function') {
+                pushConfig(logger, logger.getConfKeyword());
             }
-            if (that.userProvider && typeof that.userProvider.getConfKeyword === 'function') {
-                that.pushConfig(that.userProvider, that.userProvider.getConfKeyword());
+            if (userProvider && typeof userProvider.getConfKeyword === 'function') {
+                pushConfig(userProvider, userProvider.getConfKeyword());
             }
-            if (that.router && typeof that.router.getConfKeyword === 'function') {
-                that.pushConfig(that.router, that.router.getConfKeyword());
+            if (router && typeof router.getConfKeyword === 'function') {
+                pushConfig(router, router.getConfKeyword());
             }
-            if (that.authorization && typeof that.authorization.getConfKeyword === 'function') {
-                that.pushConfig(that.authorization, that.authorization.getConfKeyword());
+            if (authorization && typeof authorization.getConfKeyword === 'function') {
+                pushConfig(authorization, authorization.getConfKeyword());
             }
         }
         //TODO
@@ -70,39 +68,39 @@ var execute = function () {
         //or maybe migrate this module in another dir called basic module or something else
         return that;
     };
-    that.loadDefaultMiddleware = function () {
+    var loadDefaultMiddleware = function () {
         var files = glob.sync(middlewarePath);
-        if (that.logEnable) {
-            that.logger.log(files.length + " files loaded in the middleware directory.");
+        if (logEnable) {
+            logger.log(files.length + " files loaded in the middleware directory.");
         }
         files.forEach(function (file) {
             require(path.resolve(file));
         });
         return that;
     };
-    that.pushConfig = function (service, keyword) {
-        service.applyConfig(that.config.get(keyword));
+    var pushConfig = function (service, keyword) {
+        service.applyConfig(config.get(keyword));
         return that;
     };
-    that.loadControllers = function () {
-        var files = glob.sync(that.rootPath + that.controllerPath);
-        if (that.logEnable) {
-            that.logger.log(files.length + " files loaded in the controllers directory.");
+    loadControllers = function () {
+        var files = glob.sync(rootPath + controllerPath);
+        if (logEnable) {
+            logger.log(files.length + " files loaded in the controllers directory.");
         }
         files.forEach(function (file) {
             require(path.resolve(file));
         });
         return that;
     };
-    that.executeController = function (request, response) {
+    var executeController = function (request, response) {
         try {
             request.route.callback(request, response);
         } catch (err) {
             response.internalServerError("failed to process request");
         }
-        if (that.responseMiddleware.handleResponse(response) === false) {
-            if (that.logEnable) {
-                that.logger.log("Middleware has not been able to process the response.");
+        if (responseMiddleware.handleResponse(response) === false) {
+            if (logEnable) {
+                logger.log("Middleware has not been able to process the response.");
             }
             //TODO
             //this is useless lol
@@ -110,157 +108,160 @@ var execute = function () {
         }
         return that;
     };
-    return {
-        registerLogger: function (logger) {
-            that.logger = logger;
-            if (that.debug) {
-                that.logEnable = true;
-            }
-            if (that.logEnable) {
-                that.logger.log("Register logger module.");
-            }
-            return that;
-        },
-        getLogger: function () {
-            return that.logger;
-        },
-        registerUserProvider: function (userProvider) {
-            that.userProvider = userProvider;
-            if (that.logEnable) {
-                that.logger.log("Register user provider module.");
-            }
-            return that;
-        },
-        getUserProvider: function () {
-            return that.userProvider;
-        },
-        registerRouter: function (router) {
-            that.router = router;
-            if (that.logEnable) {
-                that.logger.log("Register router module.");
-            }
-            return that;
-        },
-        getRouter: function () {
-            return that.router;
-        },
-        registerAuthorization: function (authorization) {
-            that.authorization = authorization;
-            if (that.logEnable) {
-                that.logger.log("Register authorization module.");
-            }
-            return that;
-        },
-        getAuthorization: function () {
-            return that.authorization;
-        },
-        registerConfig: function (config) {
-            that.config = config;
-            if (that.logEnable) {
-                that.logger.log("Register config module.");
-            }
-            return that;
-        },
-        getConfig: function () {
-            return that.config;
-        },
-        registerRequestMiddleware: function (middleware) {
-            //TODO maybe in the future rename this like entry point
-            //because there are not really middleware
-            //Add chained middleware can be a good idea
-            that.requestMiddleware = middleware;
-            if (that.logEnable) {
-                that.logger.log("Register request middleware module.");
-            }
-            return that;
-        },
-        getRequestMiddleware: function () {
-            return that.requestMiddleware;
-        },
-        registerResponseMiddleware: function (middleware) {
-            //TODO same as request middleware
-            that.responseMiddleware = middleware;
-            if (that.logEnable) {
-                that.logger.log("Register response middleware module.");
-            }
-            return that;
-        },
-        getResponseMiddleware: function () {
-            return that.responseMiddleware;
-        },
-        boot: function (debug) {
-            //
-            //TODO put it in a another var
-            //the pruopose is that this var is hust  to ask debug activation
-            //but if no logger is activated, something will be wrong
-            //
-            if (debug) {
-                that.debug = true;
-            } else {
-                that.debug = false;
-            }
-            that.logEnable = false;
-
-            //TODO
-            //is this a good pattern, all module are loaded, then configuration are applied
-            //there is no configuration apply to middleware
-            that.loadCore().loadConfig().loadDefaultMiddleware().loadControllers();
-            //TODO
-            //linking here or when handle request??
-            return that;
-        },
-        handleRequest: function (request, response) {
-            that.requestMiddleware.setNext(that.userProvider.handleRequest);
-            that.userProvider.setNext(that.router.handleRequest);
-            that.router.setNext(that.authorization.handleRequest);
-            that.authorization.setNext(that.executeController);
-            that.responseMiddleware.setNext(response);
-            var response = responseFactory.createResponse();
-            if (that.requestMiddleware.handleRequest(request, response) === false) {
-                if (that.logEnable) {
-                    that.logger.log("Middleware has not been able to process the request.");
-                }
-                response.badRequest("bad request");
-            }
-            return that;
-        },
-        getEnv: function () {
-            //for the mmoment env var is not used
-            return that.env;
-        },
-        debugIsActive: function () {
-            return that.debug;
-        },
-        setRootPath: function (rootPath) {
-            //TODO maybe this is not usefull, for the moment no use case and this is not needed
-            that.rootPath = rootPath;
-            if (that.logEnable) {
-                that.logger.log("Change root path.");
-            }
-            return that;
-        },
-        resetRootPath: function () {
-            //TODO this is needed for testing, but this is probably not a best practice
-            that.rootPath = process.cwd();
-            return that;
-        },
-        getRootPath: function () {
-            return that.rootPath;
-        },
-        setControllerPath: function (controllerPath) {
-            //TODO throw an error if .js is not in the string
-            //OR simply add it at the end
-            that.controllerPath = controllerPath;
-            if (that.logEnable) {
-                that.logger.log("Change controller path.");
-            }
-            return that;
-        },
-        getControllerPath: function () {
-            return that.controllerPath;
+    that.registerLogger = function (extLogger) {
+        logger = extLogger;
+        if (debug) {
+            logEnable = true;
         }
+        if (logEnable) {
+            logger.log("Register logger module.");
+        }
+        return that;
     };
-};
-var smash = execute();
-module.exports = smash;
+    that.getLogger = function () {
+        return logger;
+    };
+    that.registerUserProvider = function (extUserProvider) {
+        userProvider = extUserProvider;
+        if (logEnable) {
+            logger.log("Register user provider module.");
+        }
+        return that;
+    };
+    that.getUserProvider = function () {
+        return userProvider;
+    };
+    that.registerRouter = function (extRouter) {
+        router = extRouter;
+        if (logEnable) {
+            logger.log("Register router module.");
+        }
+        return that;
+    };
+    that.getRouter = function () {
+        return router;
+    };
+    that.registerAuthorization = function (extAuthorization) {
+        authorization = extAuthorization;
+        if (logEnable) {
+            logger.log("Register authorization module.");
+        }
+        return that;
+    };
+    that.getAuthorization = function () {
+        return authorization;
+    };
+    that.registerConfig = function (extConfig) {
+        config = extConfig;
+        if (logEnable) {
+            logger.log("Register config module.");
+        }
+        return that;
+    };
+    that.getConfig = function () {
+        return config;
+    };
+    that.registerRequestMiddleware = function (extMiddleware) {
+        //TODO maybe in the future rename this like entry point
+        //because there are not really middleware
+        //Add chained middleware can be a good idea
+        requestMiddleware = extMiddleware;
+        if (logEnable) {
+            logger.log("Register request middleware module.");
+        }
+        return that;
+    };
+    that.getRequestMiddleware = function () {
+        return requestMiddleware;
+    };
+    that.registerResponseMiddleware = function (extMiddleware) {
+        //TODO same as request middleware
+        responseMiddleware = extMiddleware;
+        if (logEnable) {
+            logger.log("Register response middleware module.");
+        }
+        return that;
+    };
+    that.getResponseMiddleware = function () {
+        return responseMiddleware;
+    };
+    that.boot = function (extDebug) {
+        //
+        //TODO put it in a another var
+        //the pruopose is that this var is hust  to ask debug activation
+        //but if no logger is activated, something will be wrong
+        //
+        if (extDebug) {
+            debug = true;
+        } else {
+            debug = false;
+        }
+        logEnable = false;
+        //TODO
+        //is this a good pattern, all module are loaded, then configuration are applied
+        //there is no configuration apply to middleware
+        loadCore();
+        loadConfig();
+        loadDefaultMiddleware();
+        loadControllers();
+        //TODO
+        //linking here or when handle request??
+        return that;
+    };
+    that.handleRequest = function (request, response) {
+        requestMiddleware.setNext(userProvider.handleRequest);
+        userProvider.setNext(router.handleRequest);
+        router.setNext(authorization.handleRequest);
+        authorization.setNext(executeController);
+        responseMiddleware.setNext(response);
+        var response = responseFactory.createResponse();
+        if (requestMiddleware.handleRequest(request, response) === false) {
+            if (logEnable) {
+                logger.log("Middleware has not been able to process the request.");
+            }
+            response.badRequest("bad request");
+        }
+        return that;
+    };
+    that.getEnv = function () {
+        //for the mmoment env var is not used
+        return env;
+    };
+
+    that.debugIsActive = function () {
+        return debug;
+    };
+
+    that.setRootPath = function (extRootPath) {
+        //TODO maybe this is not usefull, for the moment no use case and this is not needed
+        rootPath = extRootPath;
+        if (logEnable) {
+            logger.log("Change root path.");
+        }
+        return that;
+    };
+
+    that.resetRootPath = function () {
+        //TODO this is needed for testing, but this is probably not a best practice
+        rootPath = process.cwd();
+        return that;
+    };
+    that.getRootPath = function () {
+        return rootPath;
+    };
+    that.setControllerPath = function (extControllerPath) {
+        //TODO throw an error if .js is not in the string
+        //OR simply add it at the end
+        controllerPath = extControllerPath;
+        if (logEnable) {
+            logger.log("Change controller path.");
+        }
+        return that;
+    };
+    that.getControllerPath = function () {
+        return controllerPath;
+    };
+}
+
+module.exports = new smash();
 

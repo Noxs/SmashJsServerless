@@ -1,13 +1,12 @@
 var smash = require("../smash.js");
 var requestFactory = require('../core/request.js');
-
 //TODO
 //maybe group this with response
 //no possibility to define JSON encoder/decoder
-var execute = function () {
+function lambdaProxyRequest() {
     var that = this;
-    that.next = null;
-    that.buildRequest = function (event) {
+    var next = null;
+    var buildRequest = function (event) {
         if (!event.httpMethod || !event.path) {
             return null;
         }
@@ -24,23 +23,19 @@ var execute = function () {
         }
         return request;
     };
-    return {
-        setNext: function (next) {
-            that.next = next;
-            return that;
-        },
-        handleRequest: function (inputRequest, response) {
-            request = that.buildRequest(inputRequest);
-            if (request !== null) {
-                that.next(request, response);
-                return true;
-            } else {
-                return false;
-            }
+    that.setNext = function (extNext) {
+        next = extNext;
+        return that;
+    };
+    that.handleRequest = function (inputRequest, response) {
+        request = buildRequest(inputRequest);
+        if (request !== null) {
+            next(request, response);
+            return true;
+        } else {
+            return false;
         }
     };
-};
-
-var lambdaProxyRequest = execute();
-module.exports = lambdaProxyRequest;
-smash.registerRequestMiddleware(lambdaProxyRequest);
+}
+smash.registerRequestMiddleware(new lambdaProxyRequest());
+module.exports = smash.getRequetsMiddleware();
