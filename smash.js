@@ -75,6 +75,12 @@ var execute = function () {
         service.applyConfig(that.config.get(keyword));
         return that;
     };
+    that.loadControllers = function () {
+        glob.sync(that.rootPath + that.controllerPath).forEach(function (file) {
+            require(path.resolve(file));
+        });
+        return that;
+    };
     that.executeController = function (request, response) {
         try {
             request.route.callback(request, response);
@@ -185,7 +191,7 @@ var execute = function () {
             //TODO
             //is this a good pattern, all module are loaded, then configuration are applied
             //there is no configuration apply to middleware
-            that.loadCore().loadConfig().loadDefaultMiddleware();
+            that.loadCore().loadConfig().loadDefaultMiddleware().loadControllers();
             //TODO
             //linking here or when handle request??
             return that;

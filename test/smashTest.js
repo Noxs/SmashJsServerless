@@ -261,6 +261,9 @@ describe('Smash', function () {
         //assert.isObject(smash.registerResponseMiddleware(fakeLambdaProxyResponse));
         assert.deepEqual(smash.getResponseMiddleware(), fakeLambdaProxyResponse);
     });
+    it('Test register controllers', function () {
+        //TODO
+    });
     it('Test request', function () {
         var fakeLambdaProxyRequest = createFakeLambdaProxyRequest();
         var fakeLogger = createFakeLogger();

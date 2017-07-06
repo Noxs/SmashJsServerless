@@ -5,9 +5,6 @@
 .jshintrc
 .npmignore
 .tesselinclude
-apis/*.normal.json
-appveyor.yml
-bower.json
 configuration
 configuration.sample
 codecov.yml
@@ -20,8 +17,9 @@ Gemfile.lock
 features
 karma.conf.js
 Rakefile
-test
 testem.json
 tasks
 ts
 vendor
+node_modules
+test
