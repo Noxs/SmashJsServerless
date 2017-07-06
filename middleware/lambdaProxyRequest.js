@@ -38,4 +38,4 @@ function lambdaProxyRequest() {
     };
 }
 smash.registerRequestMiddleware(new lambdaProxyRequest());
-module.exports = smash.getRequetsMiddleware();
+module.exports = smash.getRequestMiddleware();

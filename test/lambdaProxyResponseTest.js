@@ -28,7 +28,6 @@ describe('LambdaProxyResponse', function () {
             assert.equal(formattedResponse.body, response.body);
         });
         assert.isTrue(lambdaProxyResponse.handleResponse(response));
-
         response.body = {"test": "test"};
         lambdaProxyResponse.setNext(function (error, formattedResponse) {
             assert.isNull(error);

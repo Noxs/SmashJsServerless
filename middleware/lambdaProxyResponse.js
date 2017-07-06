@@ -20,5 +20,5 @@ function lambdaProxyResponse() {
     };
 }
 
-smash.registerRequestMiddleware(new lambdaProxyResponse());
+smash.registerResponseMiddleware(new lambdaProxyResponse());
 module.exports = smash.getResponseMiddleware();

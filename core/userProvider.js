@@ -27,7 +27,7 @@ function userProvider() {
                 ":username": username
             }
         };
-        params.ExpressionAttributeValues = that.dynamodbTypes.wrap(params.ExpressionAttributeValues);
+        params.ExpressionAttributeValues = dynamodbTypes.wrap(params.ExpressionAttributeValues);
         dynamodb.query(params, function (err, data) {
             if (err) {
                 if (smash.getLogger()) {
@@ -65,7 +65,7 @@ function userProvider() {
         return that;
     };
     that.setDynamodbTypes = function (extDynamodbTypes) {
-        that.Types = extDynamodbTypes;
+        dynamodbTypes = extDynamodbTypes;
         return that;
     };
     that.getConfKeyword = function () {
@@ -86,4 +86,4 @@ function userProvider() {
 
 
 smash.registerUserProvider(new userProvider());
-module.exports = smasgetUserProvider();
+module.exports = smash.getUserProvider();
