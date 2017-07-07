@@ -93,10 +93,16 @@ function smash() {
         return that;
     };
     var executeController = function (request, response) {
+        if (logEnable) {
+            logger.log("Execute controller.");
+        }
         try {
             request.route.callback(request, response);
         } catch (err) {
             response.internalServerError("failed to process request");
+            if (logEnable) {
+                logger.log("Error when executing controller.");
+            }
         }
         if (responseMiddleware.handleResponse(response) === false) {
             if (logEnable) {
@@ -209,6 +215,9 @@ function smash() {
         return that;
     };
     that.handleRequest = function (request, response) {
+        if (logEnable) {
+            logger.log("Handle new request.");
+        }
         requestMiddleware.setNext(userProvider.handleRequest, responseMiddleware.handleResponse);
         userProvider.setNext(router.handleRequest, responseMiddleware.handleResponse);
         router.setNext(authorization.handleRequest, responseMiddleware.handleResponse);

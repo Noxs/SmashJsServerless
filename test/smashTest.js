@@ -5,88 +5,74 @@ var should = chai.should();
 var smash = require('../smash.js');
 var lambdaProxyRequest = require('../middleware/lambdaProxyRequest.js');
 var lambdaProxyResponse = require('../middleware/lambdaProxyResponse.js');
-var createFakeLambdaProxyRequest = function () {
+function logger() {
     var that = this;
-    that.next = null;
-    return {
-        setNext: function (next) {
-            that.next = next;
-            return that;
-        },
-        handleRequest: function (request, response) {
+    that.log = function () {};
+    that.warn = function () {};
+    that.error = function () {};
+}
+function serviceRequestSuccess() {
+    var that = this;
+    var next = null;
+    var fail = null;
+    that.setNext = function (extNext, extFail) {
+        next = extNext;
+        fail = extFail;
+        return that;
+    };
+    that.handleRequest = function (request, response) {
+        next(request, response);
+        return true;
+    };
+}
+function serviceRequestFailure() {
+    var that = this;
+    var next = null;
+    var fail = null;
+    that.setNext = function (extNext, extFail) {
+        next = extNext;
+        fail = extFail;
+        return that;
+    };
+    that.handleRequest = function (request, response) {
+        response.code = 500;
+        fail(response);
+        return false;
+    };
+}
+function config() {
+    var that = this;
+    that.load = function () {};
+}
 
-        }
-    };
-};
-//TODO improve
-var createFakeLogger = function () {
+function serviceResponseSuccess() {
     var that = this;
-    that.next = null;
-    return {
-        log: function () {},
-        warn: function () {},
-        error: function () {}
+    var next = null;
+    var fail = null;
+    that.setNext = function (extNext, extFail) {
+        next = extNext;
+        fail = extFail;
+        return that;
     };
-};
-var createFakeUserProvider = function () {
-    var that = this;
-    that.next = null;
-    return {
-        setNext: function (next) {
-            that.next = next;
-            return that;
-        },
-        handleResponse: function (response) {
+    that.handleResponse = function (response) {
+        next(null, response);
+    };
+}
 
-        }
-    };
-};
-var createFakeRouter = function () {
+function serviceResponseFailure() {
     var that = this;
-    that.next = null;
-    return {
-        setNext: function (next) {
-            that.next = next;
-            return that;
-        },
-        handleResponse: function (response) {
+    var next = null;
+    var fail = null;
+    that.setNext = function (extNext, extFail) {
+        next = extNext;
+        fail = extFail;
+        return that;
+    };
+    that.handleResponse = function (response) {
+        fail(response);
+    };
+}
 
-        }
-    };
-};
-var createFakeAuthorization = function () {
-    var that = this;
-    that.next = null;
-    return {
-        setNext: function (next) {
-            that.next = next;
-            return that;
-        },
-        handleResponse: function (response) {
-
-        }
-    };
-};
-var createFakeConfig = function () {
-    var that = this;
-    that.next = null;
-    return {
-        load: function () {}
-    };
-};
-var createFakeLambdaProxyResponse = function () {
-    var that = this;
-    that.next = null;
-    return {
-        setNext: function (next) {
-            that.next = next;
-            return that;
-        },
-        handleResponse: function (response) {
-
-        }
-    };
-};
 var lambdaEvent = {
     "body": "{\"test\":\"body\"}",
     "resource": "/{proxy+}",
@@ -226,69 +212,67 @@ describe('Smash', function () {
         expect(smash.boot).to.not.throw();
     });
     it('Test register request middleware', function () {
-        var fakeLambdaProxyRequest = createFakeLambdaProxyRequest();
-        smash.registerRequestMiddleware(fakeLambdaProxyRequest)
-        //TODO
-        //reactivate when refactor
-        //assert.isObject(smash.registerRequestMiddleware(fakeLambdaProxyRequest));
+        var fakeLambdaProxyRequest = new serviceRequestSuccess();
+        smash.registerRequestMiddleware(fakeLambdaProxyRequest);
+        assert.isObject(smash.registerRequestMiddleware(fakeLambdaProxyRequest));
         assert.deepEqual(smash.getRequestMiddleware(), fakeLambdaProxyRequest);
     });
     it('Test register config', function () {
-        var fakeConfig = createFakeConfig();
-        smash.registerConfig(fakeConfig)
-        //assert.isObject(smash.registerConfig(fakeConfig));
+        var fakeConfig = new config();
+        smash.registerConfig(fakeConfig);
+        assert.isObject(smash.registerConfig(fakeConfig));
         assert.deepEqual(smash.getConfig(), fakeConfig);
     });
     it('Test register user provider', function () {
-        var fakeUserProvider = createFakeUserProvider();
-        smash.registerUserProvider(fakeUserProvider)
-        //assert.isObject(smash.registerUserProvider(fakeUserProvider));
+        var fakeUserProvider = new serviceRequestSuccess();
+        smash.registerUserProvider(fakeUserProvider);
+        assert.isObject(smash.registerUserProvider(fakeUserProvider));
         assert.deepEqual(smash.getUserProvider(), fakeUserProvider);
     });
     it('Test register logger', function () {
-        var fakeLogger = createFakeLogger();
-        smash.registerLogger(fakeLogger)
-        //assert.isObject(smash.registerLogger(fakeLogger));
+        var fakeLogger = new logger();
+        smash.registerLogger(fakeLogger);
+        assert.isObject(smash.registerLogger(fakeLogger));
         assert.deepEqual(smash.getLogger(), fakeLogger);
     });
     it('Test register router', function () {
-        var fakeRouter = createFakeRouter();
-        smash.registerRouter(fakeRouter)
-        //assert.isObject(smash.registerRouter(fakeRouter));
+        var fakeRouter = new serviceRequestSuccess();
+        smash.registerRouter(fakeRouter);
+        assert.isObject(smash.registerRouter(fakeRouter));
         assert.deepEqual(smash.getRouter(), fakeRouter);
     });
     it('Test register authorization', function () {
-        var fakeAuthorization = createFakeAuthorization();
-        smash.registerAuthorization(fakeAuthorization)
-        //assert.isObject(smash.registerAuthorization(fakeAuthorization));
+        var fakeAuthorization = new serviceRequestSuccess();
+        smash.registerAuthorization(fakeAuthorization);
+        assert.isObject(smash.registerAuthorization(fakeAuthorization));
         assert.deepEqual(smash.getAuthorization(), fakeAuthorization);
     });
     it('Test register response middleware', function () {
-        var fakeLambdaProxyResponse = createFakeLambdaProxyResponse();
-        smash.registerResponseMiddleware(fakeLambdaProxyResponse)
-        //assert.isObject(smash.registerResponseMiddleware(fakeLambdaProxyResponse));
+        var fakeLambdaProxyResponse = new serviceResponseSuccess();
+        smash.registerResponseMiddleware(fakeLambdaProxyResponse);
+        assert.isObject(smash.registerResponseMiddleware(fakeLambdaProxyResponse));
         assert.deepEqual(smash.getResponseMiddleware(), fakeLambdaProxyResponse);
     });
     it('Test register controllers', function () {
         //TODO
     });
-    it('Test request', function () {
-        var fakeLambdaProxyRequest = createFakeLambdaProxyRequest();
-        var fakeLogger = createFakeLogger();
-        var fakeRouter = createFakeRouter();
-        var fakeConfig = createFakeConfig();
-        var fakeUserProvider = createFakeUserProvider();
-        var fakeAuthorization = createFakeAuthorization();
-        var fakeLambdaProxyResponse = createFakeLambdaProxyResponse();
+    it('Test request with controller execution', function () {
+        var fakeLambdaProxyRequest = new serviceRequestSuccess();
+        var fakeLogger = new logger();
+        var fakeRouter = new serviceRequestSuccess();
+        var fakeConfig = new config();
+        var fakeUserProvider = new serviceRequestSuccess();
+        var fakeAuthorization = new serviceRequestSuccess();
+        var fakeLambdaProxyResponse = new serviceResponseSuccess();
         smash.resetRootPath();
         smash.registerRequestMiddleware(fakeLambdaProxyRequest);
         smash.registerResponseMiddleware(fakeLambdaProxyResponse);
-        smash.boot(true);
         smash.registerLogger(fakeLogger);
         smash.registerConfig(fakeConfig);
         smash.registerRouter(fakeRouter);
         smash.registerAuthorization(fakeAuthorization);
         smash.registerUserProvider(fakeUserProvider);
+        smash.boot(true);
         smash.handleRequest(lambdaEvent, function (err, response) {
             assert.isNull(err);
             assert.isObject(response);
@@ -297,5 +281,29 @@ describe('Smash', function () {
         //TODO improve test 
         //add case
     });
-    //TODO test module loading better
+    it('Test request without controller execution and error before controller execution', function () {
+        var fakeLambdaProxyRequest = new serviceRequestFailure();
+        var fakeLogger = new logger();
+        var fakeRouter = new serviceRequestSuccess();
+        var fakeConfig = new config();
+        var fakeUserProvider = new serviceRequestSuccess();
+        var fakeAuthorization = new serviceRequestSuccess();
+        var fakeLambdaProxyResponse = new serviceResponseSuccess();
+        smash.resetRootPath();
+        smash.registerRequestMiddleware(fakeLambdaProxyRequest);
+        smash.registerResponseMiddleware(fakeLambdaProxyResponse);
+        smash.registerLogger(fakeLogger);
+        smash.registerConfig(fakeConfig);
+        smash.registerRouter(fakeRouter);
+        smash.registerAuthorization(fakeAuthorization);
+        smash.registerUserProvider(fakeUserProvider);
+        smash.boot(true);
+        smash.handleRequest(lambdaEvent, function (err, response) {
+            assert.isNull(err);
+            assert.equal(response.code, 500);
+        });
+
+        //TODO improve test 
+        //add case
+    });
 });
