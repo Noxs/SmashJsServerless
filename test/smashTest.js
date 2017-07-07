@@ -210,7 +210,7 @@ describe('Smash', function () {
         assert.equal(smash.getRootPath(), "/PATH/TEST");
     });
     it('Test smash controller path', function () {
-        assert.equal(smash.getControllerPath(), "/controller/*.js");
+        assert.equal(smash.getControllerPath(), "controller\\*.js");
         smash.setControllerPath("/PATH/TEST");
         assert.equal(smash.getControllerPath(), "/PATH/TEST");
     });

@@ -2,7 +2,7 @@ var smash = require("../smash.js");
 var path = require('path');
 function smashConfig() {
     var that = this;
-    const defaultFile = "/config.json";
+    const defaultFile = "config.json";
     var file = null;
     var rootPath = null;
     var nconf = require('nconf');
@@ -15,7 +15,7 @@ function smashConfig() {
         if (extFile) {
             file = extFile;
         }
-        nconf.file(path.resolve(rootPath + file));
+        nconf.file(path.resolve(path.join(rootPath, file)));
         return that;
     };
     that.get = function (keyword) {
