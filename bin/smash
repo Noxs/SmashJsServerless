@@ -3,8 +3,6 @@
 'use strict';
 
 var program = require('commander');
-var path = require('path');
-var fs = require('fs');
 var utils = require("./lib/utils.js");
 
 program.command('init aws')
