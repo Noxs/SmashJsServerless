@@ -1,6 +1,6 @@
 {
   "name": "smash-js-serverless",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Javascript serverless framework",
   "main": "smash.js",
   "scripts": {
