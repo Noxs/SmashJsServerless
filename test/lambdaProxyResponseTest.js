@@ -41,19 +41,22 @@ describe('LambdaProxyResponse', function () {
     });
     it('Test lambda proxy response handle request', function () {
         var response = new createResponse();
+        response.setCode(200);
         lambdaProxyResponse.setNext(function (error, formattedResponse) {
+            console.log(formattedResponse);
             assert.isNull(error);
             assert.isObject(formattedResponse);
-            assert.equal(formattedResponse.code, response.getCode());
+            assert.equal(formattedResponse.statusCode, response.getCode());
             assert.equal(formattedResponse.headers, response.getHeaders());
             assert.equal(formattedResponse.body, response.getBody());
         });
         assert.isTrue(lambdaProxyResponse.handleResponse(response));
         response.setBody({"test": "test"});
+         response.setCode(201);
         lambdaProxyResponse.setNext(function (error, formattedResponse) {
             assert.isNull(error);
             assert.isObject(formattedResponse);
-            assert.equal(formattedResponse.code, response.getCode());
+            assert.equal(formattedResponse.statusCode, response.getCode());
             assert.equal(formattedResponse.headers, response.getHeaders());
             assert.equal(formattedResponse.body, JSON.stringify(response.getBody()));
         });

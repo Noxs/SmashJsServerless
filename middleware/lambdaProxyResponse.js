@@ -8,7 +8,7 @@ function lambdaProxyResponse() {
     };
     that.handleResponse = function (response) {
         var formattedResponse = {};
-        formattedResponse.code = response.getCode();
+        formattedResponse.statusCode = response.getCode();
         formattedResponse.headers = response.getHeaders();
         if (response.getBody()) {
             formattedResponse.body = JSON.stringify(response.getBody());
