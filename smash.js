@@ -218,9 +218,9 @@ function smash() {
         if (logEnable) {
             logger.log("Handle new request.");
         }
-        requestMiddleware.setNext(userProvider.handleRequest, responseMiddleware.handleResponse);
-        userProvider.setNext(router.handleRequest, responseMiddleware.handleResponse);
-        router.setNext(authorization.handleRequest, responseMiddleware.handleResponse);
+        requestMiddleware.setNext(router.handleRequest, responseMiddleware.handleResponse);
+        router.setNext(userProvider.handleRequest, responseMiddleware.handleResponse);
+        userProvider.setNext(authorization.handleRequest, responseMiddleware.handleResponse);
         authorization.setNext(executeController, responseMiddleware.handleResponse);
         responseMiddleware.setNext(response);
         var response = responseFactory.createResponse();
