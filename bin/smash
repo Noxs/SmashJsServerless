@@ -3,7 +3,7 @@
 'use strict';
 
 var program = require('commander');
-var utils = require("./lib/utils.js");
+var utils = require("../lib/utils.js");
 
 program.command('init aws')
         .description('initialize lambda index.js, codebuild buildspec.yml, smash config.json')
