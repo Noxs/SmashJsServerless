@@ -265,6 +265,37 @@ function smash() {
     that.getControllerPath = function () {
         return controllerPath;
     };
+    //TODO check pattern for registering route is good or not, 
+    //if not rework router component
+    //as a clue, maybe just a function is enough
+    that.get = function (route, callback) {
+        router.get(route, callback);
+        return that;
+    };
+    that.post = function (route, callback) {
+        router.post(route, callback);
+        return that;
+    };
+    that.put = function (route, callback) {
+        router.put(route, callback);
+        return that;
+    };
+    that.delete = function (route, callback) {
+        router.delete(route, callback);
+        return that;
+    };
+    that.patch = function (route, callback) {
+        router.patch(route, callback);
+        return that;
+    };
+    that.options = function (route, callback) {
+        router.options(route, callback);
+        return that;
+    };
+    that.head = function (route, callback) {
+        router.head(route, callback);
+        return that;
+    };
 }
 
 module.exports = new smash();
