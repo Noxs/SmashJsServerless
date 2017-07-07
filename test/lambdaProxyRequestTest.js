@@ -70,23 +70,27 @@ var notLambdaEvent = {};
 function createNext() {
     return sinon.spy();
 }
+function createFail() {
+    return sinon.spy();
+}
 describe('LambdaProxyRequest', function () {
     it('Test lambda proxy request instance', function () {
         assert.isObject(lambdaProxyRequest);
     });
     it('Test lambda proxy request handling', function () {
-
+        var fail = createFail();
         lambdaProxyRequest.setNext(function (request, response) {
             assert.equal(request.method, lambdaEvent.httpMethod);
             assert.equal(request.queryParamters, lambdaEvent.queryStringParameters);
             assert.equal(request.headers, lambdaEvent.headers);
             assert.equal(request.path, lambdaEvent.path);
             assert.deepEqual(request.body, JSON.parse(lambdaEvent.body));
-        });
+        }, fail);
         var result = lambdaProxyRequest.handleRequest(lambdaEvent);
         assert.isTrue(result);
+        assert.isOk(fail.notCalled);
 
-
+        fail = createFail();
         lambdaEvent.requestContext.authorizer = {
             "username": "test@test.com"
         };
@@ -97,16 +101,20 @@ describe('LambdaProxyRequest', function () {
             assert.equal(request.path, lambdaEvent.path);
             assert.deepEqual(request.body, JSON.parse(lambdaEvent.body));
             assert.equal(request.user.username, lambdaEvent.requestContext.authorizer.username);
-        });
+        }, fail);
         result = lambdaProxyRequest.handleRequest(lambdaEvent);
         assert.isTrue(result);
+        assert.isOk(fail.notCalled);
 
     });
     it('Test lambda not proxy request handling', function () {
         var next = createNext();
-        lambdaProxyRequest.setNext(next);
+        var fail = createFail();
+        lambdaProxyRequest.setNext(next, fail);
         var result = lambdaProxyRequest.handleRequest(notLambdaEvent);
         assert.isFalse(result);
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
     });
+    //TODO test when no request context, no username
 });

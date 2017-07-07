@@ -1,29 +1,26 @@
 var smash = require("../smash.js");
-var execute = function () {
+function logger() {
     var that = this;
-    that.customConsole = console;
-    return {
-        log: function () {
-            that.customConsole.log.apply(this, arguments);
-            return that;
-        },
-        warn: function () {
-            that.customConsole.warn.apply(this, arguments);
-            return that;
-        },
-        error: function () {
-            that.customConsole.error.apply(this, arguments);
-            return that;
-        },
-        setConsole: function (customConsole) {
-            that.customConsole = customConsole;
-            return that;
-        },
-        getConsole: function () {
-            return that.customConsole;
-        }
+    var customConsole = console;
+    that.log = function () {
+        customConsole.log.apply(this, arguments);
+        return that;
     };
-};
-var logger = execute();
-module.exports = logger;
-smash.registerLogger(logger);
+    that.warn = function () {
+        customConsole.warn.apply(this, arguments);
+        return that;
+    };
+    that.error = function () {
+        customConsole.error.apply(this, arguments);
+        return that;
+    };
+    that.setConsole = function (extCustomConsole) {
+        customConsole = extCustomConsole;
+        return that;
+    };
+    that.getConsole = function () {
+        return customConsole;
+    };
+}
+smash.registerLogger(new logger());
+module.exports = smash.getLogger();

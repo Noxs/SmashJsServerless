@@ -27,6 +27,9 @@ function createResponse() {
 function createNext() {
     return  sinon.spy();
 }
+function createFail() {
+    return sinon.spy();
+}
 var request = newRequest();
 describe('Router', function () {
     it('Test router instance', function () {
@@ -174,587 +177,1143 @@ describe('Router', function () {
     it('Test router handle get request', function () {
         var response = createResponse();
         var next = createNext();
-        router.setNext(next);
+        var fail = createFail();
+        router.setNext(next, fail);
         router.clearRoutes();
         request.method = "GET";
         request.path = "/";
         assert.isFalse(router.handleRequest(request, response));
         assert.isOk(response.notFound.called);
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
         response = createResponse();
         next = createNext();
-        router.setNext(next);
+        fail = createFail();
+        router.setNext(next, fail);
         router.post({path: "/request/post"}, function (request, response) {});
         assert.isFalse(router.handleRequest(request, response));
         assert.isOk(response.notFound.called);
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
         response = createResponse();
         next = createNext();
-        router.setNext(next);
+        fail = createFail();
+        router.setNext(next, fail);
         router.post({path: "/"}, function (request, response) {});
         assert.isFalse(router.handleRequest(request, response));
         assert.isOk(response.notFound.called);
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
         response = createResponse();
         next = createNext();
-        router.setNext(next);
+        fail = createFail();
+        router.setNext(next, fail);
         router.post({byPass: true}, function (request, response) {});
         assert.isFalse(router.handleRequest(request, response));
         assert.isOk(response.notFound.called);
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
         response = createResponse();
         next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         router.get({path: "/request/get"}, function (request, response) {});
         assert.isFalse(router.handleRequest(request, response));
         assert.isOk(response.notFound.called);
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.exists(request.route.byPass);
-        });
+        }, fail);
         router.get({byPass: true}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
         assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
         router.clearRoutes();
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-        });
+        }, fail);
         router.get({path: "/"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
         assert.isOk(response.notFound.notCalled);
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-        });
+        }, fail);
         router.get({path: "/get"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
         assert.isOk(response.notFound.notCalled);
-
-
-        response = createResponse();
-        router.setNext(function (request, response) {
-            assert.isObject(request.route);
-            assert.equal(request.route.path, "/get");
-        });
-        request.path = "/get";
-        assert.isTrue(router.handleRequest(request, response));
-        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
         response = createResponse();
         next = createNext();
-        router.setNext(next);
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/get");
+        }, fail);
+        request.path = "/get";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         request.path = "/request/get";
         assert.isFalse(router.handleRequest(request, response));
         assert.isOk(response.notFound.called);
         assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:get");
-        });
+        }, fail);
         router.get({path: "/request/:get"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
         assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request2/:get");
-        });
+        }, fail);
         router.get({path: "/request2/:get"}, function (request, response) {});
         request.path = "/request2/get";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:get/details");
-        });
+        }, fail);
         router.get({path: "/request/:get/details"}, function (request, response) {});
         request.path = "/request/get/details";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:get");
             assert.equal(request.parameters.get, "get");
-        });
+        }, fail);
         request.path = "/request/get";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
         response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:get/details/:working");
             assert.equal(request.parameters.get, "get");
             assert.equal(request.parameters.working, "nice");
-        });
+        }, fail);
         router.get({path: "/request/:get/details/:working"}, function (request, response) {});
         request.path = "/request/get/details/nice";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
     });
     it('Test router handle post request', function () {
         var response = createResponse();
         var next = createNext();
-        router.setNext(function (request, response) {
-            assert.isObject(request.route);
-            assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "POST");
-        });
+        var fail = createFail();
+        router.setNext(next, fail);
         request.method = "POST";
         request.path = "/";
-        router.post({path: "/"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.post({path: "/request/post"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.post({path: "/request/post"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.exists(request.route.byPass);
+        }, fail);
+        router.post({byPass: true}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        router.clearRoutes();
 
-
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "POST");
-        });
+        }, fail);
+        router.post({path: "/"}, function (request, response) {});
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+        assert.isOk(response.notFound.notCalled);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/");
+        }, fail);
         router.post({path: "/post"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/post");
-            assert.equal(request.route.method, "POST");
-        });
+        }, fail);
         request.path = "/post";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
-        next = createNext();
+
         response = createResponse();
-        router.setNext(next);
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         request.path = "/request/post";
         assert.isFalse(router.handleRequest(request, response));
-        assert.isOk(next.notCalled);
         assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:post");
-            assert.equal(request.route.method, "POST");
-        });
+        }, fail);
         router.post({path: "/request/:post"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request2/:post");
-            assert.equal(request.route.method, "POST");
-        });
+        }, fail);
         router.post({path: "/request2/:post"}, function (request, response) {});
         request.path = "/request2/post";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:post/details");
-            assert.equal(request.route.method, "POST");
-        });
+        }, fail);
         router.post({path: "/request/:post/details"}, function (request, response) {});
         request.path = "/request/post/details";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:post");
-            assert.equal(request.route.method, "POST");
-        });
+            assert.equal(request.parameters.post, "post");
+        }, fail);
         request.path = "/request/post";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:post/details/:working");
+            assert.equal(request.parameters.post, "post");
+            assert.equal(request.parameters.working, "nice");
+        }, fail);
+        router.post({path: "/request/:post/details/:working"}, function (request, response) {});
+        request.path = "/request/post/details/nice";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
     });
     it('Test router handle put request', function () {
         var response = createResponse();
         var next = createNext();
-        router.setNext(function (request, response) {
-            assert.isObject(request.route);
-            assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "PUT");
-        });
+        var fail = createFail();
+        router.setNext(next, fail);
         request.method = "PUT";
         request.path = "/";
-        router.put({path: "/"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.put({path: "/request/put"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.put({path: "/request/put"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.exists(request.route.byPass);
+        }, fail);
+        router.put({byPass: true}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        router.clearRoutes();
 
-
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "PUT");
-        });
+        }, fail);
+        router.put({path: "/"}, function (request, response) {});
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+        assert.isOk(response.notFound.notCalled);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/");
+        }, fail);
         router.put({path: "/put"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/put");
-            assert.equal(request.route.method, "PUT");
-        });
+        }, fail);
         request.path = "/put";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
-        next = createNext();
+
         response = createResponse();
-        router.setNext(next);
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         request.path = "/request/put";
         assert.isFalse(router.handleRequest(request, response));
-        assert.isOk(next.notCalled);
         assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:put");
-            assert.equal(request.route.method, "PUT");
-        });
+        }, fail);
         router.put({path: "/request/:put"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request2/:put");
-            assert.equal(request.route.method, "PUT");
-        });
+        }, fail);
         router.put({path: "/request2/:put"}, function (request, response) {});
         request.path = "/request2/put";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:put/details");
-            assert.equal(request.route.method, "PUT");
-        });
+        }, fail);
         router.put({path: "/request/:put/details"}, function (request, response) {});
         request.path = "/request/put/details";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:put");
-            assert.equal(request.route.method, "PUT");
-        });
+            assert.equal(request.parameters.put, "put");
+        }, fail);
         request.path = "/request/put";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:put/details/:working");
+            assert.equal(request.parameters.put, "put");
+            assert.equal(request.parameters.working, "nice");
+        }, fail);
+        router.put({path: "/request/:put/details/:working"}, function (request, response) {});
+        request.path = "/request/put/details/nice";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
     });
     it('Test router handle delete request', function () {
         var response = createResponse();
         var next = createNext();
-        router.setNext(function (request, response) {
-            assert.isObject(request.route);
-            assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "DELETE");
-        });
+        var fail = createFail();
+        router.setNext(next, fail);
         request.method = "DELETE";
         request.path = "/";
-        router.delete({path: "/"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.delete({path: "/request/delete"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.delete({path: "/request/delete"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.exists(request.route.byPass);
+        }, fail);
+        router.delete({byPass: true}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        router.clearRoutes();
 
-
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "DELETE");
-        });
+        }, fail);
+        router.delete({path: "/"}, function (request, response) {});
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+        assert.isOk(response.notFound.notCalled);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/");
+        }, fail);
         router.delete({path: "/delete"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/delete");
-            assert.equal(request.route.method, "DELETE");
-        });
+        }, fail);
         request.path = "/delete";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
-        next = createNext();
+
         response = createResponse();
-        router.setNext(next);
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         request.path = "/request/delete";
         assert.isFalse(router.handleRequest(request, response));
-        assert.isOk(next.notCalled);
         assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:delete");
-            assert.equal(request.route.method, "DELETE");
-        });
+        }, fail);
         router.delete({path: "/request/:delete"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request2/:delete");
-            assert.equal(request.route.method, "DELETE");
-        });
+        }, fail);
         router.delete({path: "/request2/:delete"}, function (request, response) {});
         request.path = "/request2/delete";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:delete/details");
-            assert.equal(request.route.method, "DELETE");
-        });
+        }, fail);
         router.delete({path: "/request/:delete/details"}, function (request, response) {});
         request.path = "/request/delete/details";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:delete");
-            assert.equal(request.route.method, "DELETE");
-        });
+            assert.equal(request.parameters.delete, "delete");
+        }, fail);
         request.path = "/request/delete";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:delete/details/:working");
+            assert.equal(request.parameters.delete, "delete");
+            assert.equal(request.parameters.working, "nice");
+        }, fail);
+        router.delete({path: "/request/:delete/details/:working"}, function (request, response) {});
+        request.path = "/request/delete/details/nice";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
     });
     it('Test router handle options request', function () {
         var response = createResponse();
         var next = createNext();
-        router.setNext(function (request, response) {
-            assert.isObject(request.route);
-            assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "OPTIONS");
-        });
+        var fail = createFail();
+        router.setNext(next, fail);
         request.method = "OPTIONS";
         request.path = "/";
-        router.options({path: "/"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.options({path: "/request/options"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.options({path: "/request/options"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.exists(request.route.byPass);
+        }, fail);
+        router.options({byPass: true}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        router.clearRoutes();
 
-
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "OPTIONS");
-        });
+        }, fail);
+        router.options({path: "/"}, function (request, response) {});
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+        assert.isOk(response.notFound.notCalled);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/");
+        }, fail);
         router.options({path: "/options"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/options");
-            assert.equal(request.route.method, "OPTIONS");
-        });
+        }, fail);
         request.path = "/options";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
-        next = createNext();
+
         response = createResponse();
-        router.setNext(next);
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         request.path = "/request/options";
         assert.isFalse(router.handleRequest(request, response));
-        assert.isOk(next.notCalled);
         assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:options");
-            assert.equal(request.route.method, "OPTIONS");
-        });
+        }, fail);
         router.options({path: "/request/:options"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request2/:options");
-            assert.equal(request.route.method, "OPTIONS");
-        });
+        }, fail);
         router.options({path: "/request2/:options"}, function (request, response) {});
         request.path = "/request2/options";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:options/details");
-            assert.equal(request.route.method, "OPTIONS");
-        });
+        }, fail);
         router.options({path: "/request/:options/details"}, function (request, response) {});
         request.path = "/request/options/details";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:options");
-            assert.equal(request.route.method, "OPTIONS");
-        });
+            assert.equal(request.parameters.options, "options");
+        }, fail);
         request.path = "/request/options";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:options/details/:working");
+            assert.equal(request.parameters.options, "options");
+            assert.equal(request.parameters.working, "nice");
+        }, fail);
+        router.options({path: "/request/:options/details/:working"}, function (request, response) {});
+        request.path = "/request/options/details/nice";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
     });
     it('Test router handle patch request', function () {
         var response = createResponse();
         var next = createNext();
-        router.setNext(function (request, response) {
-            assert.isObject(request.route);
-            assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "PATCH");
-        });
+        var fail = createFail();
+        router.setNext(next, fail);
         request.method = "PATCH";
         request.path = "/";
-        router.patch({path: "/"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.patch({path: "/request/patch"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.patch({path: "/request/patch"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.exists(request.route.byPass);
+        }, fail);
+        router.patch({byPass: true}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        router.clearRoutes();
 
-
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "PATCH");
-        });
+        }, fail);
+        router.patch({path: "/"}, function (request, response) {});
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+        assert.isOk(response.notFound.notCalled);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/");
+        }, fail);
         router.patch({path: "/patch"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/patch");
-            assert.equal(request.route.method, "PATCH");
-        });
+        }, fail);
         request.path = "/patch";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
-        next = createNext();
+
         response = createResponse();
-        router.setNext(next);
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         request.path = "/request/patch";
         assert.isFalse(router.handleRequest(request, response));
-        assert.isOk(next.notCalled);
         assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:patch");
-            assert.equal(request.route.method, "PATCH");
-        });
+        }, fail);
         router.patch({path: "/request/:patch"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request2/:patch");
-            assert.equal(request.route.method, "PATCH");
-        });
+        }, fail);
         router.patch({path: "/request2/:patch"}, function (request, response) {});
         request.path = "/request2/patch";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:patch/details");
-            assert.equal(request.route.method, "PATCH");
-        });
+        }, fail);
         router.patch({path: "/request/:patch/details"}, function (request, response) {});
         request.path = "/request/patch/details";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:patch");
-            assert.equal(request.route.method, "PATCH");
-        });
+            assert.equal(request.parameters.patch, "patch");
+        }, fail);
         request.path = "/request/patch";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:patch/details/:working");
+            assert.equal(request.parameters.patch, "patch");
+            assert.equal(request.parameters.working, "nice");
+        }, fail);
+        router.patch({path: "/request/:patch/details/:working"}, function (request, response) {});
+        request.path = "/request/patch/details/nice";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
     });
     it('Test router handle head request', function () {
         var response = createResponse();
         var next = createNext();
-        router.setNext(function (request, response) {
-            assert.isObject(request.route);
-            assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "HEAD");
-        });
+        var fail = createFail();
+        router.setNext(next, fail);
         request.method = "HEAD";
         request.path = "/";
-        router.head({path: "/"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.head({path: "/request/head"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
+        router.head({path: "/request/head"}, function (request, response) {});
+        assert.isFalse(router.handleRequest(request, response));
+        assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.exists(request.route.byPass);
+        }, fail);
+        router.head({byPass: true}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        router.clearRoutes();
 
-
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/");
-            assert.equal(request.route.method, "HEAD");
-        });
+        }, fail);
+        router.head({path: "/"}, function (request, response) {});
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+        assert.isOk(response.notFound.notCalled);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/");
+        }, fail);
         router.head({path: "/head"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/head");
-            assert.equal(request.route.method, "HEAD");
-        });
+        }, fail);
         request.path = "/head";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
-        next = createNext();
+
         response = createResponse();
-        router.setNext(next);
+        next = createNext();
+        fail = createFail();
+        router.setNext(next, fail);
         request.path = "/request/head";
         assert.isFalse(router.handleRequest(request, response));
-        assert.isOk(next.notCalled);
         assert.isOk(response.notFound.called);
+        assert.isOk(next.notCalled);
+        assert.isOk(fail.called);
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:head");
-            assert.equal(request.route.method, "HEAD");
-        });
+        }, fail);
         router.head({path: "/request/:head"}, function (request, response) {});
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request2/:head");
-            assert.equal(request.route.method, "HEAD");
-        });
+        }, fail);
         router.head({path: "/request2/:head"}, function (request, response) {});
         request.path = "/request2/head";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:head/details");
-            assert.equal(request.route.method, "HEAD");
-        });
+        }, fail);
         router.head({path: "/request/:head/details"}, function (request, response) {});
         request.path = "/request/head/details";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
 
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
         router.setNext(function (request, response) {
             assert.isObject(request.route);
             assert.equal(request.route.path, "/request/:head");
-            assert.equal(request.route.method, "HEAD");
-        });
+            assert.equal(request.parameters.head, "head");
+        }, fail);
         request.path = "/request/head";
         assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:head/details/:working");
+            assert.equal(request.parameters.head, "head");
+            assert.equal(request.parameters.working, "nice");
+        }, fail);
+        router.head({path: "/request/:head/details/:working"}, function (request, response) {});
+        request.path = "/request/head/details/nice";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
     });
     it('Test router interpolation change', function () {
         assert.equal(router.getInterpolation(), ":");

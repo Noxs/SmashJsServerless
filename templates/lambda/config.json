@@ -16,8 +16,8 @@
         }
     },
     "user_provider": {
-        "dynamodb_table": "table",
-        "region": "region",
+        "dynamodb_table": "table_name_exemple",
+        "region": "aws_region",
         "primary": "username"
     }
 }

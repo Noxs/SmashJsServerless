@@ -1,14 +1,15 @@
 var smash = require("../smash.js");
-var execute = function () {
+function router() {
     var that = this;
     const defaultInterpolation = ":";
     const slash = "/";
     const regexp = "[^\/.]+";
-    that.next = null;
-    that.interpolation = defaultInterpolation;
+    var next = null;
+    var fail = null;
+    var interpolation = defaultInterpolation;
     //TODO optimize this with one array for each method
-    that.routes = [];
-    that.methods = {
+    var routes = [];
+    var methods = {
         GET: "GET",
         POST: "POST",
         PUT: "PUT",
@@ -17,9 +18,9 @@ var execute = function () {
         OPTIONS: "OPTIONS",
         HEAD: "HEAD"
     };
-    that.registerRoute = function (method, route, callback) {
+    var registerRoute = function (method, route, callback) {
         route.method = method;
-        if (!route.env) {
+        if (!route.env) {//TODO why this?
             route.env = smash.getEnv();
         }
         if (!route.path && !route.byPass) {
@@ -30,15 +31,15 @@ var execute = function () {
         } else {
             route.callback = callback;
         }
-        that.buildRouteParameter(route);
-        that.routes.push(route);
+        buildRouteParameter(route);
+        routes.push(route);
     };
-    that.buildRouteParameter = function (route) {
-        if (route.path && route.path.indexOf(that.interpolation) !== -1) {
+    var buildRouteParameter = function (route) {
+        if (route.path && route.path.indexOf(interpolation) !== -1) {
             route.interpolation = {number: 0, keywords: [], regexp: null, positions: []};
             var ressources = route.path.split(slash);
             for (var i = 0, length = ressources.length; i < length; i++) {
-                if (ressources[i].startsWith(that.interpolation) === true) {
+                if (ressources[i].startsWith(interpolation) === true) {
                     route.interpolation.number++;
                     route.interpolation.keywords.push(regexp);
                     route.interpolation.positions.push({keyword: ressources[i], index: i});
@@ -52,7 +53,7 @@ var execute = function () {
         }
         return that;
     };
-    that.matchRoute = function (request, route) {
+    var matchRoute = function (request, route) {
         //TODO
         //is it std to set a 404 if the method is not good
         //maybe match method at the end and use another code
@@ -85,73 +86,73 @@ var execute = function () {
         }
         return route;
     };
-    that.matchRoutes = function (request, response) {
-        for (var i = 0, length = that.routes.length; i < length; i++) {
-            var route = that.matchRoute(request, that.routes[i]);
+    var matchRoutes = function (request, response) {
+        for (var i = 0, length = routes.length; i < length; i++) {
+            var route = matchRoute(request, routes[i]);
             if (route !== null) {
                 request.route = route;
-                that.next(request, response);
+                next(request, response);
                 return true;
             }
         }
         response.notFound("not found");
+        fail(response);
         return false;
     };
-    return {
-        setNext: function (next) {
-            that.next = next;
-            return that;
-        },
-        get: function (route, callback) {
-            that.registerRoute(that.methods.GET, route, callback);
-            return that;
-        },
-        post: function (route, callback) {
-            that.registerRoute(that.methods.POST, route, callback);
-            return that;
-        },
-        put: function (route, callback) {
-            that.registerRoute(that.methods.PUT, route, callback);
-            return that;
-        },
-        delete: function (route, callback) {
-            that.registerRoute(that.methods.DELETE, route, callback);
-            return that;
-        },
-        patch: function (route, callback) {
-            that.registerRoute(that.methods.PATCH, route, callback);
-            return that;
-        },
-        options: function (route, callback) {
-            that.registerRoute(that.methods.OPTIONS, route, callback);
-            return that;
-        },
-        head: function (route, callback) {
-            that.registerRoute(that.methods.HEAD, route, callback);
-            return that;
-        },
-        handleRequest: function (request, response) {
-            return that.matchRoutes(request, response);
-        },
-        getRoutes: function () {
-            return that.routes;
-        },
-        clearRoutes: function () {
-            that.routes = [];
-            return that;
-        },
-        getInterpolation: function () {
-            return that.interpolation;
-        },
-        setInterpolation: function (interpolation) {
-            that.interpolation = interpolation;
-            for (var i = 0, length = that.routes.length; i < length; i++) {
-                that.buildRouteParameter(that.routes[i]);
-            }
-            return that;
-        }
+    that.setNext = function (extNext, extFail) {
+        next = extNext;
+        fail = extFail;
+        return that;
     };
-};
-var router = execute();
-module.exports = router;
-smash.registerRouter(router);
+    that.get = function (route, callback) {
+        registerRoute(methods.GET, route, callback);
+        return that;
+    };
+    that.post = function (route, callback) {
+        registerRoute(methods.POST, route, callback);
+        return that;
+    };
+    that.put = function (route, callback) {
+        registerRoute(methods.PUT, route, callback);
+        return that;
+    };
+    that.delete = function (route, callback) {
+        registerRoute(methods.DELETE, route, callback);
+        return that;
+    };
+    that.patch = function (route, callback) {
+        registerRoute(methods.PATCH, route, callback);
+        return that;
+    };
+    that.options = function (route, callback) {
+        registerRoute(methods.OPTIONS, route, callback);
+        return that;
+    };
+    that.head = function (route, callback) {
+        registerRoute(methods.HEAD, route, callback);
+        return that;
+    };
+    that.handleRequest = function (request, response) {
+        return matchRoutes(request, response);
+    };
+    that.getRoutes = function () {
+        return routes;
+    };
+    that.clearRoutes = function () {
+        routes = [];
+        return that;
+    };
+    that.getInterpolation = function () {
+        return interpolation;
+    };
+    that.setInterpolation = function (extInterpolation) {
+        interpolation = extInterpolation;
+        for (var i = 0, length = routes.length; i < length; i++) {
+            buildRouteParameter(routes[i]);
+        }
+        return that;
+    };
+}
+
+smash.registerRouter(new router());
+module.exports = smash.getRouter();
