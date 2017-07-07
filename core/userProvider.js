@@ -19,7 +19,7 @@ function userProvider() {
             }
         }
         if (dynamodbTypes === null) {
-            dynamodbTypes = attr.AttributeValue;
+            dynamodbTypes = attr;
         }
         var params = {
             TableName: conf.dynamodb_table,
