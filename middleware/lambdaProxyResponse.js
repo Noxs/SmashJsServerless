@@ -8,12 +8,12 @@ function lambdaProxyResponse() {
     };
     that.handleResponse = function (response) {
         var formattedResponse = {};
-        formattedResponse.code = response.code;
-        formattedResponse.headers = response.headers;
-        if (response.body) {
-            formattedResponse.body = JSON.stringify(response.body);
+        formattedResponse.code = response.getCode();
+        formattedResponse.headers = response.getHeaders();
+        if (response.getBody()) {
+            formattedResponse.body = JSON.stringify(response.getBody());
         } else {
-            formattedResponse.body = response.body;
+            formattedResponse.body = response.getBody();
         }
         next(null, formattedResponse);
         return true;
