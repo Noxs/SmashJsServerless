@@ -52,19 +52,31 @@ function authorization() {
                 for (var i = 0, lengthI = request.user.roles.length; i < lengthI; i++) {
                     for (var j = 0, lengthJ = request.route.authorizations.length; j < lengthJ; j++) {
                         if (isAuthorized(request.route.authorizations[j], request.user.roles[i]) === true) {
+                            if (smash.debugIsActive()) {
+                                smash.getLogger().log("User " + request.user.username + " is authorized.");
+                            }
                             next(request, response);
                             return true;
                         }
                     }
                 }
                 response.forbidden("not authorized");
+                if (smash.debugIsActive()) {
+                    smash.getLogger().log("User " + request.user.username + " is not authorized.");
+                }
                 fail(response);
                 return false;
             } else {
                 response.forbidden("not authorized");
+                if (smash.debugIsActive()) {
+                    smash.getLogger().log("User" + request.user.username + "  is not authorized.");
+                }
                 fail(response);
                 return false;
             }
+        }
+        if (smash.debugIsActive()) {
+            smash.getLogger().log("No authorization required.");
         }
         next(request, response);
         return true;

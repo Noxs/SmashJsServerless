@@ -116,7 +116,7 @@ function smash() {
     };
     that.registerLogger = function (extLogger) {
         logger = extLogger;
-        if (debug) {
+        if (logger && debug) {
             logEnable = true;
         }
         if (logEnable) {
@@ -233,7 +233,7 @@ function smash() {
     };
 
     that.debugIsActive = function () {
-        return debug;
+        return logEnable;
     };
 
     that.setRootPath = function (extRootPath) {

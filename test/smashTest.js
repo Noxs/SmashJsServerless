@@ -178,12 +178,27 @@ describe('Smash', function () {
     it('Test smash debug', function () {
         smash.resetRootPath();
         smash.boot(true);
+        smash.registerLogger(null);
+        assert.equal(smash.debugIsActive(), false);
+
+        smash.resetRootPath();
+        smash.registerLogger(new logger());
+        smash.boot(true);
+        assert.equal(smash.debugIsActive(), false);
+
+        smash.resetRootPath();
+        smash.boot(true);
+        smash.registerLogger(new logger());
         assert.equal(smash.debugIsActive(), true);
+
         smash.resetRootPath();
         smash.boot(false);
+        smash.registerLogger(null);
         assert.equal(smash.debugIsActive(), false);
+
         smash.resetRootPath();
         smash.boot();
+        smash.registerLogger(null);
         assert.equal(smash.debugIsActive(), false);
     });
     it('Test smash env', function () {
