@@ -35,7 +35,7 @@ function smash() {
     var requestMiddleware = null;
     var responseMiddleware = null;
     var loadCore = function () {
-        var files = glob.sync(corePath);
+        var files = glob.sync(path.resolve(corePath));
         files.forEach(function (file) {
             require(path.resolve(file));
         });
@@ -69,7 +69,7 @@ function smash() {
         return that;
     };
     var loadDefaultMiddleware = function () {
-        var files = glob.sync(middlewarePath);
+        var files = glob.sync(path.resolve(middlewarePath));
         if (logEnable) {
             logger.log(files.length + " files loaded in the middleware directory.");
         }
@@ -83,9 +83,9 @@ function smash() {
         return that;
     };
     loadControllers = function () {
-        var files = glob.sync(rootPath + controllerPath);
+        var files = glob.sync(path.resolve(path.join(rootPath, controllerPath)));
         if (logEnable) {
-            logger.log(files.length + " files loaded in the controllers directory.");
+            logger.log(files.length + " files loaded in the controller directory.");
         }
         files.forEach(function (file) {
             require(path.resolve(file));
