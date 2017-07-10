@@ -1,6 +1,6 @@
 {
   "name": "smash-js-serverless",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Javascript serverless framework",
   "main": "smash.js",
   "scripts": {
@@ -37,6 +37,7 @@
     "dynamodb-data-types": "^3.0.0",
     "fs-extra": "^3.0.1",
     "glob": "^7.1.2",
+    "mkdirp": "^0.5.1",
     "nconf": "^0.8.4"
   },
   "bin": {

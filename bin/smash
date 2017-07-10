@@ -33,4 +33,11 @@ program.command('init codebuild')
             process.exit(0);
         });
 
+program.command('init controller')
+        .description('initialize controller directory')
+        .action(function () {
+            utils.initControllerDirectory();
+            process.exit(0);
+        });
+
 program.parse(process.argv);
