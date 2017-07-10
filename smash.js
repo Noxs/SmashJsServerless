@@ -104,6 +104,12 @@ function smash() {
                 logger.log("Error when executing controller.");
             }
         }
+        if (logEnable) {
+            logger.log("Execute controller done.");
+        }
+        if (logEnable) {
+            logger.log("Handle response.");
+        }
         if (responseMiddleware.handleResponse(response) === false) {
             if (logEnable) {
                 logger.log("Middleware has not been able to process the response.");
@@ -216,13 +222,16 @@ function smash() {
     };
     that.handleRequest = function (request, response) {
         if (logEnable) {
-            logger.log("Handle new request.");
+            logger.log("Linking.");
         }
         requestMiddleware.setNext(router.handleRequest, responseMiddleware.handleResponse);
         router.setNext(userProvider.handleRequest, responseMiddleware.handleResponse);
         userProvider.setNext(authorization.handleRequest, responseMiddleware.handleResponse);
         authorization.setNext(executeController, responseMiddleware.handleResponse);
         responseMiddleware.setNext(response);
+        if (logEnable) {
+            logger.log("Handle request.");
+        }
         var response = responseFactory.createResponse();
         requestMiddleware.handleRequest(request, response);
         return that;
