@@ -83,5 +83,14 @@ function authorization() {
     };
 }
 
-smash.registerAuthorization(new authorization());
-module.exports = smash.getAuthorization();
+module.exports = {
+    build: function () {
+        if (smash.getAuthorization() === null) {
+            smash.registerAuthorization(new authorization());
+        }
+        return smash.getAuthorization();
+    },
+    get: function () {
+        return smash.getAuthorization();
+    }
+};

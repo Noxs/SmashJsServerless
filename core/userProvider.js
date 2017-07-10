@@ -92,6 +92,14 @@ function userProvider() {
     };
 }
 
-
-smash.registerUserProvider(new userProvider());
-module.exports = smash.getUserProvider();
+module.exports = {
+    build: function () {
+        if (smash.getUserProvider() === null) {
+            smash.registerUserProvider(new userProvider());
+        }
+        return smash.getUserProvider();
+    },
+    get: function () {
+        return smash.getUserProvider();
+    }
+};

@@ -22,3 +22,16 @@ function lambdaProxyResponse() {
 
 smash.registerResponseMiddleware(new lambdaProxyResponse());
 module.exports = smash.getResponseMiddleware();
+
+
+module.exports = {
+    build: function () {
+        if (smash.getResponseMiddleware() === null) {
+            smash.registerResponseMiddleware(new lambdaProxyResponse());
+        }
+        return smash.getResponseMiddleware();
+    },
+    get: function () {
+        return smash.getResponseMiddleware();
+    }
+};

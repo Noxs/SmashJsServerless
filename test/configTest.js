@@ -2,7 +2,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
-var config = require('../core/config.js');
+var config = require('../core/config.js').build();
 var dynamodb_config = {
     dynamodb_table: 'test_table',
     region: 'eu-west-1',

@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 var sinon = require('sinon');
-var userProvider = require('../core/userProvider.js');
+var userProvider = require('../core/userProvider.js').build();
 var smash = require('../smash.js');
 var dynamodbTypes = {
     wrap: sinon.spy(),

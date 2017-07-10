@@ -154,5 +154,14 @@ function router() {
     };
 }
 
-smash.registerRouter(new router());
-module.exports = smash.getRouter();
+module.exports = {
+    build: function () {
+        if (smash.getRouter() === null) {
+            smash.registerRouter(new router());
+        }
+        return smash.getRouter();
+    },
+    get: function () {
+        return smash.getRouter();
+    }
+};

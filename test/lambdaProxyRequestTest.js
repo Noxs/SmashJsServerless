@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 var sinon = require('sinon');
-var lambdaProxyRequest = require('../middleware/lambdaProxyRequest.js');
+var lambdaProxyRequest = require('../middleware/lambdaProxyRequest.js').build();
 var lambdaEvent = {
     "body": "{\"test\":\"body\"}",
     "resource": "/{proxy+}",

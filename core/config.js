@@ -27,5 +27,14 @@ function smashConfig() {
     };
 }
 
-smash.registerConfig(new smashConfig());
-module.exports = smash.getConfig();
+module.exports = {
+    build: function () {
+        if (smash.getConfig() === null) {
+            smash.registerConfig(new smashConfig());
+        }
+        return smash.getConfig();
+    },
+    get: function () {
+        return smash.getConfig();
+    }
+};

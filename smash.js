@@ -37,7 +37,10 @@ function smash() {
     var loadCore = function () {
         var files = glob.sync(path.resolve(corePath));
         files.forEach(function (file) {
-            require(path.resolve(file));
+            var module = require(path.resolve(file));
+            if (module.build) {
+                module.build();
+            }
         });
         if (logEnable) {
             logger.log(files.length + " files loaded in the core directory.");
@@ -74,7 +77,10 @@ function smash() {
             logger.log(files.length + " files loaded in the middleware directory.");
         }
         files.forEach(function (file) {
-            require(path.resolve(file));
+            var module = require(path.resolve(file));
+            if (module.build) {
+                module.build();
+            }
         });
         return that;
     };
@@ -88,7 +94,10 @@ function smash() {
             logger.log(files.length + " files loaded in the controller directory.");
         }
         files.forEach(function (file) {
-            require(path.resolve(file));
+            var module = require(path.resolve(file));
+            if (module.build) {
+                module.build();
+            }
         });
         return that;
     };
@@ -124,6 +133,8 @@ function smash() {
         logger = extLogger;
         if (logger && debug) {
             logEnable = true;
+        } else {
+            logEnable = false;
         }
         if (logEnable) {
             logger.log("Register logger module.");

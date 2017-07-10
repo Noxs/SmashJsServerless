@@ -22,5 +22,15 @@ function logger() {
         return customConsole;
     };
 }
-smash.registerLogger(new logger());
-module.exports = smash.getLogger();
+
+module.exports = {
+    build: function () {
+        if (smash.getLogger() === null) {
+            smash.registerLogger(new logger());
+        }
+        return smash.getLogger();
+    },
+    get: function () {
+        return smash.getLogger();
+    }
+};

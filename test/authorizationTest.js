@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 var sinon = require('sinon');
-var authorization = require('../core/authorization.js');
+var authorization = require('../core/authorization.js').build();
 var conf = {
     "roles": {
         "ROLE_USER": {

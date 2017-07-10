@@ -2,7 +2,7 @@ var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
-var logger = require('../core/logger.js');
+var logger = require('../core/logger.js').build();
 var currentArgment = null;
 var consoleMock = {
     log: function () {

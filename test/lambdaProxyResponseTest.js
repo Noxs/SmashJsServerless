@@ -3,7 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 var sinon = require('sinon');
-var lambdaProxyResponse = require('../middleware/lambdaProxyResponse.js');
+var lambdaProxyResponse = require('../middleware/lambdaProxyResponse.js').build();
 function createResponse() {
     var that = this;
     var code = null;

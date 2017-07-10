@@ -53,5 +53,15 @@ function lambdaProxyRequest() {
         }
     };
 }
-smash.registerRequestMiddleware(new lambdaProxyRequest());
-module.exports = smash.getRequestMiddleware();
+
+module.exports = {
+    build: function () {
+        if (smash.getRequestMiddleware() === null) {
+            smash.registerRequestMiddleware(new lambdaProxyRequest());
+        }
+        return smash.getRequestMiddleware();
+    },
+    get: function () {
+        return smash.getRequestMiddleware();
+    }
+};

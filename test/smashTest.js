@@ -3,8 +3,8 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 var smash = require('../smash.js');
-var lambdaProxyRequest = require('../middleware/lambdaProxyRequest.js');
-var lambdaProxyResponse = require('../middleware/lambdaProxyResponse.js');
+var lambdaProxyRequest = require('../middleware/lambdaProxyRequest.js').build();
+var lambdaProxyResponse = require('../middleware/lambdaProxyResponse.js').build();
 function logger() {
     var that = this;
     that.log = function () {};
@@ -35,7 +35,7 @@ function serviceRequestFailure() {
         return that;
     };
     that.handleRequest = function (request, response) {
-        response.code = 500;
+        response.badRequest();
         fail(response);
         return false;
     };
@@ -315,12 +315,12 @@ describe('Smash', function () {
         smash.boot(true);
         smash.handleRequest(lambdaEvent, function (err, response) {
             assert.isNull(err);
-            assert.equal(response.code, 500);
+            assert.equal(response.getCode(), 400);
         });
 
         //TODO improve test 
         //add case
     });
-    
+
     //TODO test loading controller
 });
