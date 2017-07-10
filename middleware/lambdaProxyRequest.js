@@ -33,6 +33,10 @@ function lambdaProxyRequest() {
         try {
             request = buildRequest(inputRequest);
         } catch (error) {
+            if (smash.getLogger()) {
+                smash.getLogger().error("Invalid json: " + error);
+            }
+            response.badRequest("Invalid json.");
             fail(response);
             return false;
         }
@@ -40,6 +44,10 @@ function lambdaProxyRequest() {
             next(request, response);
             return true;
         } else {
+            if (smash.getLogger()) {
+                smash.getLogger().error("Invalid lambda request");
+            }
+            response.badRequest("Invalid json.");
             fail(response);
             return false;
         }

@@ -73,6 +73,11 @@ function createNext() {
 function createFail() {
     return sinon.spy();
 }
+function createResponse() {
+    return {
+        badRequest: sinon.spy()
+    };
+}
 describe('LambdaProxyRequest', function () {
     it('Test lambda proxy request instance', function () {
         assert.isObject(lambdaProxyRequest);
@@ -110,11 +115,13 @@ describe('LambdaProxyRequest', function () {
     it('Test lambda not proxy request handling', function () {
         var next = createNext();
         var fail = createFail();
+        var response = createResponse();
         lambdaProxyRequest.setNext(next, fail);
-        var result = lambdaProxyRequest.handleRequest(notLambdaEvent);
+        var result = lambdaProxyRequest.handleRequest(notLambdaEvent, response);
         assert.isFalse(result);
         assert.isOk(next.notCalled);
         assert.isOk(fail.called);
+        assert.isOk(response.badRequest.called);
     });
     //TODO test when no request context, no username
 });
