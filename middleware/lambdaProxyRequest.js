@@ -30,7 +30,12 @@ function lambdaProxyRequest() {
         return that;
     };
     that.handleRequest = function (inputRequest, response) {
-        request = buildRequest(inputRequest);
+        try {
+            request = buildRequest(inputRequest);
+        } catch (error) {
+            fail(response);
+            return false;
+        }
         if (request !== null) {
             next(request, response);
             return true;
