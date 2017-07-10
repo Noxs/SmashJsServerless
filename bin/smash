@@ -40,4 +40,11 @@ program.command('init controller')
             process.exit(0);
         });
 
+program.command('create controller <name>')
+        .description('create controller file')
+        .action(function (name) {
+            utils.createNewController(name);
+            process.exit(0);
+        });
+
 program.parse(process.argv);
