@@ -167,6 +167,7 @@ describe('Smash', function () {
     });
     it('Test smash instance', function () {
         smash.resetRootPath();
+        smash.registerLogger(null);
         smash.boot();
         assert.isObject(smash);
         assert.isObject(smash.getLogger());
@@ -177,6 +178,7 @@ describe('Smash', function () {
     });
     it('Test smash debug', function () {
         smash.resetRootPath();
+        smash.registerLogger(null);
         smash.boot(true);
         smash.registerLogger(null);
         assert.equal(smash.debugIsActive(), false);
@@ -184,7 +186,7 @@ describe('Smash', function () {
         smash.resetRootPath();
         smash.registerLogger(new logger());
         smash.boot(true);
-        assert.equal(smash.debugIsActive(), false);
+        assert.equal(smash.debugIsActive(), true);
 
         smash.resetRootPath();
         smash.boot(true);

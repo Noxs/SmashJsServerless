@@ -36,9 +36,12 @@ function smash() {
     var responseMiddleware = null;
     var loadCore = function () {
         var files = glob.sync(path.resolve(corePath));
+        console.log("Load core get files");
         files.forEach(function (file) {
+            console.log("Load core require file");
             var module = require(path.resolve(file));
             if (module.build) {
+                console.log("Load core build");
                 module.build();
             }
         });
@@ -209,6 +212,7 @@ function smash() {
         return responseMiddleware;
     };
     that.boot = function (extDebug) {
+        console.log("Boot");
         //
         //TODO put it in a another var
         //the pruopose is that this var is hust  to ask debug activation
@@ -219,13 +223,21 @@ function smash() {
         } else {
             debug = false;
         }
-        logEnable = false;
+        if (logger) {
+            logEnable = true;
+        } else {
+            logEnable = false;
+        }
         //TODO
         //is this a good pattern, all module are loaded, then configuration are applied
         //there is no configuration apply to middleware
+        console.log("Load core");
         loadCore();
+        console.log("Load Config");
         loadConfig();
+        console.log("Load middleware");
         loadDefaultMiddleware();
+        console.log("Load controller");
         loadControllers();
         //TODO
         //linking here or when handle request??

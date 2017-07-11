@@ -25,9 +25,12 @@ function logger() {
 
 module.exports = {
     build: function () {
+        console.log("Load core build logger");
         if (smash.getLogger() === null) {
+            console.log("Load core register logger");
             smash.registerLogger(new logger());
         }
+        console.log("Load core return logger");
         return smash.getLogger();
     },
     get: function () {
