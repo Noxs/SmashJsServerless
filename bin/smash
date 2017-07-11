@@ -6,7 +6,7 @@ var program = require('commander');
 var utils = require("../lib/utils.js");
 
 program.command('init aws')
-        .description('initialize lambda index.js, codebuild buildspec.yml, smash config.json')
+        .description('initialize lambda index.js, codebuild buildspec.yml, smash config.json, and controller directory')
         .action(function () {
             utils.initAws();
             process.exit(0);
@@ -46,5 +46,7 @@ program.command('controller <name>')
             utils.createNewController(name);
             process.exit(0);
         });
+
+//TODO debug command for print routes
 
 program.parse(process.argv);

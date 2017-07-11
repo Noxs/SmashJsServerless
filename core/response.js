@@ -3,7 +3,11 @@
 function response(terminateCallback) {
     var that = this;
     var code = null;
-    var headers = {};
+    var headers = {
+        "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+        "Access-Control-Allow-Origin": '*',
+        "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
+    };
     var body = null;
     var terminate = terminateCallback;
     that.ok = function (extBody) {

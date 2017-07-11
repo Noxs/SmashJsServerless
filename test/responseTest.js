@@ -4,6 +4,11 @@ var expect = chai.expect;
 var should = chai.should();
 var sinon = require('sinon');
 var responseFactory = require('../core/response.js');
+var defaultHeaders = {
+    "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+    "Access-Control-Allow-Origin": '*',
+    "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
+};
 function createNext() {
     return sinon.spy();
 }
@@ -27,7 +32,12 @@ describe('Response', function () {
     it('Test response header', function () {
         var response = responseFactory.createResponse();
         response.addHeader("Content-Type", "application/json");
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
     });
     it('Test response body', function () {
         var response = responseFactory.createResponse();
@@ -41,7 +51,12 @@ describe('Response', function () {
         response.ok({"content": "ok"});
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 200);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.deepEqual(response.getBody(), {"content": "ok"});
 
         terminate = createTerminate();
@@ -58,7 +73,12 @@ describe('Response', function () {
         response.created({"content": "ok"});
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 201);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.deepEqual(response.getBody(), {"content": "ok"});
     });
     it('Test response no content', function () {
@@ -68,7 +88,12 @@ describe('Response', function () {
         response.noContent();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 204);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response bad request', function () {
@@ -78,7 +103,12 @@ describe('Response', function () {
         response.badRequest();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 400);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response unauthorized', function () {
@@ -88,7 +118,12 @@ describe('Response', function () {
         response.unauthorized();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 401);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response forbidden', function () {
@@ -98,7 +133,12 @@ describe('Response', function () {
         response.forbidden();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 403);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response not found', function () {
@@ -108,7 +148,12 @@ describe('Response', function () {
         response.notFound();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 404);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response conflict', function () {
@@ -118,7 +163,12 @@ describe('Response', function () {
         response.conflict();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 409);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response internal server error', function () {
@@ -128,7 +178,12 @@ describe('Response', function () {
         response.internalServerError();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 500);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response not implemented', function () {
@@ -138,7 +193,12 @@ describe('Response', function () {
         response.notImplemented();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 501);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
     it('Test response service unavailable', function () {
@@ -148,7 +208,12 @@ describe('Response', function () {
         response.serviceUnavailable();
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 503);
-        assert.deepEqual(response.getHeaders(), {"Content-Type": "application/json"});
+        assert.deepEqual(response.getHeaders(), {
+            "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+            "Content-Type": "application/json"
+        });
         assert.isNull(response.getBody());
     });
 }
