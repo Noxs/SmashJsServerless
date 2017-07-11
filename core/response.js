@@ -1,65 +1,75 @@
-////TODO
-//is it usefull to transform this in a class?
 //TODO 
 //message for some response are not used
-function response() {
+function response(terminateCallback) {
     var that = this;
     var code = null;
     var headers = {};
     var body = null;
+    var terminate = terminateCallback;
     that.ok = function (extBody) {
         code = 200;
         body = extBody;
+        terminate(that);
         return that;
     };
     that.created = function (extBody) {
         code = 201;
         body = extBody;
+        terminate(that);
         return that;
     };
     that.noContent = function () {
         code = 204;
         body = null;
+        terminate(that);
         return that;
     };
     that.badRequest = function (message) {
         code = 400;
         body = null;
+        terminate(that);
         return that;
     };
     that.unauthorized = function (message) {
         code = 401;
         body = null;
+        terminate(that);
         return that;
     };
     that.forbidden = function (message) {
         code = 403;
         body = null;
+        terminate(that);
         return that;
     };
     that.notFound = function (message) {
         code = 404;
         body = null;
+        terminate(that);
         return that;
     };
     that.conflict = function (message) {
         code = 409;
         body = null;
+        terminate(that);
         return that;
     };
     that.internalServerError = function (message) {
         code = 500;
         body = null;
+        terminate(that);
         return that;
     };
     that.notImplemented = function (message) {
         code = 501;
         body = null;
+        terminate(that);
         return that;
     };
     that.serviceUnavailable = function (message) {
         code = 503;
         body = null;
+        terminate(that);
         return that;
     };
     that.setHeaders = function (extHeaders) {
@@ -89,7 +99,7 @@ function response() {
 //TODO create a complete object factory
 //then when create pass the callback to start response processing
 module.exports = {
-    createResponse: function () {
-        return new response();
+    createResponse: function (terminate) {
+        return new response(terminate);
     }
 };

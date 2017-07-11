@@ -29,12 +29,9 @@ function smashConfig() {
 
 module.exports = {
     build: function () {
-        console.log("Load core build config");
         if (smash.getConfig() === null) {
-            console.log("Load core register authorization");
             smash.registerConfig(new smashConfig());
         }
-        console.log("Load core return config");
         return smash.getConfig();
     },
     get: function () {

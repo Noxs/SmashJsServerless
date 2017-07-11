@@ -36,12 +36,9 @@ function smash() {
     var responseMiddleware = null;
     var loadCore = function () {
         var files = glob.sync(path.resolve(corePath));
-        console.log("Load core get files");
         files.forEach(function (file) {
-            console.log("Load core require file");
             var module = require(path.resolve(file));
             if (module.build) {
-                console.log("Load core build");
                 module.build();
             }
         });
@@ -116,6 +113,23 @@ function smash() {
                 logger.log("Error when executing controller.");
             }
         }
+        if (logEnable) {
+            logger.log("Execute controller done.");
+        }
+        if (logEnable) {
+            logger.log("Handle response.");
+        }
+        if (responseMiddleware.handleResponse(response) === false) {
+            if (logEnable) {
+                logger.log("Middleware has not been able to process the response.");
+            }
+            //TODO
+            //this is useless lol
+            response.badRequest("bad request");
+        }
+        return that;
+    };
+    var terminateController = function (response) {
         if (logEnable) {
             logger.log("Execute controller done.");
         }
@@ -212,7 +226,6 @@ function smash() {
         return responseMiddleware;
     };
     that.boot = function (extDebug) {
-        console.log("Boot");
         //
         //TODO put it in a another var
         //the pruopose is that this var is hust  to ask debug activation
@@ -231,13 +244,9 @@ function smash() {
         //TODO
         //is this a good pattern, all module are loaded, then configuration are applied
         //there is no configuration apply to middleware
-        console.log("Load core");
         loadCore();
-        console.log("Load Config");
         loadConfig();
-        console.log("Load middleware");
         loadDefaultMiddleware();
-        console.log("Load controller");
         loadControllers();
         //TODO
         //linking here or when handle request??
@@ -255,7 +264,7 @@ function smash() {
         if (logEnable) {
             logger.log("Handle request.");
         }
-        var response = responseFactory.createResponse();
+        var response = responseFactory.createResponse(terminateController);
         requestMiddleware.handleRequest(request, response);
         return that;
     };

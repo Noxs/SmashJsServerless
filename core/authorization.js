@@ -93,12 +93,9 @@ function authorization() {
 
 module.exports = {
     build: function () {
-        console.log("Load core build authorization");
         if (smash.getAuthorization() === null) {
-            console.log("Load core register authorization");
             smash.registerAuthorization(new authorization());
         }
-        console.log("Load core return authorization");
         return smash.getAuthorization();
     },
     get: function () {
