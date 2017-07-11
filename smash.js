@@ -113,20 +113,6 @@ function smash() {
                 logger.log("Error when executing controller.");
             }
         }
-        if (logEnable) {
-            logger.log("Execute controller done.");
-        }
-        if (logEnable) {
-            logger.log("Handle response.");
-        }
-        if (responseMiddleware.handleResponse(response) === false) {
-            if (logEnable) {
-                logger.log("Middleware has not been able to process the response.");
-            }
-            //TODO
-            //this is useless lol
-            response.badRequest("bad request");
-        }
         return that;
     };
     var terminateController = function (response) {

@@ -5,6 +5,11 @@ var should = chai.should();
 var smash = require('../smash.js');
 var lambdaProxyRequest = require('../middleware/lambdaProxyRequest.js').build();
 var lambdaProxyResponse = require('../middleware/lambdaProxyResponse.js').build();
+var authorization = require('../core/authorization.js').build();
+var realConfig = require('../core/config.js').build();
+var realLogger = require('../core/logger.js').build();
+var router = require('../core/router.js').build();
+var userProvider = require('../core/userProvider.js').build();
 function logger() {
     var that = this;
     that.log = function () {};
@@ -133,7 +138,7 @@ var lambdaEvent = {
     "stageVariables": {
         "baz": "qux"
     },
-    "path": "/statistics/navigation/path/conversion"
+    "path": "/test"
 };
 var notLambdaEvent = {};
 describe('Smash', function () {
@@ -273,7 +278,43 @@ describe('Smash', function () {
     it('Test register controllers', function () {
         //TODO
     });
-    it('Test request with controller execution', function () {
+    it('Test request with controller execution not found', function () {
+        smash.resetRootPath();
+        smash.registerRequestMiddleware(new serviceRequestSuccess());
+        smash.registerResponseMiddleware(new serviceResponseSuccess());
+        smash.registerLogger(new logger());
+        smash.registerConfig(new config());
+        smash.registerRouter(router);
+        smash.registerAuthorization(new serviceRequestSuccess());
+        smash.registerUserProvider(new serviceRequestSuccess());
+        smash.boot(true);
+        smash.handleRequest(lambdaEvent, function (err, response) {
+            assert.isNull(err);
+            assert.isObject(response);
+            assert.equal(response.getCode(), 404);
+        });
+    });
+    it('Test request with controller execution ok', function () {
+        smash.resetRootPath();
+        smash.registerRequestMiddleware(null);
+        smash.registerRequestMiddleware(require('../middleware/lambdaProxyRequest.js').build());
+        smash.registerResponseMiddleware(new serviceResponseSuccess());
+        smash.registerLogger(new logger());
+        smash.registerConfig(new config());
+        smash.registerRouter(require('../core/router.js').build());
+        smash.registerAuthorization(new serviceRequestSuccess());
+        smash.registerUserProvider(new serviceRequestSuccess());
+        smash.boot(true);
+        smash.get({path: "/test"}, function (request, response) {
+            response.ok({foo: "bar"});
+        });
+        smash.handleRequest(lambdaEvent, function (err, response) {
+            assert.isNull(err);
+            assert.isObject(response);
+            assert.equal(response.getCode(), 200);
+        });
+    });
+    it('Test request with controller execution error', function () {
         var fakeLambdaProxyRequest = new serviceRequestSuccess();
         var fakeLogger = new logger();
         var fakeRouter = new serviceRequestSuccess();
@@ -293,6 +334,7 @@ describe('Smash', function () {
         smash.handleRequest(lambdaEvent, function (err, response) {
             assert.isNull(err);
             assert.isObject(response);
+            assert.equal(response.getCode(), 500);
         });
 
         //TODO improve test 
