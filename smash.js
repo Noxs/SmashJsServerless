@@ -110,7 +110,7 @@ function smash() {
         } catch (err) {
             response.internalServerError("failed to process request");
             if (logEnable) {
-                logger.log("Error when executing controller.");
+                logger.log("Error when executing controller: "+ err);
             }
         }
         return that;
