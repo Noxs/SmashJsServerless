@@ -104,13 +104,13 @@ function smash() {
     var executeController = function (request, response) {
         if (logEnable) {
             logger.log("Execute controller.");
-            if (request.route.authorizations) {
-                logger.log("Route: " + request.route.method + " " + request.route.path + " " + request.route.authorizations);
-            } else {
-                logger.log("Route: " + request.route.method + " " + request.route.path);
-            }
         }
         try {
+            if (logEnable && request.route.authorizations) {
+                logger.log("Route: " + request.route.method + " " + request.route.path + " " + request.route.authorizations);
+            } else if (logEnable) {
+                logger.log("Route: " + request.route.method + " " + request.route.path);
+            }
             request.route.callback(request, response);
         } catch (err) {
             response.internalServerError("failed to process request");
