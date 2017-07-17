@@ -48,5 +48,8 @@ program.command('controller <name>')
         });
 
 //TODO debug command for print routes
+//check if routes are uniq???
+
+//TODO generate database file
 
 program.parse(process.argv);

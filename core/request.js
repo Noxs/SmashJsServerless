@@ -10,8 +10,8 @@ function request() {
     that.path = null;
     that.headers = null;
     that.body = null;
-    that.queryParamters = [];
-    that.paramters = [];
+    that.queryParameters = [];
+    that.parameters = [];
     that.user = null;
 }
 module.exports = {
