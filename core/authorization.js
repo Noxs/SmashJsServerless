@@ -6,11 +6,11 @@ function authorization() {
     var fail = null;
     var roles = {};
     var conf = null;
-    var goDownInRole = function (roles, role, childrens, list) {
+    var goDownInRole = function (conf, roles, role, childrens, list) {
         list.push(role);
         if (childrens) {
             for (var key in childrens) {
-                goDownInRole(roles, childrens[key], roles[childrens[key]].childrens, list);
+                goDownInRole(conf, roles, childrens[key], conf[childrens[key]].childrens, list);
             }
         }
         return list;
@@ -18,7 +18,7 @@ function authorization() {
     var buildRolesTree = function (conf) {
         for (var key in conf.roles) {
             var authorizedRole = [];
-            goDownInRole(roles, key, conf.roles[key].childrens, authorizedRole);
+            goDownInRole(conf.roles, roles, key, conf.roles[key].childrens, authorizedRole);
             roles[key] = {authorized: authorizedRole};
         }
         return that;

@@ -172,5 +172,15 @@ describe('Authorization', function () {
         assert.isOk(fail.notCalled);
         assert.isTrue(authorization.handleRequest(request, response));
 
+        fail = createFail();
+        request.user = {roles: ["ROLE_SUPER_ADMIN"]};
+        request.route.authorizations = ["ROLE_USER"];
+        authorization.setNext(function (request, response) {
+            assert.isObject(request);
+            assert.equal(request, request);
+        }, fail);
+        assert.isOk(fail.notCalled);
+        assert.isTrue(authorization.handleRequest(request, response));
+
     });
 });
