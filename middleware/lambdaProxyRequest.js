@@ -15,6 +15,9 @@ function lambdaProxyRequest() {
         if (event.requestContext && event.requestContext.authorizer && event.requestContext.authorizer.username) {
             request.user = {username: event.requestContext.authorizer.username, roles: null};
         }
+        if (event.requestContext && event.requestContext.stage) {
+            request.env = event.requestContext.stage;
+        }
         request.method = event.httpMethod;
         request.queryParamters = event.queryStringParameters;
         request.headers = event.headers;
