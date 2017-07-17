@@ -86,7 +86,7 @@ describe('LambdaProxyRequest', function () {
         var fail = createFail();
         lambdaProxyRequest.setNext(function (request, response) {
             assert.equal(request.method, lambdaEvent.httpMethod);
-            assert.equal(request.queryParamters, lambdaEvent.queryStringParameters);
+            assert.equal(request.parameters, lambdaEvent.queryStringParameters);
             assert.equal(request.headers, lambdaEvent.headers);
             assert.equal(request.path, lambdaEvent.path);
             assert.deepEqual(request.body, JSON.parse(lambdaEvent.body));
@@ -101,7 +101,7 @@ describe('LambdaProxyRequest', function () {
         };
         lambdaProxyRequest.setNext(function (request, response) {
             assert.equal(request.method, lambdaEvent.httpMethod);
-            assert.equal(request.queryParamters, lambdaEvent.queryStringParameters);
+            assert.equal(request.parameters, lambdaEvent.queryStringParameters);
             assert.equal(request.headers, lambdaEvent.headers);
             assert.equal(request.path, lambdaEvent.path);
             assert.equal(request.env, lambdaEvent.requestContext.stage);

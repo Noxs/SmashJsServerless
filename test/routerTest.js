@@ -299,6 +299,7 @@ describe('Router', function () {
         assert.isTrue(router.handleRequest(request, response));
         assert.isOk(response.notFound.notCalled);
         assert.isOk(fail.notCalled);
+        assert.equal(request.parameters.get, "get");
 
 
         response = createResponse();
