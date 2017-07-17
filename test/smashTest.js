@@ -3,6 +3,7 @@ var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
 var smash = require('../smash.js');
+var path = require('path');
 var lambdaProxyRequest = require('../middleware/lambdaProxyRequest.js').build();
 var lambdaProxyResponse = require('../middleware/lambdaProxyResponse.js').build();
 var authorization = require('../core/authorization.js').build();
@@ -217,7 +218,7 @@ describe('Smash', function () {
         assert.equal(smash.getRootPath(), "/PATH/TEST");
     });
     it('Test smash controller path', function () {
-        assert.equal(smash.getControllerPath(), "controller\\*.js");
+        assert.equal(smash.getControllerPath(), path.join("controller", "*.js"));
         smash.setControllerPath("/PATH/TEST");
         assert.equal(smash.getControllerPath(), "/PATH/TEST");
     });
