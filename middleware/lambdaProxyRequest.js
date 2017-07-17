@@ -19,7 +19,10 @@ function lambdaProxyRequest() {
             request.env = event.requestContext.stage;
         }
         request.method = event.httpMethod;
-        request.parameters = event.queryStringParameters;
+        request.parameters = {};
+        if (event.queryStringParameters) {
+            request.parameters = event.queryStringParameters;
+        }
         request.headers = event.headers;
         request.path = event.path;
         if (event.body) {
