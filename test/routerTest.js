@@ -301,6 +301,35 @@ describe('Router', function () {
         assert.isOk(fail.notCalled);
         assert.equal(request.parameters.get, "get");
 
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:get");
+        }, fail);
+        router.get({path: "/request/:get"}, function (request, response) {});
+        request.path = "/request/foo@bar";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        assert.equal(request.parameters.get, "foo@bar");
+
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:get");
+        }, fail);
+        router.get({path: "/request/:get"}, function (request, response) {});
+        request.path = "/request/foo@bar.com";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(response.notFound.notCalled);
+        assert.isOk(fail.notCalled);
+        assert.equal(request.parameters.get, "foo@bar.com");
+
 
         response = createResponse();
         next = createNext();
@@ -352,6 +381,20 @@ describe('Router', function () {
         }, fail);
         router.get({path: "/request/:get/details/:working"}, function (request, response) {});
         request.path = "/request/get/details/nice";
+        assert.isTrue(router.handleRequest(request, response));
+        assert.isOk(fail.notCalled);
+
+        response = createResponse();
+        next = createNext();
+        fail = createFail();
+        router.setNext(function (request, response) {
+            assert.isObject(request.route);
+            assert.equal(request.route.path, "/request/:get/details/:working");
+            assert.equal(request.parameters.get, "get@troll");
+            assert.equal(request.parameters.working, "nice");
+        }, fail);
+        router.get({path: "/request/:get/details/:working"}, function (request, response) {});
+        request.path = "/request/get@troll/details/nice";
         assert.isTrue(router.handleRequest(request, response));
         assert.isOk(fail.notCalled);
 

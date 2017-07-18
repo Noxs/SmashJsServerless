@@ -3,7 +3,7 @@ function router() {
     var that = this;
     const defaultInterpolation = ":";
     const slash = "/";
-    const regexp = "[^\/.]+";
+    const regexp = "[^\/]+";
     var next = null;
     var fail = null;
     var interpolation = defaultInterpolation;
