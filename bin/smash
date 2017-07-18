@@ -51,5 +51,6 @@ program.command('controller <name>')
 //check if routes are uniq???
 
 //TODO generate database file
+//add creation of database and utils folder
 
 program.parse(process.argv);

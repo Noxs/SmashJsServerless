@@ -125,7 +125,7 @@ function smash() {
             logger.log("Execute controller done.");
         }
         if (logEnable) {
-            logger.log("Handle response.");
+            logger.log("Handle response: " + response.getCode());
         }
         if (responseMiddleware.handleResponse(response) === false) {
             if (logEnable) {

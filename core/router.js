@@ -95,6 +95,9 @@ function router() {
                 return true;
             }
         }
+        if (smash.getLogger()) {
+            smash.getLogger().log("Route not found for: " + request.path);
+        }
         response.notFound("not found");
         fail(response);
         return false;
