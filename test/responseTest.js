@@ -100,7 +100,7 @@ describe('Response', function () {
         var terminate = createTerminate();
         var response = responseFactory.createResponse(terminate);
         response.addHeader("Content-Type", "application/json");
-        response.badRequest();
+        response.badRequest("LOL");
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 400);
         assert.deepEqual(response.getHeaders(), {
@@ -109,7 +109,7 @@ describe('Response', function () {
             "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
             "Content-Type": "application/json"
         });
-        assert.isNull(response.getBody());
+        assert.deepEqual(response.getBody(), {reason: "LOL"});
     });
     it('Test response unauthorized', function () {
         var terminate = createTerminate();
@@ -175,7 +175,7 @@ describe('Response', function () {
         var terminate = createTerminate();
         var response = responseFactory.createResponse(terminate);
         response.addHeader("Content-Type", "application/json");
-        response.internalServerError();
+        response.internalServerError("NOPE");
         assert.isOk(terminate.called);
         assert.equal(response.getCode(), 500);
         assert.deepEqual(response.getHeaders(), {
@@ -184,7 +184,7 @@ describe('Response', function () {
             "Access-Control-Allow-Methods": 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
             "Content-Type": "application/json"
         });
-        assert.isNull(response.getBody());
+        assert.deepEqual(response.getBody(), {reason: "NOPE"});
     });
     it('Test response not implemented', function () {
         var terminate = createTerminate();

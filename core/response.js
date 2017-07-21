@@ -31,7 +31,7 @@ function response(terminateCallback) {
     };
     that.badRequest = function (message) {
         code = 400;
-        body = null;
+        body = {reason: message};
         terminate(that);
         return that;
     };
@@ -61,7 +61,7 @@ function response(terminateCallback) {
     };
     that.internalServerError = function (message) {
         code = 500;
-        body = null;
+        body = {reason: message};
         terminate(that);
         return that;
     };
@@ -101,8 +101,6 @@ function response(terminateCallback) {
     };
 }
 
-//TODO create a complete object factory
-//then when create pass the callback to start response processing
 module.exports = {
     createResponse: function (terminate) {
         return new response(terminate);
