@@ -5,38 +5,38 @@
 var program = require('commander');
 var utils = require("../lib/utils.js");
 
-program.command('init aws')
-        .description('initialize lambda index.js, codebuild buildspec.yml, smash config.json, and controller directory')
+program.command('init:aws')
+        .description('initialize lambda index.js, codebuild buildspec.yml, smash config.json, and directories')
         .action(function () {
             utils.initAws();
             process.exit(0);
         });
 
-program.command('init lambda')
+program.command('init:lambda')
         .description('initialize lambda index.js')
         .action(function () {
             utils.initLambda();
             process.exit(0);
         });
 
-program.command('init config')
+program.command('init:config')
         .description('initialize smash config.json')
         .action(function () {
             utils.initConfig();
             process.exit(0);
         });
 
-program.command('init codebuild')
+program.command('init:codebuild')
         .description('initialize codebuild buildspec.yml')
         .action(function () {
             utils.initCodebuild();
             process.exit(0);
         });
 
-program.command('init controller')
-        .description('initialize controller directory')
+program.command('init:directories')
+        .description('initialize directories structure')
         .action(function () {
-            utils.initControllerDirectory();
+            utils.initDirectories();
             process.exit(0);
         });
 
@@ -47,10 +47,28 @@ program.command('controller <name>')
             process.exit(0);
         });
 
-//TODO debug command for print routes
-//check if routes are uniq???
+program.command('database <name>')
+        .description('create database file')
+        .action(function (name) {
+            utils.createNewDatabase(name);
+            process.exit(0);
+        });
 
-//TODO generate database file
-//add creation of database and utils folder
+program.command('utils <name>')
+        .description('create util file')
+        .action(function (name) {
+            utils.createNewUtil(name);
+            process.exit(0);
+        });
+
+program.command('router debug')
+        .description('Print routes')
+        .action(function (name) {
+            //TODO
+            //TODO debug command for print routes
+            //check if routes are uniq???
+            process.exit(0);
+        });
+
 
 program.parse(process.argv);

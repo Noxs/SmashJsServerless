@@ -3,6 +3,7 @@
 function response(terminateCallback) {
     var that = this;
     var code = null;
+    //put it in config
     var headers = {
         "Access-Control-Allow-Headers": 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
         "Access-Control-Allow-Origin": '*',
