@@ -1,6 +1,6 @@
 var smash = require("smash-js-serverless");
 
-smash.get({path: "/", roles: ["ROLE_USER"]}, function (request, response) {
+smash.get({path: "/", authorizations: ["ROLE_USER"]}, function (request, response) {
     //Method available:
     //smash.get
     //smash.post
