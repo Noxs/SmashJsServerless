@@ -4,6 +4,7 @@
 
 var program = require('commander');
 var utils = require("../lib/utils.js");
+var controllerGenerator = require("../lib/controllerGenerator.js");
 
 program.command('init:aws')
         .description('initialize lambda index.js, codebuild buildspec.yml, smash config.json, and directories')
@@ -43,7 +44,7 @@ program.command('init:directories')
 program.command('controller <name>')
         .description('create controller file')
         .action(function (name) {
-            utils.createNewController(name);
+            controllerGenerator.createNewController(name);
             process.exit(0);
         });
 
@@ -67,6 +68,15 @@ program.command('router debug')
             //TODO
             //TODO debug command for print routes
             //check if routes are uniq???
+            process.exit(0);
+        });
+
+
+program.command('rest <name>')
+        .description('create rest endpoint')
+        .action(function (name) {
+            utils.createNewDatabase(name);
+            controllerGenerator.createNewRest(name);
             process.exit(0);
         });
 
