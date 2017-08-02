@@ -65,7 +65,7 @@ function authorization() {
                     if (request.user && request.user.username) {
                         smash.getLogger().log("User " + request.user.username + "  is not authorized.");
                     } else {
-                        smash.getLogger().log("User anonymous is not authorized.");
+                        smash.getLogger().log("User anonymous is not authorized: user has not a admitted role.");
                     }
                 }
                 fail(response);
@@ -76,7 +76,7 @@ function authorization() {
                     if (request.user && request.user.username) {
                         smash.getLogger().log("User " + request.user.username + "  is not authorized.");
                     } else {
-                        smash.getLogger().log("User anonymous is not authorized.");
+                        smash.getLogger().log("User anonymous is not authorized: user has no roles.");
                     }
                 }
                 fail(response);
