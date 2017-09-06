@@ -16,7 +16,7 @@ function lambdaProxyRequest() {
             request.user = {username: event.requestContext.authorizer.username, roles: null};
         }
         if (event.requestContext && event.requestContext.stage) {
-            request.env = event.requestContext.stage;
+            smash.addEnv("ENV", event.requestContext.stage);
         }
         request.method = event.httpMethod;
         request.parameters = {};

@@ -25,9 +25,7 @@ function smash() {
     var router = null;
     var authorization = null;
     var config = null;
-    //TODO maybe env are not usefull
-    var envList = ["prod", "dev", "test"]; //useless?????
-    var env = null; //Not used
+    var env = {};
     var debug = false;
     var logEnable = false;
     var rootPath = process.cwd();
@@ -47,6 +45,7 @@ function smash() {
         }
         return that;
     };
+
     var loadConfig = function () {
         //TODO the problem here is this is not really DRY
         //find a solution to apply push config in an array of core module
@@ -71,6 +70,7 @@ function smash() {
         //or maybe migrate this module in another dir called basic module or something else
         return that;
     };
+
     var loadDefaultMiddleware = function () {
         var files = glob.sync(path.resolve(middlewarePath));
         if (logEnable) {
@@ -84,10 +84,17 @@ function smash() {
         });
         return that;
     };
+
     var pushConfig = function (service, keyword) {
         service.applyConfig(config.get(keyword));
         return that;
     };
+
+    var setEnv = function (extEnv) {
+        env = extEnv;
+        return that;
+    };
+
     loadControllers = function () {
         var files = glob.sync(path.resolve(path.join(rootPath, controllerPath)));
         if (logEnable) {
@@ -101,6 +108,7 @@ function smash() {
         });
         return that;
     };
+
     var executeController = function (request, response) {
         if (logEnable) {
             logger.log("Execute controller.");
@@ -120,6 +128,7 @@ function smash() {
         }
         return that;
     };
+
     var terminateController = function (response) {
         if (logEnable) {
             logger.log("Execute controller done.");
@@ -137,6 +146,7 @@ function smash() {
         }
         return that;
     };
+
     that.registerLogger = function (extLogger) {
         logger = extLogger;
         if (logger && debug) {
@@ -149,9 +159,11 @@ function smash() {
         }
         return that;
     };
+
     that.getLogger = function () {
         return logger;
     };
+
     that.registerUserProvider = function (extUserProvider) {
         userProvider = extUserProvider;
         if (logEnable) {
@@ -159,9 +171,11 @@ function smash() {
         }
         return that;
     };
+
     that.getUserProvider = function () {
         return userProvider;
     };
+
     that.registerRouter = function (extRouter) {
         router = extRouter;
         if (logEnable) {
@@ -169,9 +183,11 @@ function smash() {
         }
         return that;
     };
+
     that.getRouter = function () {
         return router;
     };
+
     that.registerAuthorization = function (extAuthorization) {
         authorization = extAuthorization;
         if (logEnable) {
@@ -179,9 +195,11 @@ function smash() {
         }
         return that;
     };
+
     that.getAuthorization = function () {
         return authorization;
     };
+
     that.registerConfig = function (extConfig) {
         config = extConfig;
         if (logEnable) {
@@ -189,9 +207,11 @@ function smash() {
         }
         return that;
     };
+
     that.getConfig = function () {
         return config;
     };
+
     that.registerRequestMiddleware = function (extMiddleware) {
         //TODO maybe in the future rename this like entry point
         //because there are not really middleware
@@ -202,9 +222,11 @@ function smash() {
         }
         return that;
     };
+
     that.getRequestMiddleware = function () {
         return requestMiddleware;
     };
+
     that.registerResponseMiddleware = function (extMiddleware) {
         //TODO same as request middleware
         responseMiddleware = extMiddleware;
@@ -213,10 +235,16 @@ function smash() {
         }
         return that;
     };
+
     that.getResponseMiddleware = function () {
         return responseMiddleware;
     };
-    that.boot = function (extDebug) {
+
+    that.boot = function (env, extDebug) {
+
+        if (env) {
+            setEnv(env);
+        }
         //
         //TODO put it in a another var
         //the pruopose is that this var is hust  to ask debug activation
@@ -232,6 +260,7 @@ function smash() {
         } else {
             logEnable = false;
         }
+
         //TODO
         //is this a good pattern, all module are loaded, then configuration are applied
         //there is no configuration apply to middleware
@@ -241,8 +270,13 @@ function smash() {
         loadControllers();
         //TODO
         //linking here or when handle request??
+        //
+        //Maybe improve this to support cold start diferently
+        //the idea is to to call this function only for the cold start
+        //massive improvement are required
         return that;
     };
+
     that.handleRequest = function (request, response) {
         if (logEnable) {
             logger.log("Linking.");
@@ -259,9 +293,22 @@ function smash() {
         requestMiddleware.handleRequest(request, response);
         return that;
     };
-    that.getEnv = function () {
-        //for the mmoment env var is not used
-        return env;
+
+    that.getEnv = function (property) {
+        if (env[property]) {
+            return env[property];
+        } else {
+            return null;
+        }
+    };
+
+    that.addEnv = function (extEnv, value) {
+        if (env[extEnv]) {
+            return false;
+        } else {
+            env[extEnv] = value;
+            return true;
+        }
     };
 
     that.debugIsActive = function () {
@@ -282,9 +329,11 @@ function smash() {
         rootPath = process.cwd();
         return that;
     };
+
     that.getRootPath = function () {
         return rootPath;
     };
+
     that.setControllerPath = function (extControllerPath) {
         //TODO throw an error if .js is not in the string
         //OR simply add it at the end
@@ -294,9 +343,11 @@ function smash() {
         }
         return that;
     };
+
     that.getControllerPath = function () {
         return controllerPath;
     };
+
     //TODO check pattern for registering route is good or not, 
     //if not rework router component
     //as a clue, maybe just a function is enough
@@ -304,26 +355,32 @@ function smash() {
         router.get(route, callback);
         return that;
     };
+
     that.post = function (route, callback) {
         router.post(route, callback);
         return that;
     };
+
     that.put = function (route, callback) {
         router.put(route, callback);
         return that;
     };
+
     that.delete = function (route, callback) {
         router.delete(route, callback);
         return that;
     };
+
     that.patch = function (route, callback) {
         router.patch(route, callback);
         return that;
     };
+
     that.options = function (route, callback) {
         router.options(route, callback);
         return that;
     };
+
     that.head = function (route, callback) {
         router.head(route, callback);
         return that;

@@ -20,9 +20,6 @@ function router() {
     };
     var registerRoute = function (method, route, callback) {
         route.method = method;
-        if (!route.env) {//TODO why this?
-            route.env = smash.getEnv();
-        }
         if (!route.path && !route.byPass) {
             throw new Error("Missing argument path to register route.");
         }
@@ -64,9 +61,6 @@ function router() {
             return route;
         }
         if (route.version && route.version !== request.version) {
-            return null;
-        }
-        if (route.env && route.env !== request.env) {
             return null;
         }
         var path = route.path;

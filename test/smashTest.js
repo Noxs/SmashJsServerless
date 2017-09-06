@@ -182,25 +182,34 @@ describe('Smash', function () {
         assert.isObject(smash.getConfig());
         assert.isObject(smash.getUserProvider());
     });
+    it('Test smash env', function () {
+        smash.resetRootPath();
+        smash.registerLogger(null);
+        smash.boot({TEST: 'foobar'});
+        assert.equal(smash.getEnv("TEST"), "foobar");
+        smash.boot({TEST: 'foobar'});
+        assert.equal(smash.getEnv("FOOBAR"), null);
+        assert.isObject(smash);
+    });
     it('Test smash debug', function () {
         smash.resetRootPath();
         smash.registerLogger(null);
-        smash.boot(true);
+        smash.boot({}, true);
         smash.registerLogger(null);
         assert.equal(smash.debugIsActive(), false);
 
         smash.resetRootPath();
         smash.registerLogger(new logger());
-        smash.boot(true);
+        smash.boot({}, true);
         assert.equal(smash.debugIsActive(), true);
 
         smash.resetRootPath();
-        smash.boot(true);
+        smash.boot({}, true);
         smash.registerLogger(new logger());
         assert.equal(smash.debugIsActive(), true);
 
         smash.resetRootPath();
-        smash.boot(false);
+        smash.boot({}, false);
         smash.registerLogger(null);
         assert.equal(smash.debugIsActive(), false);
 
@@ -208,9 +217,6 @@ describe('Smash', function () {
         smash.boot();
         smash.registerLogger(null);
         assert.equal(smash.debugIsActive(), false);
-    });
-    it('Test smash env', function () {
-
     });
     it('Test smash root path', function () {
         assert.equal(smash.getRootPath(), process.cwd());
@@ -288,7 +294,7 @@ describe('Smash', function () {
         smash.registerRouter(router);
         smash.registerAuthorization(new serviceRequestSuccess());
         smash.registerUserProvider(new serviceRequestSuccess());
-        smash.boot(true);
+        smash.boot({}, true);
         smash.handleRequest(lambdaEvent, function (err, response) {
             assert.isNull(err);
             assert.isObject(response);
@@ -305,11 +311,12 @@ describe('Smash', function () {
         smash.registerRouter(require('../core/router.js').build());
         smash.registerAuthorization(new serviceRequestSuccess());
         smash.registerUserProvider(new serviceRequestSuccess());
-        smash.boot(true);
+        smash.boot({}, true);
         smash.get({path: "/test"}, function (request, response) {
             response.ok({foo: "bar"});
         });
         smash.handleRequest(lambdaEvent, function (err, response) {
+            assert.equal(smash.getEnv("ENV"), "prod");
             assert.isNull(err);
             assert.isObject(response);
             assert.equal(response.getCode(), 200);
@@ -331,7 +338,7 @@ describe('Smash', function () {
         smash.registerRouter(fakeRouter);
         smash.registerAuthorization(fakeAuthorization);
         smash.registerUserProvider(fakeUserProvider);
-        smash.boot(true);
+        smash.boot({}, true);
         smash.handleRequest(lambdaEvent, function (err, response) {
             assert.isNull(err);
             assert.isObject(response);
@@ -357,7 +364,7 @@ describe('Smash', function () {
         smash.registerRouter(fakeRouter);
         smash.registerAuthorization(fakeAuthorization);
         smash.registerUserProvider(fakeUserProvider);
-        smash.boot(true);
+        smash.boot({}, true);
         smash.handleRequest(lambdaEvent, function (err, response) {
             assert.isNull(err);
             assert.equal(response.getCode(), 400);

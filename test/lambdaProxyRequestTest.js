@@ -104,7 +104,6 @@ describe('LambdaProxyRequest', function () {
             assert.equal(request.parameters, lambdaEvent.queryStringParameters);
             assert.equal(request.headers, lambdaEvent.headers);
             assert.equal(request.path, lambdaEvent.path);
-            assert.equal(request.env, lambdaEvent.requestContext.stage);
             assert.deepEqual(request.body, JSON.parse(lambdaEvent.body));
             assert.equal(request.user.username, lambdaEvent.requestContext.authorizer.username);
         }, fail);

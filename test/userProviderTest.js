@@ -83,7 +83,7 @@ describe('UserProvider', function () {
     });
     it('Test handle request', function () {
         var logger = createLogger();
-        smash.boot(false);
+        smash.boot({}, false);
         smash.registerLogger(logger);
         userProvider.setDynamodbTypes(dynamodbTypes);
         var next = createNext();
