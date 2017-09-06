@@ -51,6 +51,21 @@ module.exports = {
         };
         loadDataRecusrsive(params);
     },
+    postDATABASE_NAME_UPPERCASE: function (DATABASE_NAME, callback) {
+        var params = {
+            "TableName": table,
+            "Item": attr.wrap(DATABASE_NAME),
+            'ConditionExpression': 'attribute_not_exists(' + tablePrimary + ')'
+        };
+        dynamodb.putItem(params, function (err, data) {
+            if (err) {
+                console.error("Failed to put item: " + err);
+                callback(err);
+            } else {
+                callback(null, data);
+            }
+        });
+    },
     putDATABASE_NAME_UPPERCASE: function (DATABASE_NAME, callback) {
         var params = {
             "TableName": table,
@@ -78,5 +93,11 @@ module.exports = {
                 callback(null, data);
             }
         });
+    },
+    getOutputFilters: function () {
+        return [];
+    },
+    getInputFilters: function () {
+        return [];
     }
 };

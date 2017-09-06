@@ -25,6 +25,7 @@ function smash() {
     var router = null;
     var authorization = null;
     var config = null;
+    var filter = null;
     var env = {};
     var debug = false;
     var logEnable = false;
@@ -198,6 +199,18 @@ function smash() {
 
     that.getAuthorization = function () {
         return authorization;
+    };
+
+    that.registerFilter = function (extFilter) {
+        filter = extFilter;
+        if (logEnable) {
+            logger.log("Register filter module.");
+        }
+        return that;
+    };
+
+    that.getFilter = function () {
+        return filter;
     };
 
     that.registerConfig = function (extConfig) {
@@ -384,6 +397,28 @@ function smash() {
     that.head = function (route, callback) {
         router.head(route, callback);
         return that;
+    };
+
+    that.filterInput = function (databaseData, extData, databaseObject) {
+        if (that.getFilter() === null) {
+            if (logEnable) {
+                logger.log("No filter module registered.");
+            }
+            return databaseData;
+        } else {
+            return that.getFilter.filterInput(databaseData, extData, databaseObject);
+        }
+    };
+
+    that.filterOutput = function (data, databaseObject) {
+        if (that.getFilter() === null) {
+            if (logEnable) {
+                logger.log("No filter module registered.");
+            }
+            return data;
+        } else {
+            return that.getFilter.filterOutput(data, databaseObject);
+        }
     };
 }
 
