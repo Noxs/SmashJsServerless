@@ -375,4 +375,6 @@ describe('Smash', function () {
     });
 
     //TODO test loading controller
+    
+    //TODO test filters
 });

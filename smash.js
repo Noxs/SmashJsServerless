@@ -406,7 +406,7 @@ function smash() {
             }
             return databaseData;
         } else {
-            return that.getFilter.filterInput(databaseData, extData, databaseObject);
+            return that.getFilter().filterInput(databaseData, extData, databaseObject);
         }
     };
 
@@ -417,7 +417,7 @@ function smash() {
             }
             return data;
         } else {
-            return that.getFilter.filterOutput(data, databaseObject);
+            return that.getFilter().filterOutput(data, databaseObject);
         }
     };
 }
