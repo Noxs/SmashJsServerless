@@ -44,7 +44,6 @@ describe('Filter', function () {
     });
     it('Test good input filters', function () {
         var input = filter.filterInput(createDbData(), createExtData(), databaseSuccess);
-        console.log(input);
         assert.equal(input.username, createDbData().username);
         assert.notEqual(input.username, createExtData().username);
         assert.equal(input.roles, createExtData().roles);

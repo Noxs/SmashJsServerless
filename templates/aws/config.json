@@ -3,6 +3,10 @@
         "roles": {
             "ROLE_USER": {
             },
+            "ROLE_EXTERNAL_WORKER": {
+            },
+            "ROLE_INTERNAL_WORKER": {
+            },
             "ROLE_ADMIN": {
                 "childrens": [
                     "ROLE_USER"
