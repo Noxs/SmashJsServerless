@@ -27,7 +27,8 @@ var createExtData = function () {
         username: "false@bar.com",
         password: "foobar",
         roles: "ADMIN",
-        renew: "never"
+        renew: "never",
+        test: ""
     };
 };
 describe('Filter', function () {
@@ -48,6 +49,7 @@ describe('Filter', function () {
         assert.notEqual(input.username, createExtData().username);
         assert.equal(input.roles, createExtData().roles);
         assert.equal(input.renew, createExtData().renew);
+        assert.equal(null,input.test);
         var output = filter.filterOutput(createDbData(), databaseSuccess);
         assert.notExists(output.password);
         assert.exists(output.username);

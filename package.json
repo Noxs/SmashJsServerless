@@ -1,5 +1,5 @@
 {
-  "name": "smash-js-serverless", "version": "0.0.54", "description": "Javascript serverless framework", "main": "smash.js", "scripts": {
+  "name": "smash-js-serverless", "version": "0.0.55", "description": "Javascript serverless framework", "main": "smash.js", "scripts": {
     "test": "mocha", "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --reporter=lcovonly -- test"
   }, "repository": {
     "type": "git", "url": "git+https://github.com/Noxs/SmashJsServerless.git"

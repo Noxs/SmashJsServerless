@@ -15,6 +15,8 @@ function Filter() {
                 if (found === false) {
                     if (extData[keyExtData] === null) {
                         delete databaseData[keyExtData];
+                    } else if (extData[keyExtData] === "") {
+                        databaseData[keyExtData] = null;
                     } else {
                         databaseData[keyExtData] = extData[keyExtData];
                     }
