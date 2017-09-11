@@ -17,9 +17,9 @@ var responseFactory = require('./core/response.js');
 //create abstraction for module
 function smash() {
     var that = this;
-    const corePath = path.join(__dirname, "core", "*.js");
-    const middlewarePath = path.join(__dirname, "middleware", "*.js");
-    const defaultControllerPath = path.join("controller", "*.js");
+    const corePath = path.join(__dirname, "core", "**/*.js");
+    const middlewarePath = path.join(__dirname, "middleware", "**/*.js");
+    const defaultControllerPath = path.join("controller", "**/*.js");
     var logger = null;
     var userProvider = null;
     var router = null;
