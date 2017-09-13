@@ -1,14 +1,52 @@
 #!/usr/bin/env node
 
 'use strict';
-
 var program = require('commander');
-require('../lib/projectManager.js');
-require('../lib/updateManager.js');
-require('../lib/dependenciesManager.js');
-require('../lib/debug.js');
+var glob = require('glob');
+var path = require('path');
+const cliPath = "../lib/cli";
+
+
+//TODO improve this file
+//build smashCli object
+function SmashCli() {
+
+}
+
+var loadCliModules = function () {
+    var files = glob.sync(path.resolve(path.join(__dirname, cliPath, "**/*.js")));
+    var modules = [];
+    files.forEach(function (file) {
+        modules.push(require(path.resolve(file)));
+    });
+    return modules;
+};
+
+loadCliModules();
+
 var utils = require("../lib/utils.js");
 var controllerGenerator = require("../lib/controllerGenerator.js");
+
+program.command('init')
+        .description('initialize smash configuration')
+        .action(function () {
+            var modules = loadCliModules();
+            var promises = [];
+            for (var i = 0, length = modules.length; i < length; i++) {
+                if (modules[i].init) {
+                    promises.push(modules[i].init());
+                }
+            }
+            Promise.all(promises).then(function () {
+                console.log("Successfully init modules.");
+                process.exit(0);
+            }, function (error) {
+                console.log("Failed init modules.", error);
+                process.exit(1);
+            });
+        });
+
+//here put self update
 
 program.command('init:aws')
         .description('initialize lambda index.js, codebuild buildspec.yml, smash config.json, and directories')

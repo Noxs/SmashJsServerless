@@ -1,0 +1,27 @@
+{
+    "authorization": { 
+        "roles": {
+            "ROLE_USER": {
+            },
+            "ROLE_EXTERNAL_WORKER": {
+            },
+            "ROLE_INTERNAL_WORKER": {
+            },
+            "ROLE_ADMIN": {
+                "childrens": [
+                    "ROLE_USER"
+                ]
+            },
+            "ROLE_SUPER_ADMIN": {
+                "childrens": [
+                    "ROLE_ADMIN"
+                ]
+            }
+        }
+    },
+    "user_provider": {
+        "dynamodb_table": "table_name_exemple",
+        "region": "aws_region",
+        "primary": "username"
+    }
+}
