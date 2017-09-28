@@ -116,9 +116,9 @@ function smash() {
         }
         try {
             if (logEnable && request.route.authorizations) {
-                logger.log("Route: " + request.route.method + " " + request.route.path + " " + request.route.authorizations);
+                logger.log("Route: " + request.route.method + " " + request.route.path + " " + request.route.authorizations + " env: " + that.getEnv("ENV"));
             } else if (logEnable) {
-                logger.log("Route: " + request.route.method + " " + request.route.path);
+                logger.log("Route: " + request.route.method + " " + request.route.path + " env: " + that.getEnv("ENV"));
             }
             request.route.callback(request, response);
         } catch (err) {
