@@ -15,7 +15,7 @@ var responseFactory = require('./core/response.js');
 
 //TODO
 //create abstraction for module
-function smash() {
+function Smash() {
     var that = this;
     const corePath = path.join(__dirname, "core", "**/*.js");
     const middlewarePath = path.join(__dirname, "middleware", "**/*.js");
@@ -255,8 +255,10 @@ function smash() {
 
     that.boot = function (env, extDebug) {
 
-        if (env) {
+        if (typeof env === "object") {
             setEnv(env);
+        } else {
+            //rework logger system with stack message even if logger not register
         }
         //
         //TODO put it in a another var
@@ -422,5 +424,5 @@ function smash() {
     };
 }
 
-module.exports = new smash();
+module.exports = new Smash();
 

@@ -18,6 +18,11 @@ function lambdaProxyRequest() {
         if (event.requestContext && event.requestContext.stage) {
             smash.addEnv("ENV", event.requestContext.stage);
         }
+        if (event.stageVariables) {
+            for (var key in event.stageVariables) {
+                smash.addEnv(key.toUpperCase(), event.stageVariables[key]);
+            }
+        }
         request.method = event.httpMethod;
         request.parameters = {};
         if (event.queryStringParameters) {
