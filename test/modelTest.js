@@ -3,7 +3,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Model = require("../lib/model.js");
+const Model = require("../lib/util/model.js");
 
 class TestEmpty extends Model {
 
