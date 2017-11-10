@@ -5,6 +5,7 @@ const should = chai.should();
 const Config = require('../lib/core/config.js');
 const fs = require('fs');
 const path = require('path');
+
 const configTest = {
     "authorization": {
         "roles": {
@@ -28,19 +29,22 @@ const configTest = {
         "primary": "username"
     }
 };
-
+ 
 describe('Config', function () {
-    it('Test config instance', function () {
+    it('Test config instance failure', function () {
         fs.renameSync(path.resolve(path.join(process.cwd(), "config.json")), path.resolve(path.join(process.cwd(), "config1.json")));
         expect(function () {
             const config = new Config();
         }).to.throw(Error);
         fs.renameSync(path.resolve(path.join(process.cwd(), "config1.json")), path.resolve(path.join(process.cwd(), "config.json")));
-
+    });
+    
+    it('Test config instance success', function () {
         expect(function () {
             const config = new Config();
         }).to.not.throw(Error);
     });
+    
     it('Test config value access', function () {
         const config = new Config();
         assert.deepEqual(config.get(), configTest);

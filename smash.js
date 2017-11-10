@@ -1,6 +1,6 @@
-var glob = require("glob");
-var path = require('path');
-var responseFactory = require('./core/response.js');
+const glob = require("glob");
+const path = require('path');
+const responseFactory = require('./core/response.js');
 //TODO
 //core module can be explicitly replaced by custom module
 //add method call verification everywhere
@@ -45,7 +45,6 @@ function Smash() {
         }
         return that;
     };
-
     var loadConfig = function () {
         //TODO the problem here is this is not really DRY
         //find a solution to apply push config in an array of core module
@@ -70,7 +69,6 @@ function Smash() {
         //or maybe migrate this module in another dir called basic module or something else
         return that;
     };
-
     var loadDefaultMiddleware = function () {
         var files = glob.sync(path.resolve(middlewarePath));
         if (logEnable) {
@@ -84,17 +82,14 @@ function Smash() {
         });
         return that;
     };
-
     var pushConfig = function (service, keyword) {
         service.applyConfig(config.get(keyword));
         return that;
     };
-
     var setEnv = function (extEnv) {
         env = extEnv;
         return that;
     };
-
     loadControllers = function () {
         var files = glob.sync(path.resolve(path.join(rootPath, controllerPath)));
         if (logEnable) {
@@ -108,7 +103,6 @@ function Smash() {
         });
         return that;
     };
-
     var executeController = function (request, response) {
         if (logEnable) {
             logger.log("Execute controller.");
@@ -128,7 +122,6 @@ function Smash() {
         }
         return that;
     };
-
     var terminateController = function (response) {
         if (logEnable) {
             logger.log("Execute controller done.");
@@ -146,7 +139,6 @@ function Smash() {
         }
         return that;
     };
-
     that.registerLogger = function (extLogger) {
         logger = extLogger;
         if (logger && debug) {
@@ -159,11 +151,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getLogger = function () {
         return logger;
     };
-
     that.registerUserProvider = function (extUserProvider) {
         userProvider = extUserProvider;
         if (logEnable) {
@@ -171,11 +161,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getUserProvider = function () {
         return userProvider;
     };
-
     that.registerRouter = function (extRouter) {
         router = extRouter;
         if (logEnable) {
@@ -183,11 +171,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getRouter = function () {
         return router;
     };
-
     that.registerAuthorization = function (extAuthorization) {
         authorization = extAuthorization;
         if (logEnable) {
@@ -195,11 +181,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getAuthorization = function () {
         return authorization;
     };
-
     that.registerConfig = function (extConfig) {
         config = extConfig;
         if (logEnable) {
@@ -207,11 +191,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getConfig = function () {
         return config;
     };
-
     that.registerRequestMiddleware = function (extMiddleware) {
         //TODO maybe in the future rename this like entry point
         //because there are not really middleware
@@ -222,11 +204,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getRequestMiddleware = function () {
         return requestMiddleware;
     };
-
     that.registerResponseMiddleware = function (extMiddleware) {
         //TODO same as request middleware
         responseMiddleware = extMiddleware;
@@ -235,11 +215,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getResponseMiddleware = function () {
         return responseMiddleware;
     };
-
     that.boot = function (env, extDebug) {
 
         if (typeof env === "object") {
@@ -278,7 +256,6 @@ function Smash() {
         //massive improvement are required
         return that;
     };
-
     that.handleRequest = function (request, response) {
         if (logEnable) {
             logger.log("Linking.");
@@ -295,7 +272,6 @@ function Smash() {
         requestMiddleware.handleRequest(request, response);
         return that;
     };
-
     that.getEnv = function (property) {
         if (env[property]) {
             return env[property];
@@ -303,7 +279,6 @@ function Smash() {
             return null;
         }
     };
-
     that.addEnv = function (extEnv, value) {
         if (env[extEnv]) {
             return false;
@@ -312,11 +287,9 @@ function Smash() {
             return true;
         }
     };
-
     that.debugIsActive = function () {
         return logEnable;
     };
-
     that.setRootPath = function (extRootPath) {
         //TODO maybe this is not usefull, for the moment no use case and this is not needed
         rootPath = extRootPath;
@@ -325,17 +298,14 @@ function Smash() {
         }
         return that;
     };
-
     that.resetRootPath = function () {
         //TODO this is needed for testing, but this is probably not a best practice
         rootPath = process.cwd();
         return that;
     };
-
     that.getRootPath = function () {
         return rootPath;
     };
-
     that.setControllerPath = function (extControllerPath) {
         //TODO throw an error if .js is not in the string
         //OR simply add it at the end
@@ -345,11 +315,9 @@ function Smash() {
         }
         return that;
     };
-
     that.getControllerPath = function () {
         return controllerPath;
     };
-
     //TODO check pattern for registering route is good or not, 
     //if not rework router component
     //as a clue, maybe just a function is enough
@@ -357,38 +325,129 @@ function Smash() {
         router.get(route, callback);
         return that;
     };
-
     that.post = function (route, callback) {
         router.post(route, callback);
         return that;
     };
-
     that.put = function (route, callback) {
         router.put(route, callback);
         return that;
     };
-
     that.delete = function (route, callback) {
         router.delete(route, callback);
         return that;
     };
-
     that.patch = function (route, callback) {
         router.patch(route, callback);
         return that;
     };
-
     that.options = function (route, callback) {
         router.options(route, callback);
         return that;
     };
-
     that.head = function (route, callback) {
         router.head(route, callback);
         return that;
     };
-
 }
 
 module.exports = new Smash();
 
+
+/*TODO*/
+//const corePath = path.join(__dirname, "core", "**/*.js");
+//const middlewarePath = path.join(__dirname, "middleware", "**/*.js");
+
+//const defaultControllerPath = path.join("controller", "**/*.js");
+//const defaultControllerPath = path.join("controller", "**/*.js");
+/*
+ const Console = require("./lib/core/console.js");
+ const Config = require("./lib/core/config.js");
+ const EXT_JS = ".js";
+ 
+ class Smash extends Console {
+ constructor() {
+ //TODO boot here
+ //no more boot function
+ //build all app here
+ this._config = new Config();
+ 
+ }
+ 
+ handleEvent(event) {
+ //freeze env when request if ready to be process
+ //Object.freeze(this.env);
+ }
+ 
+ get(route, callback) {
+ this.router.get(route, callback);
+ return this;
+ }
+ 
+ post(route, callback) {
+ this.router.post(route, callback);
+ return this;
+ }
+ 
+ put(route, callback) {
+ this.router.put(route, callback);
+ return this;
+ }
+ 
+ delete(route, callback) {
+ this.router.delete(route, callback);
+ return this;
+ }
+ 
+ patch(route, callback) {
+ this.router.patch(route, callback);
+ return this;
+ }
+ 
+ options(route, callback) {
+ this.router.options(route, callback);
+ return this;
+ }
+ 
+ head(route, callback) {
+ this.router.head(route, callback);
+ return this;
+ }
+ 
+ //TODO
+ event(source, callback) {
+ //TODO
+ return this;
+ }
+ 
+ get env() {
+ return this._env;
+ }
+ 
+ getEnv(key) {
+ return this.env[key];
+ }
+ 
+ setEnv(key, value) {
+ this.env[key] = value;
+ }
+ 
+ util(module) {
+ if (typeof module !=== 'string' || module.length === 0) {
+ throw new Error("First parameter of util must be a valid string, " + typeof module + "given");
+ }
+ return require(path.resolve(path.join(process.cwd(), utilPath, module + JS_EXT)));
+ }
+ 
+ database(module) {
+ if (typeof module !=== 'string' || module.length === 0) {
+ throw new Error("First parameter of util must be a valid string, " + typeof module + "given");
+ }
+ return require(path.resolve(path.join(process.cwd(), databasePath, module + JS_EXT)));
+ }
+ 
+ get config (){
+ return this._config;
+ }
+ 
+ }*/
