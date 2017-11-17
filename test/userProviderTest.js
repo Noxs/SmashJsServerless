@@ -65,6 +65,25 @@ class RepositoryFailure {
     }
 }
 
+class Link {
+    constructor() {
+        this._spy = sinon.spy();
+    }
+    handleRequest(request, response) {
+        this._spy.call();
+    }
+}
+
+class End {
+    constructor() {
+        this._spy = sinon.spy();
+    }
+    handleResponse(response) {
+        this._spy.call();
+    }
+}
+
+
 describe('UserProvider', function () {
     it('Test instance', function () {
         const userProvider = new UserProvider();
@@ -112,32 +131,32 @@ describe('UserProvider', function () {
     it('Test handle request without repository', function () {
         const userProvider = new UserProvider();
         const request = new Request();
-        const response = new Response((parameter) => {
-        });
+        const end = new End();
+        const response = new Response(end);
 
         expect(function () {
             userProvider.handleRequest();
         }).to.throw(Error);
+        assert.ok(end._spy.notCalled);
 
         expect(function () {
             userProvider.handleRequest(request);
         }).to.throw(Error);
+        assert.ok(end._spy.notCalled);
 
-        expect(function () {
-            userProvider.handleRequest(request, response);
-        }).to.throw(Error);
+        userProvider.handleRequest(request, response);
+        assert.ok(end._spy.called);
 
-        expect(function () {
-            userProvider.handleRequest(null, response);
-        }).to.throw(Error);
+        userProvider.handleRequest(null, response);
+        assert.ok(end._spy.called);
     });
 
     it('Test handle request without good parameters', function () {
         const userProvider = new UserProvider();
         const repository = new Repository();
         const request = new Request();
-        const response = new Response((parameter) => {
-        });
+        const end = new End();
+        const response = new Response(end);
 
         userProvider.attachRepository(repository);
 
@@ -149,228 +168,150 @@ describe('UserProvider', function () {
             userProvider.handleRequest(request);
         }).to.throw(Error);
 
-        expect(function () {
-            userProvider.handleRequest(request, response);
-        }).to.throw(Error);
-
-        expect(function () {
-            userProvider.handleRequest(null, response);
-        }).to.throw(Error);
+        userProvider.handleRequest(null, response);
+        assert.ok(end._spy.called);
     });
 
     it('Test userProvider handle request without repository', function () {
         const userProvider = new UserProvider();
         const request = new Request();
-        const spyNext = sinon.spy();
-        const spyFail = sinon.spy();
-        const response = new Response((parameter) => {
-            spyFail.call();
-        });
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
         request.user = {};
 
-        userProvider.setNext(function (request, response) {
-            spyNext.call();
-        });
+        userProvider.setNext(link);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.called);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
     });
 
     it('Test userProvider handle request without user', function () {
         const userProvider = new UserProvider();
         const repository = new Repository();
         const request = new Request();
-        const spyNext = sinon.spy();
-        const spyFail = sinon.spy();
-        const response = new Response((parameter) => {
-            spyFail.call();
-        });
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
 
         userProvider.attachRepository(repository);
 
-        userProvider.setNext(function (request, response) {
-            spyNext.call();
-        });
+        userProvider.setNext(link);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(spyNext.called);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.called);
+        assert.isOk(end._spy.notCalled);
     });
 
     it('Test userProvider handle request with bad user object', function () {
         const userProvider = new UserProvider();
         const repositorySuccess = new RepositorySuccess();
         const request = new Request();
-        const spyNext = sinon.spy();
-        const spyFail = sinon.spy();
-        const response = new Response((parameter) => {
-            spyFail.call();
-        });
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
         request.user = {};
         userProvider.attachRepository(repositorySuccess);
 
-        userProvider.setNext(function (request, response) {
-            spyNext.call();
-        });
+        userProvider.setNext(link);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.called);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
     });
 
     it('Test userProvider handle request with user not found', function () {
         const userProvider = new UserProvider();
         const repositoryNotFound = new RepositoryNotFound();
         const request = new Request();
-        const spyNext = sinon.spy();
-        const spyFail = sinon.spy();
-        const response = new Response((parameter) => {
-            spyFail.call();
-        });
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
         request.user = {username: "test"};
         userProvider.attachRepository(repositoryNotFound);
 
-        userProvider.setNext(function (request, response) {
-            spyNext.call();
-        });
+        userProvider.setNext(link);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.called);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
+    });
+
+    it('Test userProvider handle request with no repository', function () {
+        const userProvider = new UserProvider();
+        const request = new Request();
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
+        request.user = {username: "test"};
+
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
+        userProvider.handleRequest(request, response);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
     });
 
     it('Test userProvider handle request with repository failure', function () {
         const userProvider = new UserProvider();
         const repositoryFailure = new RepositoryFailure();
         const request = new Request();
-        const spyNext = sinon.spy();
-        const spyFail = sinon.spy();
-        const response = new Response((parameter) => {
-            spyFail.call();
-        });
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
         request.user = {username: "test"};
         userProvider.attachRepository(repositoryFailure);
 
-        userProvider.setNext(function (request, response) {
-            spyNext.call();
-        });
+        userProvider.setNext(link);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.called);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
     });
 
     it('Test userProvider handle request with repository success', function () {
         const userProvider = new UserProvider();
         const repositorySuccess = new RepositorySuccess();
         const request = new Request();
-        const spyNext = sinon.spy();
-        const spyFail = sinon.spy();
-        const response = new Response((parameter) => {
-            spyFail.call();
-        });
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
         request.user = {username: "test"};
         userProvider.attachRepository(repositorySuccess);
 
-        userProvider.setNext(function (request, response) {
-            spyNext.call();
-        });
+        userProvider.setNext(link);
 
-        assert.isOk(spyNext.notCalled);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(spyNext.called);
-        assert.isOk(spyFail.notCalled);
+        assert.isOk(link._spy.called);
+        assert.isOk(end._spy.notCalled);
     });
-
-
-    /*it('Test conf keyword', function () {
-     assert.equal(userProvider.getConfKeyword(), "user_provider");
-     });
-     it('Test set next', function () {
-     expect(() => userProvider.setNext(createNext())).to.not.throw();
-     });
-     it('Test apply config', function () {
-     assert.isFunction(userProvider.applyConfig);
-     expect(() => userProvider.applyConfig(conf)).to.not.throw();
-     });
-     it('Test handle request', function () {
-     var logger = createLogger();
-     smash.boot({}, false);
-     smash.registerLogger(logger);
-     userProvider.setDynamodbTypes(dynamodbTypes);
-     var next = createNext();
-     var fail = createFail();
-     var response = createResponse();
-     userProvider.setDynamodb(dynamodbFailed);
-     userProvider.setNext(next, fail);
-     userProvider.handleRequest(request, response);
-     assert.isOk(next.called);
-     assert.isOk(response.internalServerError.notCalled);
-     assert.isOk(response.forbidden.notCalled);
-     assert.isOk(fail.notCalled);
-     
-     next = createNext();
-     fail = createFail();
-     response = createResponse();
-     request.user = {};
-     request.user.username = "test@test.com";
-     userProvider.setDynamodb(dynamodbFailed);
-     userProvider.setNext(next, fail);
-     userProvider.handleRequest(request, response);
-     assert.isOk(next.notCalled);
-     assert.isOk(response.internalServerError.called);
-     assert.isOk(response.forbidden.notCalled);
-     assert.isOk(fail.called);
-     
-     
-     next = createNext();
-     fail = createFail();
-     response = createResponse();
-     request.user = {};
-     request.user.username = "test@test.com";
-     userProvider.setDynamodb(dynamodbNotFound);
-     userProvider.setNext(next, fail);
-     userProvider.handleRequest(request, response);
-     assert.isOk(next.notCalled);
-     assert.isOk(response.internalServerError.notCalled);
-     assert.isOk(response.forbidden.called);
-     assert.isOk(fail.called);
-     
-     next = createNext();
-     fail = createFail();
-     response = createResponse();
-     request.user = {};
-     request.user.username = "test@test.com";
-     userProvider.setDynamodb(dynamodbSuccess);
-     userProvider.setNext(next, fail);
-     userProvider.handleRequest(request, response);
-     assert.isOk(next.called);
-     assert.isOk(response.internalServerError.notCalled);
-     assert.isOk(response.forbidden.notCalled);
-     assert.isOk(fail.notCalled);
-     });*/
 });

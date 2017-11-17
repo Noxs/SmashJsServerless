@@ -1,4 +1,4 @@
-var chai = require('chai');
+/*var chai = require('chai');
 var assert = chai.assert;
 var expect = chai.expect;
 var should = chai.should();
@@ -45,8 +45,8 @@ var lambdaEvent = {
         "CloudFront-Is-Mobile-Viewer": "false",
         "X-Forwarded-For": "127.0.0.1, 127.0.0.2",
         "CloudFront-Viewer-Country": "US",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Upgrade-Insecure-Requests": "1",
+        //"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
+        /*"Upgrade-Insecure-Requests": "1",
         "X-Forwarded-Port": "443",
         "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
         "X-Forwarded-Proto": "https",
@@ -125,3 +125,4 @@ describe('LambdaProxyRequest', function () {
     });
     //TODO test when no request context, no username
 });
+*/

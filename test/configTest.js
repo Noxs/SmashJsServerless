@@ -27,24 +27,36 @@ const configTest = {
         "dynamodb_table": "test_table",
         "region": "eu-west-1",
         "primary": "username"
+    },
+    "response": {
+        "headers": {
+            "default": {
+                "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT"
+            }
+        }
     }
 };
- 
+
 describe('Config', function () {
     it('Test config instance failure', function () {
+        Object.keys(require.cache).forEach(function (key) {
+            delete require.cache[key];
+        });
         fs.renameSync(path.resolve(path.join(process.cwd(), "config.json")), path.resolve(path.join(process.cwd(), "config1.json")));
         expect(function () {
             const config = new Config();
         }).to.throw(Error);
         fs.renameSync(path.resolve(path.join(process.cwd(), "config1.json")), path.resolve(path.join(process.cwd(), "config.json")));
     });
-    
+
     it('Test config instance success', function () {
         expect(function () {
             const config = new Config();
         }).to.not.throw(Error);
     });
-    
+
     it('Test config value access', function () {
         const config = new Config();
         assert.deepEqual(config.get(), configTest);

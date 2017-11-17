@@ -11,6 +11,24 @@ class Test extends Next {
 
 }
 
+class BadLink {
+    handleRequest() {
+
+    }
+}
+
+class GoodLink {
+    handleRequest(request, response) {
+
+    }
+}
+
+class GoodEnd {
+    handleResponse(response) {
+
+    }
+}
+
 describe('Next', function () {
     it('Test next instance creation failure', function () {
         expect(function () {
@@ -39,15 +57,23 @@ describe('Next', function () {
         expect(function () {
             test.setNext(function () {});
         }).to.throw(Error);
+
+        expect(function () {
+            test.setNext({});
+        }).to.throw(Error);
+
+        const badLink = new BadLink();
+        expect(function () {
+            test.setNext(badLink);
+        }).to.throw(Error);
     });
 
     it('Test good setNext function', function () {
         const test = new Test();
-
+        const goodLink = new GoodLink();
         assert.isFunction(test.setNext);
         expect(function () {
-            test.setNext(function ( {}, {}){
-            });
+            test.setNext(goodLink);
         }).to.not.throw(Error);
     });
 
@@ -62,50 +88,48 @@ describe('Next', function () {
     it('Test bad next function', function () {
         const test = new Test();
         const request = new Request();
+        const goodLink = new GoodLink();
 
         expect(function () {
-            test.setNext(function ( {}, {}){
-            });
+            test.setNext(goodLink);
             test.next();
         }).to.throw(Error);
 
         expect(function () {
-            test.setNext(function ( {}, {}){
-            });
+            test.setNext(goodLink);
             test.next({});
         }).to.throw(Error);
 
         expect(function () {
-            test.setNext(function ( {}, {}){
-            });
+            test.setNext(goodLink);
             test.next({}, {});
         }).to.throw(Error);
 
         expect(function () {
-            test.setNext((request, response) => {
-            });
+            test.setNext(goodLink);
             test.next();
         }).to.throw(Error);
 
         expect(function () {
-            test.setNext((request, response) => {
-            });
+            test.setNext(goodLink);
             test.next(request);
         }).to.throw(Error);
     });
-
 
     it('Test next function', function () {
         const test = new Test();
         const spy = sinon.spy();
         const request = new Request();
-        const response = new Response((parameter) => {
-        });
+        const goodEnd = new GoodEnd();
+        const response = new Response(goodEnd);
+        const goodLink = new GoodLink();
+
+        goodLink.handleRequest = function (request, response) {
+            spy.call();
+        };
 
         expect(function () {
-            test.setNext((request, response) => {
-                spy.call();
-            });
+            test.setNext(goodLink);
             test.next(request, response);
         }).to.not.throw(Error);
 

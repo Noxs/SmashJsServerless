@@ -19,5 +19,14 @@
         "dynamodb_table": "test_table",
         "region": "eu-west-1",
         "primary": "username"
+    },
+    "response": {
+        "headers": {
+            "default": {
+                "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT"
+            }
+        }
     }
 }

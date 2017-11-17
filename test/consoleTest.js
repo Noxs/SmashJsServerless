@@ -4,7 +4,6 @@ const expect = chai.expect;
 const should = chai.should();
 const Console = require('../lib/util/console.js');
 
-
 describe('Console', function () {
     it('Test console instance', function () {
         const console = new Console();
