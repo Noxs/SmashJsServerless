@@ -12,6 +12,7 @@ const UTIL_PATH = "util";
 class Smash extends Console {
     constructor() {
         super();
+        this._config = new Config();
         this._middlewares = [];
     }
 
@@ -45,7 +46,6 @@ class Smash extends Console {
     }
 
     boot() {
-        this._config = new Config();
         this._registerMiddlewares();
         this._registerHandlers();
     }

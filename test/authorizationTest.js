@@ -38,24 +38,13 @@ class ConfigEmpty {
 
 describe('Authorization', function () {
     it('Test authorization instance success', function () {
-        const config = new Config();
         expect(function () {
-            const authorization = new Authorization(config);
+            const authorization = new Authorization();
         }).to.not.throw(Error);
     });
 
-    it('Test authorization instance failure', function () {
-        expect(function () {
-            const authorization = new Authorization();
-        }).to.throw(Error);
-        expect(function () {
-            const authorization = new Authorization({});
-        }).to.throw(Error);
-    });
-
     it('Test build route authorizations success', function () {
-        const config = new Config();
-        const authorization = new Authorization(config);
+        const authorization = new Authorization();
 
         const route1 = new Route("GET", {path: "/foo/:foo/bar/:bar", authorizations: ["ROLE_USER"], version: "01-01-2000"}, (request, response) => {
         });
@@ -88,8 +77,7 @@ describe('Authorization', function () {
     });
 
     it('Test build route authorizations empty', function () {
-        const config = new Config();
-        const authorization = new Authorization(config);
+        const authorization = new Authorization();
         const route = new Route("GET", {path: "/foo/:foo/bar/:bar", version: "01-01-2000"}, (request, response) => {
         });
         expect(function () {
