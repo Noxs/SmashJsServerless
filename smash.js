@@ -40,7 +40,7 @@ class Smash extends Console {
         delete this.env;
         this.env = {};
         Object.assign(this.env, process.env);
-        setEnv("ENV", context.functionVersion);
+        this._setEnv("ENV", context.functionVersion);
         Object.freeze(this.env);
         return this;
     }
@@ -112,11 +112,11 @@ class Smash extends Console {
     }
 
     getEnv(key) {
-        return this.env[key];
+        return this._env[key];
     }
 
-    setEnv(key, value) {
-        this.env[key] = value;
+    _setEnv(key, value) {
+        this._env[key] = value;
     }
 
     util(module) {
