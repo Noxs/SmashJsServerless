@@ -23,10 +23,8 @@ const configTest = {
             }
         }
     },
-    "user_provider": {
-        "dynamodb_table": "test_table",
-        "region": "eu-west-1",
-        "primary": "username"
+    "user_repository": {
+        "file": "./database/testUser.js"
     },
     "response": {
         "headers": {
@@ -60,8 +58,8 @@ describe('Config', function () {
     it('Test config value access', function () {
         const config = new Config();
         assert.deepEqual(config.get(), configTest);
-        assert.deepEqual(config.get("user_provider"), configTest.user_provider);
-        assert.deepEqual(config.get("user_provider.region"), configTest.user_provider.region);
-        assert.deepEqual(config.get("user_provider.notexist"), undefined);
+        assert.deepEqual(config.get("response"), configTest.response);
+        assert.deepEqual(config.get("response.headers"), configTest.response.headers);
+        assert.deepEqual(config.get("response.notexist"), undefined);
     });
 });

@@ -13,35 +13,77 @@ class Smash extends Console {
     constructor() {
         super();
         this._config = new Config();
-        this._middlewares = [];
+        this._middlewares = null;
+        this._magics = [];
+        this._handlers = null;
+    }
+
+    _clearExpose() {
+        for (let i = 0, length = this._magics.length; i < length; i++) {
+            delete this[this._magics[i]];
+        }
+        this._magics = [];
+        return this;
+    }
+
+    _processExpose(module) {
+        if (typeof module !== 'object' || typeof module.expose !== 'function') {
+            this.error("Middlewares must be object with a function called expose, " + this.typeof(module) + ' ' + this.typeof(module.expose) + ' given');
+            throw new Error("Middlewares must be object with a function called expose, " + this.typeof(module) + ' ' + this.typeof(module.expose) + ' given');
+        }
+        const expose = module.expose();
+        for (let i = 0, length = expose.length; i < length; i++) {
+            if (this[expose[i].functionName]) {
+                this.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
+                throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
+            }
+            this[expose[i].functionName] = function () {
+                module[expose[i].function].apply(module, arguments);
+            };
+            this._magics.push(expose[i].functionName);
+        }
+        return this;
     }
 
     _registerMiddlewares() {
+        this._clearExpose();
+        this._middlewares = [];
         const files = glob.sync(path.resolve(path.join(__dirname, MIDDLEWARE_PATH, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
             const Module = require(path.resolve(files[i]));
             const module = new Module();
+            this._processExpose(module);
             this._middlewares.push(module);
             this.info("Register middleware: " + module.constructor.name);
         }
         return this;
     }
 
-    _registerHandlers() {
-        const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH)));
+    _clearHandlers() {
+        const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
-            require(path.resolve(files[i]));
+            delete require.cache[require.resolve(path.resolve(files[i]))]
+        }
+        return this;
+    }
+
+    _registerHandlers() {
+        this._clearHandlers();
+        this._handlers = [];
+        const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH, DEEP_EXT_JS)));
+        for (let i = 0, length = files.length; i < length; i++) {
+            this._handlers.push(require(path.resolve(files[i])));
         }
         this.info("Handler loaded: " + files.length);
         return this;
     }
 
     _buildEnv(context) {
-        delete this.env;
-        this.env = {};
-        Object.assign(this.env, process.env);
+        delete this._env;
+        this._env = {};
+        Object.assign(this._env, process.env);
         this._setEnv("ENV", context.functionVersion);
-        Object.freeze(this.env);
+        Object.freeze(this._env);
         return this;
     }
 
@@ -51,61 +93,22 @@ class Smash extends Console {
     }
 
     handleEvent(event, context, callback) {
-        this._buildEnv(context);
-        for (let i = 0, length = this._middlewares.length; i < length; i++) {
-            if (this._middlewares[i].isEvent(event)) {
-                this._middlewares[i].handleEvent(event, callback);
-                return this;
+        if (this._middlewares === null) {
+            this.error("Smash has not been booted, you must call boot() first", event);
+            callback(new Error("Smash has not been booted, you must call boot() first"));
+        } else {
+            this._buildEnv(context);
+            for (let i = 0, length = this._middlewares.length; i < length; i++) {
+                if (this._middlewares[i].isEvent(event)) {
+                    this._middlewares[i].handleEvent(event, callback);
+                    return this;
+                }
             }
+            this.error("No middleware found to process event", event);
+            callback(new Error("No middleware found to process event"));
         }
-        this.error("No middleware found to process event", event);
-        callback(new Error("No middleware found to process event"));
         return this;
     }
-
-    /*Refactor this*/
-
-    get(route, callback) {
-        this._apiGatewayProxy.get(route, callback);
-        return this;
-    }
-
-    post(route, callback) {
-        this._apiGatewayProxy.post(route, callback);
-        return this;
-    }
-
-    put(route, callback) {
-        this._apiGatewayProxy.put(route, callback);
-        return this;
-    }
-
-    delete(route, callback) {
-        this._apiGatewayProxy.delete(route, callback);
-        return this;
-    }
-
-    patch(route, callback) {
-        this._apiGatewayProxy.patch(route, callback);
-        return this;
-    }
-
-    options(route, callback) {
-        this._apiGatewayProxy.options(route, callback);
-        return this;
-    }
-
-    head(route, callback) {
-        this._apiGatewayProxy.head(route, callback);
-        return this;
-    }
-
-    event(source, callback) {
-        this._cloudWatchEvent.event(source, callback);
-        return this;
-    }
-
-    /*End refactor this*/
 
     get env() {
         return this._env;
@@ -147,4 +150,8 @@ class Smash extends Console {
 
 }
 
-module.exports = new Smash();
+if (!global.smash) {
+    global.smash = new Smash();
+}
+module.exports = global.smash;
+

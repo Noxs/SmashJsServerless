@@ -4,7 +4,8 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const Route = require('../lib/core/route.js');
-const Request = require('../lib/core/Request.js');
+const Request = require('../lib/core/request.js');
+const Console = require('../lib/util/console.js');
 
 describe('Route', function () {
     it('Test route build instance success', function () {
@@ -108,15 +109,22 @@ describe('Route', function () {
     it('Test route build route with parameters', function () {
         const route1 = new Route("GET", {path: "/:foo", authorizations: [], version: "01-01-2000"}, (request, response) => {
         });
-        assert.deepEqual(route1._routeParameters, [{_keyword: ":foo", _position: 1}]);
+        assert.equal(route1._routeParameters[0]._keyword, ":foo");
+        assert.equal(route1._routeParameters[0]._position, 1);
 
         const route2 = new Route("GET", {path: "/:foo/:bar", authorizations: [], version: "01-01-2000"}, (request, response) => {
         });
-        assert.deepEqual(route2._routeParameters, [{_keyword: ":foo", _position: 1}, {_keyword: ":bar", _position: 2}]);
+        assert.equal(route2._routeParameters[0]._keyword, ":foo");
+        assert.equal(route2._routeParameters[0]._position, 1);
+        assert.equal(route2._routeParameters[1]._keyword, ":bar");
+        assert.equal(route2._routeParameters[1]._position, 2);
 
         const route3 = new Route("GET", {path: "/foo/:foo/bar/:bar", authorizations: [], version: "01-01-2000"}, (request, response) => {
         });
-        assert.deepEqual(route3._routeParameters, [{_keyword: ":foo", _position: 2}, {_keyword: ":bar", _position: 4}]);
+        assert.equal(route3._routeParameters[0]._keyword, ":foo");
+        assert.equal(route3._routeParameters[0]._position, 2);
+        assert.equal(route3._routeParameters[1]._keyword, ":bar");
+        assert.equal(route3._routeParameters[1]._position, 4);
     });
 
     it('Test route build route parameters failure', function () {

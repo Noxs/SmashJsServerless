@@ -4,7 +4,8 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const ApiGatewayProxy = require('../lib/middleware/apiGatewayProxy.js');
-const smash = require('../smash.js');
+require('../smash.js');
+//const smash = require('../smash.js');
 
 const lambdaEventSuccess = {
     "body": "{\"test\":\"body\"}",

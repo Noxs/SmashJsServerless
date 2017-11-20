@@ -15,10 +15,8 @@
             }
         }
     },
-    "user_provider": {
-        "dynamodb_table": "test_table",
-        "region": "eu-west-1",
-        "primary": "username"
+    "user_repository": {
+        "file": "./database/testUser.js"
     },
     "response": {
         "headers": {
