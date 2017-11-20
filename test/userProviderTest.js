@@ -6,6 +6,7 @@ const sinon = require('sinon');
 const UserProvider = require('../lib/core/userProvider.js');
 const Request = require('../lib/core/request.js');
 const Response = require('../lib/core/response.js');
+const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
 
 class User {
 
@@ -130,7 +131,7 @@ describe('UserProvider', function () {
 
     it('Test handle request without repository', function () {
         const userProvider = new UserProvider();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const end = new End();
         const response = new Response(end);
 
@@ -154,7 +155,7 @@ describe('UserProvider', function () {
     it('Test handle request without good parameters', function () {
         const userProvider = new UserProvider();
         const repository = new Repository();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const end = new End();
         const response = new Response(end);
 
@@ -174,7 +175,7 @@ describe('UserProvider', function () {
 
     it('Test userProvider handle request without repository', function () {
         const userProvider = new UserProvider();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const link = new Link();
         const end = new End();
         const response = new Response(end);
@@ -194,7 +195,7 @@ describe('UserProvider', function () {
     it('Test userProvider handle request without user', function () {
         const userProvider = new UserProvider();
         const repository = new Repository();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const link = new Link();
         const end = new End();
         const response = new Response(end);
@@ -215,7 +216,7 @@ describe('UserProvider', function () {
     it('Test userProvider handle request with bad user object', function () {
         const userProvider = new UserProvider();
         const repositorySuccess = new RepositorySuccess();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const link = new Link();
         const end = new End();
         const response = new Response(end);
@@ -236,7 +237,7 @@ describe('UserProvider', function () {
     it('Test userProvider handle request with user not found', function () {
         const userProvider = new UserProvider();
         const repositoryNotFound = new RepositoryNotFound();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const link = new Link();
         const end = new End();
         const response = new Response(end);
@@ -256,7 +257,7 @@ describe('UserProvider', function () {
 
     it('Test userProvider handle request with no repository', function () {
         const userProvider = new UserProvider();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const link = new Link();
         const end = new End();
         const response = new Response(end);
@@ -276,7 +277,7 @@ describe('UserProvider', function () {
     it('Test userProvider handle request with repository failure', function () {
         const userProvider = new UserProvider();
         const repositoryFailure = new RepositoryFailure();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const link = new Link();
         const end = new End();
         const response = new Response(end);
@@ -297,7 +298,7 @@ describe('UserProvider', function () {
     it('Test userProvider handle request with repository success', function () {
         const userProvider = new UserProvider();
         const repositorySuccess = new RepositorySuccess();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const link = new Link();
         const end = new End();
         const response = new Response(end);

@@ -6,6 +6,7 @@ const sinon = require('sinon');
 const Next = require('../lib/core/next.js');
 const Request = require('../lib/core/request.js');
 const Response = require('../lib/core/response.js');
+const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
 
 class Test extends Next {
 
@@ -87,7 +88,7 @@ describe('Next', function () {
 
     it('Test bad next function', function () {
         const test = new Test();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const goodLink = new GoodLink();
 
         expect(function () {
@@ -119,7 +120,7 @@ describe('Next', function () {
     it('Test next function', function () {
         const test = new Test();
         const spy = sinon.spy();
-        const request = new Request();
+        const request = new Request(apiGatewayProxyRequest);
         const goodEnd = new GoodEnd();
         const response = new Response(goodEnd);
         const goodLink = new GoodLink();
