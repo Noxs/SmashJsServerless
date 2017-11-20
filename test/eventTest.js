@@ -2,7 +2,7 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
-var Event = require('../lib/core/event.js');
+const Event = require('../lib/core/event.js');
 
 describe('Event', function () {
     it('Test event instance', function () {

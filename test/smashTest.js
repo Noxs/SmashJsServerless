@@ -1,4 +1,4 @@
-require('../smash.js');
+const smash = require('../smash.js');
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
