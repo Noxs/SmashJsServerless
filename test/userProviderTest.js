@@ -148,7 +148,7 @@ describe('UserProvider', function () {
         userProvider.handleRequest(request, response);
         assert.ok(end._spy.called);
 
-        userProvider.handleRequest(null, response);
+        userProvider.handleRequest(null, new Response(end));
         assert.ok(end._spy.called);
     });
 
@@ -208,7 +208,7 @@ describe('UserProvider', function () {
         assert.isOk(end._spy.notCalled);
 
         userProvider.handleRequest(request, response);
-        
+
         assert.isOk(link._spy.called);
         assert.isOk(end._spy.notCalled);
     });

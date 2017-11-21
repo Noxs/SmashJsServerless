@@ -32,6 +32,7 @@ class Smash extends Console {
             throw new Error("Middlewares must be object with a function called expose, " + this.typeof(module) + ' ' + this.typeof(module.expose) + ' given');
         }
         const expose = module.expose();
+        const that = this;
         for (let i = 0, length = expose.length; i < length; i++) {
             if (this[expose[i].functionName]) {
                 this.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
@@ -39,6 +40,7 @@ class Smash extends Console {
             }
             this[expose[i].functionName] = function () {
                 module[expose[i].function].apply(module, arguments);
+                return that;
             };
             this._magics.push(expose[i].functionName);
         }

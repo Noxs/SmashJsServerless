@@ -91,7 +91,7 @@ describe('Smash', function () {
         assert.isFunction(smash.console);
     });
 
-    it('Test smash handle event cloud watch event', function () {
+    it('Test smash handle event cloud watch event success', function () {
         smash.boot();
         const event = cloudWatchEvent.good;
         const context = {functionVersion: "prod"};
@@ -103,8 +103,8 @@ describe('Smash', function () {
         smash.handleEvent(event, context, callback);
         assert.ok(spy.called);
     });
-    
-    it('Test smash handle event cloud watch event', function () {
+
+    it('Test smash handle event cloud watch event not found', function () {
         smash.boot();
         const event = cloudWatchEvent.bad;
         const context = {functionVersion: "prod"};
@@ -117,15 +117,66 @@ describe('Smash', function () {
         assert.ok(spy.called);
     });
 
-    it('Test smash handle event api gateway proxy event', function () {
+    it('Test smash handle event api gateway proxy event success', function () {
         smash.boot();
         const event = apiGatewayProxyRequest.goodWithoutUser;
         const context = {functionVersion: "prod"};
         const spy = sinon.spy();
-        const callback = function () {
+        const callback = function (error, data) {
+            assert.isNull(error);
+            assert.isObject(data);
+            assert.deepEqual({
+                statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'},
+                body: '{"data":{"foo":"bar"}}'
+            }, data);
             spy.call();
         };
         smash.handleEvent(event, context, callback);
         assert.ok(spy.called);
+    });
+
+    it('Test smash handle event api gateway proxy event not found', function () {
+        smash.boot();
+        const event = apiGatewayProxyRequest.goodNotFound;
+        const context = {functionVersion: "prod"};
+        const spy = sinon.spy();
+        const callback = function (error, data) {
+            assert.isNull(error);
+            assert.isObject(data);
+            assert.deepEqual({
+                statusCode: 404,
+                headers: {
+                    'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'},
+                body: '{"reason":"Not found"}'
+            }, data);
+            spy.call();
+        };
+        smash.handleEvent(event, context, callback);
+        assert.ok(spy.called);
+    });
+
+    it('Test smash handle event api gateway proxy event incorrect', function () {
+        smash.boot();
+        const event = apiGatewayProxyRequest.bad;
+        const context = {functionVersion: "prod"};
+        const callback = function (error, data) {
+            assert.isNull(error);
+            assert.isObject(data);
+            assert.deepEqual({
+                statusCode: 500,
+                headers: {
+                    'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'},
+                body: ''},
+                    data);
+        };
+        smash.handleEvent(event, context, callback);
     });
 });
