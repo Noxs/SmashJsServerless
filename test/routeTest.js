@@ -216,7 +216,7 @@ describe('Route', function () {
     });
 
     it('Test route match', function () {
-        const request1 = new Request(apiGatewayProxyRequest);
+        const request1 = new Request(apiGatewayProxyRequest.good);
         request1.method = "GET";
         request1.version = "01-01-2000";
         request1.path = "/customid";
@@ -224,7 +224,7 @@ describe('Route', function () {
         });
         assert.isTrue(route1.match(request1));
 
-        const request2 = new Request(apiGatewayProxyRequest);
+        const request2 = new Request(apiGatewayProxyRequest.good);
         request2.method = "GET";
         request2.version = "01-01-2000";
         request2.path = "/customid/anotherid";
@@ -232,7 +232,7 @@ describe('Route', function () {
         });
         assert.isTrue(route2.match(request2));
 
-        const request3 = new Request(apiGatewayProxyRequest);
+        const request3 = new Request(apiGatewayProxyRequest.good);
         request3.method = "GET";
         request3.version = "01-01-2000";
         request3.path = "/foo/customid/bar/anotherid";
@@ -242,7 +242,7 @@ describe('Route', function () {
     });
 
     it('Test route match parameters build', function () {
-        const request1 = new Request(apiGatewayProxyRequest);
+        const request1 = new Request(apiGatewayProxyRequest.good);
         request1.method = "GET";
         request1.version = "01-01-2000";
         request1.path = "/customid";
@@ -251,7 +251,7 @@ describe('Route', function () {
         route1.match(request1);
         assert.equal(route1.parameters['foo'], "customid");
 
-        const request2 = new Request(apiGatewayProxyRequest);
+        const request2 = new Request(apiGatewayProxyRequest.good);
         request2.method = "GET";
         request2.version = "01-01-2000";
         request2.path = "/customid/anotherid";
@@ -261,7 +261,7 @@ describe('Route', function () {
         assert.equal(route2.parameters['foo'], "customid");
         assert.equal(route2.parameters['bar'], "anotherid");
 
-        const request3 = new Request(apiGatewayProxyRequest);
+        const request3 = new Request(apiGatewayProxyRequest.good);
         request3.method = "GET";
         request3.version = "01-01-2000";
         request3.path = "/foo/customid/bar/anotherid";
@@ -273,7 +273,7 @@ describe('Route', function () {
     });
 
     it('Test route match no parameters build', function () {
-        const request = new Request(apiGatewayProxyRequest);
+        const request = new Request(apiGatewayProxyRequest.good);
         request.method = "GET";
         request.version = "01-01-2000";
         request.path = "/foo";
@@ -285,7 +285,7 @@ describe('Route', function () {
     });
 
     it('Test route not match', function () {
-        const request1 = new Request(apiGatewayProxyRequest);
+        const request1 = new Request(apiGatewayProxyRequest.good);
         request1.method = "GET";
         request1.version = "01-01-2000";
         request1.path = "/customid";
@@ -293,7 +293,7 @@ describe('Route', function () {
         });
         assert.isFalse(route1.match(request1));
 
-        const request2 = new Request(apiGatewayProxyRequest);
+        const request2 = new Request(apiGatewayProxyRequest.good);
         request2.method = "GET";
         request2.version = "01-01-2000";
         request2.path = "/customid/anotherid";
@@ -301,7 +301,7 @@ describe('Route', function () {
         });
         assert.isFalse(route2.match(request2));
 
-        const request3 = new Request(apiGatewayProxyRequest);
+        const request3 = new Request(apiGatewayProxyRequest.good);
         request3.method = "GET";
         request3.version = "02-01-2000";
         request3.path = "/foo/customid/bar/anotherid";

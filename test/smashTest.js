@@ -93,10 +93,24 @@ describe('Smash', function () {
 
     it('Test smash handle event cloud watch event', function () {
         smash.boot();
-        const event = cloudWatchEvent;
+        const event = cloudWatchEvent.good;
         const context = {functionVersion: "prod"};
         const spy = sinon.spy();
-        const callback = function () {
+        const callback = function (error, data) {
+            assert.isNull(error);
+            spy.call();
+        };
+        smash.handleEvent(event, context, callback);
+        assert.ok(spy.called);
+    });
+    
+    it('Test smash handle event cloud watch event', function () {
+        smash.boot();
+        const event = cloudWatchEvent.bad;
+        const context = {functionVersion: "prod"};
+        const spy = sinon.spy();
+        const callback = function (error, data) {
+            assert.isNotNull(error);
             spy.call();
         };
         smash.handleEvent(event, context, callback);
@@ -105,7 +119,7 @@ describe('Smash', function () {
 
     it('Test smash handle event api gateway proxy event', function () {
         smash.boot();
-        const event = apiGatewayProxyRequest;
+        const event = apiGatewayProxyRequest.goodWithoutUser;
         const context = {functionVersion: "prod"};
         const spy = sinon.spy();
         const callback = function () {

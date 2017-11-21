@@ -88,7 +88,7 @@ describe('Next', function () {
 
     it('Test bad next function', function () {
         const test = new Test();
-        const request = new Request(apiGatewayProxyRequest);
+        const request = new Request(apiGatewayProxyRequest.good);
         const goodLink = new GoodLink();
 
         expect(function () {
@@ -120,7 +120,7 @@ describe('Next', function () {
     it('Test next function', function () {
         const test = new Test();
         const spy = sinon.spy();
-        const request = new Request(apiGatewayProxyRequest);
+        const request = new Request(apiGatewayProxyRequest.good);
         const goodEnd = new GoodEnd();
         const response = new Response(goodEnd);
         const goodLink = new GoodLink();
