@@ -1,140 +1,318 @@
-var chai = require('chai');
-var assert = chai.assert;
-var expect = chai.expect;
-var should = chai.should();
-var sinon = require('sinon');
-var userProvider = require('../core/userProvider.js').build();
-var smash = require('../smash.js');
-var dynamodbTypes = {
-    wrap: sinon.spy(),
-    unwrap: function () {
+const chai = require('chai');
+const assert = chai.assert;
+const expect = chai.expect;
+const should = chai.should();
+const sinon = require('sinon');
+const UserProvider = require('../lib/core/userProvider.js');
+const Request = require('../lib/core/request.js');
+const Response = require('../lib/core/response.js');
+const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
+
+class User {
+
+}
+
+class EmptyRepository {
+
+}
+
+class BadFunctionRepository {
+    loadUser() {
         return {
-            "username": "test@test.com",
-            "roles": ["ROLE_USER"]
-        }
-    }
-};
-var dynamodbSuccess = {
-    query: function (params, callback) {
-        var err = null;
-        var result = {
-            Items: [{
-                    "username": "test@test.com",
-                    "roles": ["ROLE_USER"]
-                }]
+            then() {
+
+            }
         };
-        callback(err, result);
     }
-};
-var dynamodbNotFound = {
-    query: function (params, callback) {
-        var err = null;
-        var result = {
-            Items: []
+}
+
+class Repository {
+    loadUser(username) {
+        return {
+            then() {
+
+            }
         };
-        callback(err, result);
     }
-};
-var dynamodbFailed = {
-    query: function (params, callback) {
-        var err = new Error;
-        var result = {};
-        callback(err, result);
+}
+
+class RepositorySuccess {
+    loadUser(username) {
+        return {
+            then(success, failure) {
+                success(new User());
+            }
+        };
     }
-};
-var conf = {
-    "dynamodb_table": "test_table",
-    "region": "eu-west-1",
-    "primary": "username"
-};
-var request = {
-    user: null
-};
-function createResponse() {
-    return {
-        internalServerError: sinon.spy(),
-        forbidden: sinon.spy()
-    };
 }
-function createNext() {
-    return sinon.spy();
+
+class RepositoryNotFound {
+    loadUser(username) {
+        return {
+            then(success, failure) {
+                success(null);
+            }
+        };
+    }
 }
-function createFail() {
-    return sinon.spy();
+
+class RepositoryFailure {
+    loadUser(username) {
+        return {
+            then(success, failure) {
+                failure(new Error());
+            }
+        };
+    }
 }
-function createLogger() {
-    return {
-        error: sinon.spy()
-    };
+
+class Link {
+    constructor() {
+        this._spy = sinon.spy();
+    }
+    handleRequest(request, response) {
+        this._spy.call();
+    }
 }
+
+class End {
+    constructor() {
+        this._spy = sinon.spy();
+    }
+    handleResponse(response) {
+        this._spy.call();
+    }
+}
+
+
 describe('UserProvider', function () {
-    it('Test userProvider instance', function () {
+    it('Test instance', function () {
+        const userProvider = new UserProvider();
         assert.isObject(userProvider);
     });
-    it('Test conf keyword', function () {
-        assert.equal(userProvider.getConfKeyword(), "user_provider");
+
+    it('Test bad repository', function () {
+        const userProvider = new UserProvider();
+        const badRepository = "repository";
+
+        expect(function () {
+            userProvider.attachRepository(badRepository);
+        }).to.throw(Error);
     });
-    it('Test set next', function () {
-        expect(() => userProvider.setNext(createNext())).to.not.throw();
+
+    it('Test empty repository', function () {
+        const userProvider = new UserProvider();
+        const emptyRepository = new EmptyRepository();
+
+        expect(function () {
+            userProvider.attachRepository(emptyRepository);
+        }).to.throw(Error);
     });
-    it('Test apply config', function () {
-        assert.isFunction(userProvider.applyConfig);
-        expect(() => userProvider.applyConfig(conf)).to.not.throw();
+
+    it('Test bad function repository', function () {
+        const userProvider = new UserProvider();
+        const badFunctionRepository = new BadFunctionRepository();
+
+        expect(function () {
+            userProvider.attachRepository(badFunctionRepository);
+        }).to.throw(Error);
     });
-    it('Test handle request', function () {
-        var logger = createLogger();
-        smash.boot({}, false);
-        smash.registerLogger(logger);
-        userProvider.setDynamodbTypes(dynamodbTypes);
-        var next = createNext();
-        var fail = createFail();
-        var response = createResponse();
-        userProvider.setDynamodb(dynamodbFailed);
-        userProvider.setNext(next, fail);
-        userProvider.handleRequest(request, response);
-        assert.isOk(next.called);
-        assert.isOk(response.internalServerError.notCalled);
-        assert.isOk(response.forbidden.notCalled);
-        assert.isOk(fail.notCalled);
 
-        next = createNext();
-        fail = createFail();
-        response = createResponse();
+    it('Test bad function repository', function () {
+        const userProvider = new UserProvider();
+        const repository = new Repository();
+
+        expect(function () {
+            userProvider.attachRepository(repository);
+        }).to.not.throw(Error);
+
+        assert.equal(userProvider._repository, repository);
+    });
+
+    it('Test handle request without repository', function () {
+        const userProvider = new UserProvider();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const end = new End();
+        const response = new Response(end);
+
+        expect(function () {
+            userProvider.handleRequest();
+        }).to.throw(Error);
+        assert.ok(end._spy.notCalled);
+
+        expect(function () {
+            userProvider.handleRequest(request);
+        }).to.throw(Error);
+        assert.ok(end._spy.notCalled);
+
+        userProvider.handleRequest(request, response);
+        assert.ok(end._spy.called);
+
+        userProvider.handleRequest(null, new Response(end));
+        assert.ok(end._spy.called);
+    });
+
+    it('Test handle request without good parameters', function () {
+        const userProvider = new UserProvider();
+        const repository = new Repository();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const end = new End();
+        const response = new Response(end);
+
+        userProvider.attachRepository(repository);
+
+        expect(function () {
+            userProvider.handleRequest();
+        }).to.throw(Error);
+
+        expect(function () {
+            userProvider.handleRequest(request);
+        }).to.throw(Error);
+
+        userProvider.handleRequest(null, response);
+        assert.ok(end._spy.called);
+    });
+
+    it('Test userProvider handle request without repository', function () {
+        const userProvider = new UserProvider();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
         request.user = {};
-        request.user.username = "test@test.com";
-        userProvider.setDynamodb(dynamodbFailed);
-        userProvider.setNext(next, fail);
+
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
         userProvider.handleRequest(request, response);
-        assert.isOk(next.notCalled);
-        assert.isOk(response.internalServerError.called);
-        assert.isOk(response.forbidden.notCalled);
-        assert.isOk(fail.called);
 
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
+    });
 
-        next = createNext();
-        fail = createFail();
-        response = createResponse();
+    it('Test userProvider handle request without user', function () {
+        const userProvider = new UserProvider();
+        const repository = new Repository();
+        const request = new Request(apiGatewayProxyRequest.goodWithoutUser);
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
+
+        userProvider.attachRepository(repository);
+
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
+        userProvider.handleRequest(request, response);
+
+        assert.isOk(link._spy.called);
+        assert.isOk(end._spy.notCalled);
+    });
+
+    it('Test userProvider handle request with bad user object', function () {
+        const userProvider = new UserProvider();
+        const repositorySuccess = new RepositorySuccess();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
         request.user = {};
-        request.user.username = "test@test.com";
-        userProvider.setDynamodb(dynamodbNotFound);
-        userProvider.setNext(next, fail);
-        userProvider.handleRequest(request, response);
-        assert.isOk(next.notCalled);
-        assert.isOk(response.internalServerError.notCalled);
-        assert.isOk(response.forbidden.called);
-        assert.isOk(fail.called);
+        userProvider.attachRepository(repositorySuccess);
 
-        next = createNext();
-        fail = createFail();
-        response = createResponse();
-        request.user = {};
-        request.user.username = "test@test.com";
-        userProvider.setDynamodb(dynamodbSuccess);
-        userProvider.setNext(next, fail);
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
         userProvider.handleRequest(request, response);
-        assert.isOk(next.called);
-        assert.isOk(response.internalServerError.notCalled);
-        assert.isOk(response.forbidden.notCalled);
-        assert.isOk(fail.notCalled);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
+    });
+
+    it('Test userProvider handle request with user not found', function () {
+        const userProvider = new UserProvider();
+        const repositoryNotFound = new RepositoryNotFound();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
+        request.user = {username: "test"};
+        userProvider.attachRepository(repositoryNotFound);
+
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
+        userProvider.handleRequest(request, response);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
+    });
+
+    it('Test userProvider handle request with no repository', function () {
+        const userProvider = new UserProvider();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
+        request.user = {username: "test"};
+
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
+        userProvider.handleRequest(request, response);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
+    });
+
+    it('Test userProvider handle request with repository failure', function () {
+        const userProvider = new UserProvider();
+        const repositoryFailure = new RepositoryFailure();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
+        request.user = {username: "test"};
+        userProvider.attachRepository(repositoryFailure);
+
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
+        userProvider.handleRequest(request, response);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.called);
+    });
+
+    it('Test userProvider handle request with repository success', function () {
+        const userProvider = new UserProvider();
+        const repositorySuccess = new RepositorySuccess();
+        const request = new Request(apiGatewayProxyRequest.good);
+        const link = new Link();
+        const end = new End();
+        const response = new Response(end);
+        request.user = {username: "test"};
+        userProvider.attachRepository(repositorySuccess);
+
+        userProvider.setNext(link);
+
+        assert.isOk(link._spy.notCalled);
+        assert.isOk(end._spy.notCalled);
+
+        userProvider.handleRequest(request, response);
+
+        assert.isOk(link._spy.called);
+        assert.isOk(end._spy.notCalled);
     });
 });

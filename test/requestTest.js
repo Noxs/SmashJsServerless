@@ -1,15 +1,11 @@
-var chai = require('chai');
-var assert = chai.assert;
-var expect = chai.expect;
-var should = chai.should();
-var requestFactory = require('../core/request.js');
+const chai = require('chai');
+const assert = chai.assert;
+const expect = chai.expect;
+const should = chai.should();
+const Request = require('../lib/core/request.js');
+
 describe('Request', function () {
     it('Test request instance', function () {
-        assert.isObject(requestFactory);
-        assert.isFunction(requestFactory.createRequest);
-        var request = requestFactory.createRequest();
-        assert.isObject(request);
+        //TODO
     });
-    //TODO
-    //correct testing
 });
