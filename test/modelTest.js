@@ -28,6 +28,9 @@ class TestBadReturn extends Model {
     updateExclusion() {
         return "";
     }
+    required() {
+        return "";
+    }
 }
 
 class Test extends Model {
@@ -35,6 +38,9 @@ class Test extends Model {
         return ["id", "secret"];
     }
     updateExclusion() {
+        return ["id", "time"];
+    }
+    required() {
         return ["id", "time"];
     }
 }
@@ -171,6 +177,44 @@ describe('Model', function () {
         assert.equal(updatedObject.id, undefined);
         assert.equal(updatedObject.secret, undefined);
 
+    });
+
+    it('Test hasRequired function', function () {
+        const test = new Test();
+        assert.isFunction(test.required);
+        assert.isFunction(test.hasRequired);
+
+        const testEmpty = new TestEmpty();
+        const testCleanEmpty = new TestCleanEmpty();
+        const testBadReturn = new TestBadReturn();
+
+        expect(function () {
+            testEmpty.hasRequired({});
+        }).to.throw(Error);
+
+        expect(function () {
+            testCleanEmpty.hasRequired({});
+        }).to.throw(Error);
+
+        expect(function () {
+            testBadReturn.hasRequired({});
+        }).to.throw(Error);
+
+        expect(function () {
+            testBadReturn.hasRequired({});
+        }).to.throw(Error);
+
+        expect(function () {
+            testBadReturn.hasRequired([]);
+        }).to.throw(Error);
+
+        expect(function () {
+            testBadReturn.hasRequired({});
+        }).to.throw(Error);
+
+        expect(function () {
+            test.hasRequired({});
+        }).to.not.throw();
     });
 
 });
