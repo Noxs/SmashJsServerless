@@ -83,12 +83,12 @@ describe('Smash', function () {
 
     it('Test smash model', function () {
         smash.boot();
-        assert.isFunction(smash.model);
+        assert.isFunction(smash.Model);
     });
 
     it('Test smash console', function () {
         smash.boot();
-        assert.isFunction(smash.console);
+        assert.isFunction(smash.Console);
     });
 
     it('Test smash handle event cloud watch event success', function () {
