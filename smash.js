@@ -143,11 +143,11 @@ class Smash extends Console {
     }
 
     get model() {
-        return require(path.resolve(path.join(process.cwd(), "lib/util/model.js")));
+        return require(path.resolve(path.join(__dirname, "lib/util/model.js")));
     }
 
     get console() {
-        return require(path.resolve(path.join(process.cwd(), "lib/util/console.js")));
+        return require(path.resolve(path.join(__dirname, "lib/util/console.js")));
     }
 
 }
