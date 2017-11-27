@@ -151,9 +151,8 @@ class Smash extends Console {
     }
 
     set Console(console) {
-        
-    }
 
+    }
 }
 
 if (!global.smash) {
