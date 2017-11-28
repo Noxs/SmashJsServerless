@@ -4,7 +4,8 @@ const Console = require("./lib/util/console.js");
 const Config = require("./lib/core/config.js");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
-const MIDDLEWARE_PATH = "lib/middleware";
+const FILE_EXT_JS = "*.js";
+const MIDDLEWARE_PATH = "lib/middleware/*";
 const HANDLER_PATH = "controller";
 const DATABASE_PATH = "database";
 const UTIL_PATH = "util";
@@ -50,7 +51,7 @@ class Smash extends Console {
     _registerMiddlewares() {
         this._clearExpose();
         this._middlewares = [];
-        const files = glob.sync(path.resolve(path.join(__dirname, MIDDLEWARE_PATH, DEEP_EXT_JS)));
+        const files = glob.sync(path.join(__dirname, MIDDLEWARE_PATH, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
             const Module = require(path.resolve(files[i]));
             const module = new Module();
