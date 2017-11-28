@@ -96,7 +96,7 @@ describe('ApiGatewayProxy', function () {
         const apiGatewayProxy = new ApiGatewayProxy();
 
         const terminate = sinon.spy();
-        apiGatewayProxy.handleEvent(lambdaEventSuccess, terminate);
+        apiGatewayProxy.handleEvent(lambdaEventSuccess, {}, terminate);
 
     });
 
@@ -108,7 +108,7 @@ describe('ApiGatewayProxy', function () {
         }).to.throw(Error);
 
         const terminate = sinon.spy();
-        apiGatewayProxy.handleEvent("", terminate);
+        apiGatewayProxy.handleEvent("", {}, terminate);
 
         assert.isOk(terminate.called);
     });

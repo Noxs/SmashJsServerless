@@ -103,7 +103,7 @@ class Smash extends Console {
             this._buildEnv(context);
             for (let i = 0, length = this._middlewares.length; i < length; i++) {
                 if (this._middlewares[i].isEvent(event)) {
-                    this._middlewares[i].handleEvent(event, callback);
+                    this._middlewares[i].handleEvent(event, context, callback);
                     return this;
                 }
             }
