@@ -75,7 +75,12 @@ class Smash extends Console {
         this._handlers = [];
         const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
-            this._handlers.push(require(path.resolve(files[i])));
+            try {
+                this._handlers.push(require(path.resolve(files[i])));
+            } catch (error) {
+                this.error("Failed to register handler " + files[i], error);
+                throw new Error("Failed to boot smash");
+            }
         }
         this.info("Handler loaded: " + files.length);
         return this;
