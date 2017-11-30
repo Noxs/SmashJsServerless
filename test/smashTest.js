@@ -38,7 +38,7 @@ describe('Smash', function () {
     it('Test smash env', function () {
         smash.boot();
         expect(function () {
-            smash._buildEnv({functionVersion: "prod"});
+            smash._buildEnv({ invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' });
         }).to.not.throw(Error);
         assert.equal(smash.getEnv("ENV"), "prod");
     });
@@ -94,7 +94,7 @@ describe('Smash', function () {
     it('Test smash handle event cloud watch event success', function () {
         smash.boot();
         const event = cloudWatchEvent.good;
-        const context = {functionVersion: "prod"};
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const spy = sinon.spy();
         const callback = function (error, data) {
             assert.isNull(error);
@@ -107,7 +107,7 @@ describe('Smash', function () {
     it('Test smash handle event cloud watch event not found', function () {
         smash.boot();
         const event = cloudWatchEvent.bad;
-        const context = {functionVersion: "prod"};
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const spy = sinon.spy();
         const callback = function (error, data) {
             assert.isNotNull(error);
@@ -120,7 +120,7 @@ describe('Smash', function () {
     it('Test smash handle event api gateway proxy event success', function () {
         smash.boot();
         const event = apiGatewayProxyRequest.goodWithoutUser;
-        const context = {functionVersion: "prod"};
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const spy = sinon.spy();
         const callback = function (error, data) {
             assert.isNull(error);
@@ -130,7 +130,8 @@ describe('Smash', function () {
                 headers: {
                     'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'},
+                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
+                },
                 body: '{"data":{"foo":"bar"}}'
             }, data);
             spy.call();
@@ -142,7 +143,7 @@ describe('Smash', function () {
     it('Test smash handle event api gateway proxy event not found', function () {
         smash.boot();
         const event = apiGatewayProxyRequest.goodNotFound;
-        const context = {functionVersion: "prod"};
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const spy = sinon.spy();
         const callback = function (error, data) {
             assert.isNull(error);
@@ -152,7 +153,8 @@ describe('Smash', function () {
                 headers: {
                     'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'},
+                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
+                },
                 body: '{"reason":"Not found"}'
             }, data);
             spy.call();
@@ -164,7 +166,7 @@ describe('Smash', function () {
     it('Test smash handle event api gateway proxy event incorrect', function () {
         smash.boot();
         const event = apiGatewayProxyRequest.bad;
-        const context = {functionVersion: "prod"};
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = function (error, data) {
             assert.isNull(error);
             assert.isObject(data);
@@ -173,9 +175,11 @@ describe('Smash', function () {
                 headers: {
                     'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'},
-                body: ''},
-                    data);
+                    'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
+                },
+                body: ''
+            },
+                data);
         };
         smash.handleEvent(event, context, callback);
     });
