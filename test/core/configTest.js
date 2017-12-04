@@ -7,33 +7,40 @@ const fs = require('fs');
 const path = require('path');
 
 const configTest = {
-    "authorization": {
-        "roles": {
-            "ROLE_USER": {
-            },
-            "ROLE_ADMIN": {
-                "childrens": [
-                    "ROLE_USER"
-                ]
-            },
-            "ROLE_SUPER_ADMIN": {
-                "childrens": [
-                    "ROLE_ADMIN"
-                ]
+    "apiGatewayProxy": {
+        "authorization": {
+            "roles": {
+                "ROLE_USER": {},
+                "ROLE_ADMIN": {
+                    "childrens": [
+                        "ROLE_USER"
+                    ]
+                },
+                "ROLE_SUPER_ADMIN": {
+                    "childrens": [
+                        "ROLE_ADMIN"
+                    ]
+                }
+            }
+        },
+        "user_repository": {
+            "file": "./database/testUser.js"
+        },
+        "response": {
+            "headers": {
+                "default": {
+                    "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT"
+                }
             }
         }
     },
-    "user_repository": {
-        "file": "./database/testUser.js"
+    "codePipelineJobEvent": {
+        "ENV": "prod"
     },
-    "response": {
-        "headers": {
-            "default": {
-                "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT"
-            }
-        }
+    "cloudWatchEvent": {
+
     }
 };
 
@@ -58,8 +65,8 @@ describe('Config', function () {
     it('Test config value access', function () {
         const config = new Config();
         assert.deepEqual(config.get(), configTest);
-        assert.deepEqual(config.get("response"), configTest.response);
-        assert.deepEqual(config.get("response.headers"), configTest.response.headers);
-        assert.deepEqual(config.get("response.notexist"), undefined);
+        assert.deepEqual(config.get("apiGatewayProxy.response"), configTest.apiGatewayProxy.response);
+        assert.deepEqual(config.get("apiGatewayProxy.response.headers"), configTest.apiGatewayProxy.response.headers);
+        assert.deepEqual(config.get("apiGatewayProxy.response.notexist"), undefined);
     });
 });
