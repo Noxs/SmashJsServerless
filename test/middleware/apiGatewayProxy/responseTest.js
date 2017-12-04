@@ -32,6 +32,17 @@ describe('Response', function () {
             response.handleError(new Error());
         }).to.not.throw(Error);
     });
+
+    it('Test response handleError with error code', function () {
+        const apiGatewayProxy = new ApiGatewayProxy();
+        apiGatewayProxy._callback = function () { };
+        const response = new Response(apiGatewayProxy);
+        expect(function () {
+            const error = new Error("FOOBAR");
+            error.statusCode = 500;
+            response.handleError(error);
+        }).to.not.throw(Error);
+    });
 });
 
 
