@@ -132,16 +132,26 @@ class Smash extends Console {
 
     util(module) {
         if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module) + "given");
+            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module));
         }
-        return require(path.resolve(path.join(process.cwd(), UTIL_PATH, module + EXT_JS)));
+        try {
+            return require(path.resolve(path.join(process.cwd(), UTIL_PATH, module + EXT_JS)));
+        } catch (error) {
+            this.error("Failed to load module " + module, error, error.stack);
+            throw error;
+        }
     }
 
     database(module) {
         if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module) + "given");
+            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module));
         }
-        return require(path.resolve(path.join(process.cwd(), DATABASE_PATH, module + EXT_JS)));
+        try {
+            return require(path.resolve(path.join(process.cwd(), DATABASE_PATH, module + EXT_JS)));
+        } catch (error) {
+            this.error("Failed to load module " + module, error, error.stack);
+            throw error;
+        }
     }
 
     get config() {
