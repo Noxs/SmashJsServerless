@@ -69,4 +69,18 @@ describe('Config', function () {
         assert.deepEqual(config.get("apiGatewayProxy.response.headers"), configTest.apiGatewayProxy.response.headers);
         assert.deepEqual(config.get("apiGatewayProxy.response.notexist"), undefined);
     });
+
+    it('Test config by string failure', function () {
+        const config = new Config();
+        expect(function () {
+            config._byString(1);
+        }).to.throw(Error);
+    });
+
+    it('Test config get bad argument', function () {
+        const config = new Config();
+        expect(function () {
+            config.get(1);
+        }).to.throw(Error);
+    });
 });
