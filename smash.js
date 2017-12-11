@@ -29,8 +29,8 @@ class Smash extends Console {
 
     _processExpose(module) {
         if (typeof module !== 'object' || typeof module.expose !== 'function') {
-            this.error("Middlewares must be object with a function called expose, " + this.typeof(module) + ' ' + this.typeof(module.expose) + ' given');
-            throw new Error("Middlewares must be object with a function called expose, " + this.typeof(module) + ' ' + this.typeof(module.expose) + ' given');
+            this.error("Middlewares must be object with a function called expose, " + this.typeOf(module) + ' ' + this.typeOf(module.expose));
+            throw new Error("Middlewares must be object with a function called expose, " + this.typeOf(module) + ' ' + this.typeOf(module.expose));
         }
         const expose = module.expose();
         const that = this;
