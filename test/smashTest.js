@@ -10,6 +10,14 @@ const Console = require('../lib/util/console.js');
 const cloudWatchEvent = require('./util/cloudWatchEvent.js');
 const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
 
+const badModule = "badModule";
+
+const overwriteModule = {
+    expose: function () {
+        return ["foobar", "foorbar"];
+    }
+};
+
 describe('Smash', function () {
     it('Test smash boot', function () {
         expect(function () {
@@ -35,12 +43,36 @@ describe('Smash', function () {
         assert.lengthOf(smash._handlers, 3);
     });
 
+    it('Test smash process expose bad module', function () {
+        expect(function () {
+            smash._processExpose(badModule);
+        }).to.throw(Error);
+
+        expect(function () {
+            smash._processExpose();
+        }).to.throw(Error);
+    });
+
+    it('Test smash process expose overwrite module', function () {
+        expect(function () {
+            smash._processExpose(overwriteModule);
+        }).to.throw(Error);
+    });
+
+    it('Test smash process expose overwrite module', function () {
+        smash._middlewares = null;
+        expect(function () {
+            smash.handleEvent({});
+        }).to.throw(Error);
+    });
+
     it('Test smash env', function () {
         smash.boot();
         expect(function () {
             smash._buildEnv({ invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' });
         }).to.not.throw(Error);
         assert.equal(smash.getEnv("ENV"), "prod");
+        assert.isObject(smash.env);
     });
 
     it('Test smash util success', function () {
@@ -51,11 +83,19 @@ describe('Smash', function () {
         }).to.not.throw(Error);
     });
 
-    it('Test smash util failure', function () {
+    it('Test smash util not found', function () {
         smash.boot();
 
         expect(function () {
             smash.util("test");
+        }).to.throw(Error);
+    });
+
+    it('Test smash util invalid', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.util(1);
         }).to.throw(Error);
     });
 
@@ -67,11 +107,19 @@ describe('Smash', function () {
         }).to.not.throw(Error);
     });
 
-    it('Test smash database failure', function () {
+    it('Test smash database not found', function () {
         smash.boot();
 
         expect(function () {
             smash.database("test");
+        }).to.throw(Error);
+    });
+
+    it('Test smash database invalid', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.database(1);
         }).to.throw(Error);
     });
 
@@ -180,6 +228,17 @@ describe('Smash', function () {
                 body: ''
             },
                 data);
+        };
+        smash.handleEvent(event, context, callback);
+    });
+
+    it('Test smash handle event api gateway proxy event incorrect', function () {
+        smash.boot();
+        const event = apiGatewayProxyRequest.badbad;
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
+        const callback = function (error, data) {
+            assert.isUndefined(data);
+            assert.deepEqual(error.message, "No middleware found to process event");
         };
         smash.handleEvent(event, context, callback);
     });
