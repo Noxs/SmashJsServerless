@@ -17,7 +17,7 @@ class EmptyRepository {
 }
 
 class BadFunctionRepository {
-    loadUser() {
+    getUser() {
         return {
             then() {
 
@@ -27,7 +27,7 @@ class BadFunctionRepository {
 }
 
 class Repository {
-    loadUser(username) {
+    getUser(username) {
         return {
             then() {
 
@@ -37,7 +37,7 @@ class Repository {
 }
 
 class RepositorySuccess {
-    loadUser(username) {
+    getUser(username) {
         return {
             then(success, failure) {
                 success(new User());
@@ -47,7 +47,7 @@ class RepositorySuccess {
 }
 
 class RepositoryNotFound {
-    loadUser(username) {
+    getUser(username) {
         return {
             then(success, failure) {
                 success(null);
@@ -57,7 +57,7 @@ class RepositoryNotFound {
 }
 
 class RepositoryFailure {
-    loadUser(username) {
+    getUser(username) {
         return {
             then(success, failure) {
                 failure(new Error());
