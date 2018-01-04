@@ -3,7 +3,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Event = require('../../../lib/middleware/codePipelineJobEvent/lib/event.js');
+const Event = require('../../../lib/middleware/apiGatewayAuthorizerEvent/lib/event.js');
 
 describe('Event', function () {
     it('Test event instance failure', function () {
@@ -76,3 +76,4 @@ describe('Event', function () {
         assert.isTrue(spy.called);
     });
 });
+
