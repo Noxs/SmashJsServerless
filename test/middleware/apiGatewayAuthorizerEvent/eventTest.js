@@ -34,7 +34,7 @@ describe('Event', function () {
         }).to.not.throw(Error);
     });
 
-    it('Test event success', function () {
+    it('Test event internal server error', function () {
         const rawEvent = {};
         const context = {};
         const spy = sinon.spy();
@@ -44,11 +44,11 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.success();
+        event.internalServerError();
         assert.isTrue(spy.called);
     });
 
-    it('Test event failure', function () {
+    it('Test event unauthorized', function () {
         const rawEvent = {};
         const context = {};
         const spy = sinon.spy();
@@ -58,7 +58,49 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.failure(new Error("Foobar"));
+        event.unauthorized();
+        assert.isTrue(spy.called);
+    });
+
+    it('Test event invalidToken', function () {
+        const rawEvent = {};
+        const context = {};
+        const spy = sinon.spy();
+        const terminate = {
+            terminate: (error, data) => {
+                spy();
+            }
+        };
+        const event = new Event(rawEvent, context, terminate);
+        event.invalidToken();
+        assert.isTrue(spy.called);
+    });
+
+    it('Test event allow', function () {
+        const rawEvent = {};
+        const context = {};
+        const spy = sinon.spy();
+        const terminate = {
+            terminate: (error, data) => {
+                spy();
+            }
+        };
+        const event = new Event(rawEvent, context, terminate);
+        event.allow();
+        assert.isTrue(spy.called);
+    });
+
+    it('Test event deny', function () {
+        const rawEvent = {};
+        const context = {};
+        const spy = sinon.spy();
+        const terminate = {
+            terminate: (error, data) => {
+                spy();
+            }
+        };
+        const event = new Event(rawEvent, context, terminate);
+        event.deny();
         assert.isTrue(spy.called);
     });
 
