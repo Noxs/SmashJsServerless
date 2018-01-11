@@ -1,271 +1,178 @@
-var glob = require("glob");
-var path = require('path');
-var responseFactory = require('./core/response.js');
-//TODO
-//core module can be explicitly replaced by custom module
-//add method call verification everywhere
-//for the moment, correct chained module is not needed
+const glob = require('glob');
+const path = require('path');
+const Console = require("./lib/util/console.js");
+const Config = require("./lib/core/config.js");
+const EXT_JS = ".js";
+const DEEP_EXT_JS = "**/*.js";
+const FILE_EXT_JS = "*.js";
+const MIDDLEWARE_PATH = "lib/middleware/*";
+const HANDLER_PATH = "controller";
+const DATABASE_PATH = "database";
+const UTIL_PATH = "util";
 
-//TODO
-//change everywhere for object 
-//currently returning that everywhere, and this is not good
+class Smash extends Console {
+    constructor() {
+        super();
+        this._config = new Config();
+        this._middlewares = null;
+        this._magics = [];
+        this._handlers = null;
+    }
 
-//TODO 
-//add core module that can add headers from endpoint definition
+    _clearExpose() {
+        for (let i = 0, length = this._magics.length; i < length; i++) {
+            delete this[this._magics[i]];
+        }
+        this._magics = [];
+        return this;
+    }
 
-//TODO
-//create abstraction for module
-function smash() {
-    var that = this;
-    const corePath = __dirname + "/core/*.js";
-    const middlewarePath = __dirname + "/middleware/*.js";
-    const defaultControllerPath = "/controller/*.js";
-    var logger = null;
-    var userProvider = null;
-    var router = null;
-    var authorization = null;
-    var config = null;
-    //TODO maybe env are not usefull
-    var envList = ["prod", "dev", "test"]; //useless?????
-    var env = null; //Not used
-    var debug = false;
-    var logEnable = false;
-    var rootPath = process.cwd();
-    var controllerPath = defaultControllerPath;
-    var requestMiddleware = null;
-    var responseMiddleware = null;
-    var loadCore = function () {
-        var files = glob.sync(corePath);
-        files.forEach(function (file) {
-            require(path.resolve(file));
-        });
-        if (logEnable) {
-            logger.log(files.length + " files loaded in the core directory.");
+    _processExpose(module) {
+        if (typeof module !== 'object' || typeof module.expose !== 'function') {
+            this.error("Middlewares must be object with a function called expose, " + this.typeOf(module) + ' ' + this.typeOf(module.expose));
+            throw new Error("Middlewares must be object with a function called expose, " + this.typeOf(module) + ' ' + this.typeOf(module.expose));
         }
-        return that;
-    };
-    var loadConfig = function () {
-        //TODO the problem here is this is not really DRY
-        //find a solution to apply push config in an array of core module
-        if (config) {
-            config.load(rootPath);
-            if (logger && typeof logger.getConfKeyword === 'function') {
-                pushConfig(logger, logger.getConfKeyword());
+        const expose = module.expose();
+        const that = this;
+        for (let i = 0, length = expose.length; i < length; i++) {
+            if (this[expose[i].functionName]) {
+                this.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
+                throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
             }
-            if (userProvider && typeof userProvider.getConfKeyword === 'function') {
-                pushConfig(userProvider, userProvider.getConfKeyword());
-            }
-            if (router && typeof router.getConfKeyword === 'function') {
-                pushConfig(router, router.getConfKeyword());
-            }
-            if (authorization && typeof authorization.getConfKeyword === 'function') {
-                pushConfig(authorization, authorization.getConfKeyword());
+            this[expose[i].functionName] = function () {
+                module[expose[i].function].apply(module, arguments);
+                return that;
+            };
+            this._magics.push(expose[i].functionName);
+        }
+        return this;
+    }
+
+    _registerMiddlewares() {
+        this._clearExpose();
+        this._middlewares = [];
+        const files = glob.sync(path.join(__dirname, MIDDLEWARE_PATH, FILE_EXT_JS));
+        for (let i = 0, length = files.length; i < length; i++) {
+            const Module = require(path.resolve(files[i]));
+            const module = new Module();
+            this._processExpose(module);
+            this._middlewares.push(module);
+            this.info("Register middleware: " + module.constructor.name);
+        }
+        return this;
+    }
+
+    _clearHandlers() {
+        const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH, DEEP_EXT_JS)));
+        for (let i = 0, length = files.length; i < length; i++) {
+            delete require.cache[require.resolve(path.resolve(files[i]))]
+        }
+        return this;
+    }
+
+    _registerHandlers() {
+        this._clearHandlers();
+        this._handlers = [];
+        const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH, DEEP_EXT_JS)));
+        for (let i = 0, length = files.length; i < length; i++) {
+            try {
+                this._handlers.push(require(path.resolve(files[i])));
+            } catch (error) {
+                this.error("Failed to register handler " + files[i], error);
+                throw new Error("Failed to boot smash");
             }
         }
-        //TODO
-        //note that request and response are not here,
-        //maybe they should be in another dir
-        //or maybe migrate this module in another dir called basic module or something else
-        return that;
-    };
-    var loadDefaultMiddleware = function () {
-        var files = glob.sync(middlewarePath);
-        if (logEnable) {
-            logger.log(files.length + " files loaded in the middleware directory.");
+        this.info("Handler loaded: " + files.length);
+        return this;
+    }
+
+    _buildEnv(context) {
+        delete this._env;
+        this._env = {};
+        Object.assign(this._env, process.env);
+        Object.assign(this._env, context);
+        this.setEnv("ENV", context.invokedFunctionArn.split(":").pop());
+        return this;
+    }
+
+    boot() {
+        this._registerMiddlewares();
+        this._registerHandlers();
+    }
+
+    handleEvent(event, context, callback) {
+        if (this._middlewares === null) {
+            this.error("Smash has not been booted, you must call boot() first", event);
+            callback(new Error("Smash has not been booted, you must call boot() first"));
+        } else {
+            this._buildEnv(context);
+            for (let i = 0, length = this._middlewares.length; i < length; i++) {
+                if (this._middlewares[i].isEvent(event)) {
+                    this._middlewares[i].handleEvent(event, context, callback);
+                    return this;
+                }
+            }
+            this.error("No middleware found to process event", event);
+            callback(new Error("No middleware found to process event"));
         }
-        files.forEach(function (file) {
-            require(path.resolve(file));
-        });
-        return that;
-    };
-    var pushConfig = function (service, keyword) {
-        service.applyConfig(config.get(keyword));
-        return that;
-    };
-    loadControllers = function () {
-        var files = glob.sync(rootPath + controllerPath);
-        if (logEnable) {
-            logger.log(files.length + " files loaded in the controllers directory.");
-        }
-        files.forEach(function (file) {
-            require(path.resolve(file));
-        });
-        return that;
-    };
-    var executeController = function (request, response) {
-        if (logEnable) {
-            logger.log("Execute controller.");
+        return this;
+    }
+
+    get env() {
+        return this._env;
+    }
+
+    getEnv(key) {
+        return this._env[key];
+    }
+
+    setEnv(key, value) {
+        this._env[key] = value;
+    }
+
+    util(module) {
+        if (typeof module !== 'string' || module.length === 0) {
+            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module));
         }
         try {
-            request.route.callback(request, response);
-        } catch (err) {
-            response.internalServerError("failed to process request");
-            if (logEnable) {
-                logger.log("Error when executing controller.");
-            }
+            return require(path.resolve(path.join(process.cwd(), UTIL_PATH, module + EXT_JS)));
+        } catch (error) {
+            this.error("Failed to load module " + module, error, error.stack);
+            throw error;
         }
-        if (responseMiddleware.handleResponse(response) === false) {
-            if (logEnable) {
-                logger.log("Middleware has not been able to process the response.");
-            }
-            //TODO
-            //this is useless lol
-            response.badRequest("bad request");
-        }
-        return that;
-    };
-    that.registerLogger = function (extLogger) {
-        logger = extLogger;
-        if (debug) {
-            logEnable = true;
-        }
-        if (logEnable) {
-            logger.log("Register logger module.");
-        }
-        return that;
-    };
-    that.getLogger = function () {
-        return logger;
-    };
-    that.registerUserProvider = function (extUserProvider) {
-        userProvider = extUserProvider;
-        if (logEnable) {
-            logger.log("Register user provider module.");
-        }
-        return that;
-    };
-    that.getUserProvider = function () {
-        return userProvider;
-    };
-    that.registerRouter = function (extRouter) {
-        router = extRouter;
-        if (logEnable) {
-            logger.log("Register router module.");
-        }
-        return that;
-    };
-    that.getRouter = function () {
-        return router;
-    };
-    that.registerAuthorization = function (extAuthorization) {
-        authorization = extAuthorization;
-        if (logEnable) {
-            logger.log("Register authorization module.");
-        }
-        return that;
-    };
-    that.getAuthorization = function () {
-        return authorization;
-    };
-    that.registerConfig = function (extConfig) {
-        config = extConfig;
-        if (logEnable) {
-            logger.log("Register config module.");
-        }
-        return that;
-    };
-    that.getConfig = function () {
-        return config;
-    };
-    that.registerRequestMiddleware = function (extMiddleware) {
-        //TODO maybe in the future rename this like entry point
-        //because there are not really middleware
-        //Add chained middleware can be a good idea
-        requestMiddleware = extMiddleware;
-        if (logEnable) {
-            logger.log("Register request middleware module.");
-        }
-        return that;
-    };
-    that.getRequestMiddleware = function () {
-        return requestMiddleware;
-    };
-    that.registerResponseMiddleware = function (extMiddleware) {
-        //TODO same as request middleware
-        responseMiddleware = extMiddleware;
-        if (logEnable) {
-            logger.log("Register response middleware module.");
-        }
-        return that;
-    };
-    that.getResponseMiddleware = function () {
-        return responseMiddleware;
-    };
-    that.boot = function (extDebug) {
-        //
-        //TODO put it in a another var
-        //the pruopose is that this var is hust  to ask debug activation
-        //but if no logger is activated, something will be wrong
-        //
-        if (extDebug) {
-            debug = true;
-        } else {
-            debug = false;
-        }
-        logEnable = false;
-        //TODO
-        //is this a good pattern, all module are loaded, then configuration are applied
-        //there is no configuration apply to middleware
-        loadCore();
-        loadConfig();
-        loadDefaultMiddleware();
-        loadControllers();
-        //TODO
-        //linking here or when handle request??
-        return that;
-    };
-    that.handleRequest = function (request, response) {
-        if (logEnable) {
-            logger.log("Handle new request.");
-        }
-        requestMiddleware.setNext(userProvider.handleRequest, responseMiddleware.handleResponse);
-        userProvider.setNext(router.handleRequest, responseMiddleware.handleResponse);
-        router.setNext(authorization.handleRequest, responseMiddleware.handleResponse);
-        authorization.setNext(executeController, responseMiddleware.handleResponse);
-        responseMiddleware.setNext(response);
-        var response = responseFactory.createResponse();
-        requestMiddleware.handleRequest(request, response);
-        return that;
-    };
-    that.getEnv = function () {
-        //for the mmoment env var is not used
-        return env;
-    };
+    }
 
-    that.debugIsActive = function () {
-        return debug;
-    };
-
-    that.setRootPath = function (extRootPath) {
-        //TODO maybe this is not usefull, for the moment no use case and this is not needed
-        rootPath = extRootPath;
-        if (logEnable) {
-            logger.log("Change root path.");
+    database(module) {
+        if (typeof module !== 'string' || module.length === 0) {
+            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module));
         }
-        return that;
-    };
-
-    that.resetRootPath = function () {
-        //TODO this is needed for testing, but this is probably not a best practice
-        rootPath = process.cwd();
-        return that;
-    };
-    that.getRootPath = function () {
-        return rootPath;
-    };
-    that.setControllerPath = function (extControllerPath) {
-        //TODO throw an error if .js is not in the string
-        //OR simply add it at the end
-        controllerPath = extControllerPath;
-        if (logEnable) {
-            logger.log("Change controller path.");
+        try {
+            return require(path.resolve(path.join(process.cwd(), DATABASE_PATH, module + EXT_JS)));
+        } catch (error) {
+            this.error("Failed to load module " + module, error, error.stack);
+            throw error;
         }
-        return that;
-    };
-    that.getControllerPath = function () {
-        return controllerPath;
-    };
+    }
+
+    get config() {
+        return this._config;
+    }
+
+    get Model() {
+        return require(path.resolve(path.join(__dirname, "lib/util/model.js")));
+    }
+
+    get Console() {
+        return require(path.resolve(path.join(__dirname, "lib/util/console.js")));
+    }
+
+    set Console(console) {
+
+    }
 }
 
-module.exports = new smash();
+if (!global.smash) {
+    global.smash = new Smash();
+}
+module.exports = global.smash;
 
