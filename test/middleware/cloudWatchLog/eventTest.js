@@ -3,7 +3,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Event = require('../../../lib/middleware/CloudWatchLog/lib/event.js');
+const Event = require('../../../lib/middleware/cloudWatchLog/lib/event.js');
 
 describe('Event', function () {
     it('Test event instance failure', function () {
