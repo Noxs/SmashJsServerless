@@ -17,6 +17,7 @@ class Smash extends Console {
         this._middlewares = null;
         this._magics = [];
         this._handlers = null;
+        this._containerEnv = {};
     }
 
     _clearExpose() {
@@ -89,12 +90,21 @@ class Smash extends Console {
     _buildEnv(context) {
         delete this._env;
         this._env = {};
-        Object.assign(this._env, process.env);
-        Object.assign(this._env, context);
+        Object.assign(this._env, this._containerEnv);
+        if (typeof module === 'object') {
+            Object.assign(this._env, context);
+        }
+        return this;
+    }
+
+    _buildContainerEnv() {
+        Object.assign(this._containerEnv, process.env);
+        this._buildEnv();
         return this;
     }
 
     boot() {
+        this._buildContainerEnv();
         this._registerMiddlewares();
         this._registerHandlers();
     }
