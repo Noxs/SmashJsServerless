@@ -91,7 +91,6 @@ class Smash extends Console {
         this._env = {};
         Object.assign(this._env, process.env);
         Object.assign(this._env, context);
-        this.setEnv("ENV", context.invokedFunctionArn.split(":").pop());
         return this;
     }
 
