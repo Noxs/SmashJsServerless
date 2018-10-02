@@ -3,25 +3,25 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Model = require("../../lib/util/model.js");
+const DynamodbModel = require("../../lib/util/dynamodbModel.js");
 
-class TestEmpty extends Model {
+class TestEmpty extends DynamodbModel {
 
 }
 
-class TestCleanEmpty extends Model {
+class TestCleanEmpty extends DynamodbModel {
     updateExclusion() {
         return [];
     }
 }
 
-class TestUpdateEmpty extends Model {
+class TestUpdateEmpty extends DynamodbModel {
     cleanInclusion() {
         return [];
     }
 }
 
-class TestBadReturn extends Model {
+class TestBadReturn extends DynamodbModel {
     cleanInclusion() {
         return {};
     }
@@ -33,7 +33,7 @@ class TestBadReturn extends Model {
     }
 }
 
-class Test extends Model {
+class Test extends DynamodbModel {
     cleanInclusion() {
         return ["id", "secret"];
     }
@@ -45,10 +45,10 @@ class Test extends Model {
     }
 }
 
-describe('Model', function () {
-    it('Test Model instance', function () {
+describe('DynamodbModel', function () {
+    it('Test DynamodbModel instance', function () {
         expect(function () {
-            const model = new Model();
+            const model = new DynamodbModel();
         }).to.throw(Error);
 
         expect(function () {

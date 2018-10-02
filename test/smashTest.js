@@ -5,7 +5,7 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const Config = require('../lib/core/config.js');
-const Model = require('../lib/util/model.js');
+const DynamodbModel = require('../lib/util/dynamodbModel.js');
 const Console = require('../lib/util/console.js');
 const cloudWatchEvent = require('./util/cloudWatchEvent.js');
 const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
@@ -133,7 +133,7 @@ describe('Smash', function () {
 
     it('Test smash model', function () {
         smash.boot();
-        assert.isFunction(smash.Model);
+        assert.isFunction(smash.DynamodbModel);
     });
 
     it('Test smash console', function () {

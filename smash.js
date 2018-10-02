@@ -167,8 +167,8 @@ class Smash extends Console {
         return this._config;
     }
 
-    get Model() {
-        return require(path.resolve(path.join(__dirname, "lib/util/model.js")));
+    get DynamodbModel() {
+        return require(path.resolve(path.join(__dirname, "lib/util/dynamodbModel.js")));
     }
 
     get Console() {
