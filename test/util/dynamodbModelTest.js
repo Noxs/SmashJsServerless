@@ -129,6 +129,12 @@ describe('DynamodbModel', function () {
         assert.equal(updatedObject.thisisnull, undefined);
         assert.equal(updatedObject.id, undefined);
 
+        const updatedObject2 = test.update(extendedFilled);
+        assert.notEqual("bar2", updatedObject2.foo);
+        assert.equal(extendedFilled.thisisnull, updatedObject2.updatedObject);
+        assert.equal(updatedObject2.thisisnull, undefined);
+        assert.equal(updatedObject2.id, undefined);
+
     });
 
     it('Test clean function', function () {
