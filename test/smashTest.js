@@ -29,10 +29,10 @@ describe('Smash', function () {
         expect(function () {
             smash.boot();
         }).to.not.throw(Error);
-        assert.lengthOf(smash._middlewares, 5);
+        assert.lengthOf(smash._middlewares, 6);
 
         smash.boot();
-        assert.lengthOf(smash._middlewares, 5);
+        assert.lengthOf(smash._middlewares, 6);
     });
 
     it('Test smash register handlers', function () {
