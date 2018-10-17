@@ -35,7 +35,7 @@ describe('Event', function () {
     });
 
     it('Test event success', function () {
-        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "{'testProperty':'this is a string'}" } }] };
+        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "{\"testProperty\":\"this is a string\"}" } }] };
         const spy = sinon.spy();
         const terminate = {
             terminate: (error, data) => {
@@ -48,7 +48,7 @@ describe('Event', function () {
     });
 
     it('Test event failure', function () {
-        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=\'{'testJSONProperty':'this is a string'}\'" } }] };
+        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'" } }] };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -73,6 +73,20 @@ describe('Event', function () {
         const event = new Event(rawEvent, context, terminate);
         event.terminate(null);
         assert.isTrue(spy.called);
+    });
+
+    it('Test event parsing', function () {
+        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'\ntestProperty1=\'Foobar\'" } }] };
+        const context = {};
+        const terminate = { terminate: (error, data) => { } };
+        const event = new Event(rawEvent, context, terminate);
+        const message = {
+            testProperty: {
+                testJSONProperty: 'this is a string'
+            },
+            testProperty1: 'Foobar'
+        };
+        assert.deepEqual(event.message, message);
     });
 });
 
