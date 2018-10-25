@@ -62,7 +62,7 @@ describe('Event', function () {
     });
 
     it('Test event terminate', function () {
-        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty" } }] };
+        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=null" } }] };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -76,7 +76,7 @@ describe('Event', function () {
     });
 
     it('Test event parsing', function () {
-        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'\ntestProperty1=\'Foobar\'" } }] };
+        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: 'testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'\ntestProperty1=\'Foobar\'' } }] };
         const context = {};
         const terminate = { terminate: (error, data) => { } };
         const event = new Event(rawEvent, context, terminate);
@@ -89,4 +89,6 @@ describe('Event', function () {
         assert.deepEqual(event.message, message);
     });
 });
+
+
 
