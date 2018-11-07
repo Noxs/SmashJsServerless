@@ -9,6 +9,7 @@ const MIDDLEWARE_PATH = "lib/middleware/*";
 const HANDLER_PATH = "controller";
 const DATABASE_PATH = "database";
 const UTIL_PATH = "util";
+const AWS_REGION = "AWS_REGION";
 
 class Smash extends Console {
     constructor() {
@@ -133,6 +134,10 @@ class Smash extends Console {
 
     getEnv(key) {
         return this._env[key];
+    }
+
+    getRegion() {
+        return this._env[AWS_REGION];
     }
 
     setEnv(key, value) {
