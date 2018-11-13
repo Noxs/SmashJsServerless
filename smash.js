@@ -9,6 +9,7 @@ const MIDDLEWARE_PATH = "lib/middleware/*";
 const HANDLER_PATH = "controller";
 const DATABASE_PATH = "database";
 const UTIL_PATH = "util";
+const AWS_REGION = "AWS_REGION";
 
 class Smash extends Console {
     constructor() {
@@ -135,6 +136,10 @@ class Smash extends Console {
         return this._env[key];
     }
 
+    getRegion() {
+        return this._env[AWS_REGION];
+    }
+
     setEnv(key, value) {
         this._env[key] = value;
     }
@@ -169,6 +174,10 @@ class Smash extends Console {
 
     get DynamodbModel() {
         return require(path.resolve(path.join(__dirname, "lib/util/dynamodbModel.js")));
+    }
+
+    get DynamodbIndexModel() {
+        return require(path.resolve(path.join(__dirname, "lib/util/dynamodbIndexModel.js")));
     }
 
     get Console() {
