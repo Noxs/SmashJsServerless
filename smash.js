@@ -176,6 +176,10 @@ class Smash extends Console {
         return require(path.resolve(path.join(__dirname, "lib/util/dynamodbModel.js")));
     }
 
+    get DynamodbIndexModel() {
+        return require(path.resolve(path.join(__dirname, "lib/util/dynamodbIndexModel.js")));
+    }
+
     get Console() {
         return require(path.resolve(path.join(__dirname, "lib/util/console.js")));
     }
