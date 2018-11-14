@@ -129,29 +129,6 @@ describe('UserProvider', function () {
         assert.equal(userProvider._repository, repository);
     });
 
-    it('Test handle request without repository', function () {
-        const userProvider = new UserProvider();
-        const request = new Request(apiGatewayProxyRequest.good);
-        const end = new End();
-        const response = new Response(end);
-
-        expect(function () {
-            userProvider.handleRequest();
-        }).to.throw(Error);
-        assert.ok(end._spy.notCalled);
-
-        expect(function () {
-            userProvider.handleRequest(request);
-        }).to.throw(Error);
-        assert.ok(end._spy.notCalled);
-
-        userProvider.handleRequest(request, response);
-        assert.ok(end._spy.called);
-
-        userProvider.handleRequest(null, new Response(end));
-        assert.ok(end._spy.called);
-    });
-
     it('Test handle request without good parameters', function () {
         const userProvider = new UserProvider();
         const repository = new Repository();
@@ -243,25 +220,6 @@ describe('UserProvider', function () {
         const response = new Response(end);
         request.user = {username: "test"};
         userProvider.attachRepository(repositoryNotFound);
-
-        userProvider.setNext(link);
-
-        assert.isOk(link._spy.notCalled);
-        assert.isOk(end._spy.notCalled);
-
-        userProvider.handleRequest(request, response);
-
-        assert.isOk(link._spy.notCalled);
-        assert.isOk(end._spy.called);
-    });
-
-    it('Test userProvider handle request with no repository', function () {
-        const userProvider = new UserProvider();
-        const request = new Request(apiGatewayProxyRequest.good);
-        const link = new Link();
-        const end = new End();
-        const response = new Response(end);
-        request.user = {username: "test"};
 
         userProvider.setNext(link);
 

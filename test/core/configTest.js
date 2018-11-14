@@ -23,8 +23,12 @@ const configTest = {
                 }
             }
         },
-        "user_repository": {
-            "file": "./database/testUser.js"
+        "user_provider": {
+            "repository": {
+                "file": "./database/testUser.js",
+                "method": "getUser",
+                "arguments": ["username"]
+            }
         },
         "response": {
             "headers": {

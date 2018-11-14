@@ -66,17 +66,6 @@ describe('Smash', function () {
         }).to.throw(Error);
     });
 
-    it('Test smash env', function () {
-        // TODO this is not valid anymore
-        // FIX ME remove it?
-        /*smash.boot();
-        expect(function () {
-            smash._buildEnv({ invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' });
-        }).to.not.throw(Error);
-        assert.equal(smash.getEnv("ENV"), "prod");
-        assert.isObject(smash.env);*/
-    });
-
     it('Test smash util success', function () {
         smash.boot();
 
@@ -228,8 +217,7 @@ describe('Smash', function () {
                     'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
                 },
                 body: ''
-            },
-                data);
+            }, data);
         };
         smash.handleEvent(event, context, callback);
     });
