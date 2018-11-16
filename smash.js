@@ -116,8 +116,10 @@ class Smash extends Console {
             callback(new Error("Smash has not been booted, you must call boot() first"));
         } else {
             this._buildEnv(context);
+            console.log(event);
             for (let i = 0, length = this._middlewares.length; i < length; i++) {
                 if (this._middlewares[i].isEvent(event)) {
+                    console.log(this._middlewares[i].constructor.name);
                     this._middlewares[i].handleEvent(event, context, callback);
                     return this;
                 }
