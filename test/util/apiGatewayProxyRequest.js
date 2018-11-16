@@ -33,7 +33,7 @@ module.exports = {
             "source": "fubiz"
         },
         "headers": {
-            "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+            "Via": "1.1 wxcvbn.cloudfront.net (CloudFront)",
             "Accept-Language": "en-US,en;q=0.8",
             "CloudFront-Is-Desktop-Viewer": "true",
             "CloudFront-Is-SmartTV-Viewer": "false",
@@ -45,7 +45,7 @@ module.exports = {
             "X-Forwarded-Port": "443",
             "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
             "X-Forwarded-Proto": "https",
-            "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+            "X-Amz-Cf-Id": "wxcvbn",
             "CloudFront-Is-Tablet-Viewer": "false",
             "Cache-Control": "max-age=0",
             "User-Agent": "Custom User Agent String",
@@ -92,7 +92,7 @@ module.exports = {
             "source": "fubiz"
         },
         "headers": {
-            "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+            "Via": "1.1 wxcvbn.cloudfront.net (CloudFront)",
             "Accept-Language": "en-US,en;q=0.8",
             "CloudFront-Is-Desktop-Viewer": "true",
             "CloudFront-Is-SmartTV-Viewer": "false",
@@ -104,7 +104,7 @@ module.exports = {
             "X-Forwarded-Port": "443",
             "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
             "X-Forwarded-Proto": "https",
-            "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+            "X-Amz-Cf-Id": "wxcvbn",
             "CloudFront-Is-Tablet-Viewer": "false",
             "Cache-Control": "max-age=0",
             "User-Agent": "Custom User Agent String",
@@ -154,7 +154,7 @@ module.exports = {
             "source": "fubiz"
         },
         "headers": {
-            "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+            "Via": "1.1 wxcvbn.cloudfront.net (CloudFront)",
             "Accept-Language": "en-US,en;q=0.8",
             "CloudFront-Is-Desktop-Viewer": "true",
             "CloudFront-Is-SmartTV-Viewer": "false",
@@ -166,7 +166,7 @@ module.exports = {
             "X-Forwarded-Port": "443",
             "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
             "X-Forwarded-Proto": "https",
-            "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+            "X-Amz-Cf-Id": "wxcvbn-nvCh-wxcvbn==",
             "CloudFront-Is-Tablet-Viewer": "false",
             "Cache-Control": "max-age=0",
             "User-Agent": "Custom User Agent String",
@@ -216,7 +216,7 @@ module.exports = {
             "source": "fubiz"
         },
         "headers": {
-            "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+            "Via": "1.1 wxcvbn.cloudfront.net (CloudFront)",
             "Accept-Language": "en-US,en;q=0.8",
             "CloudFront-Is-Desktop-Viewer": "true",
             "CloudFront-Is-SmartTV-Viewer": "false",
@@ -228,7 +228,7 @@ module.exports = {
             "X-Forwarded-Port": "443",
             "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
             "X-Forwarded-Proto": "https",
-            "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+            "X-Amz-Cf-Id": "wxcvbn-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
             "CloudFront-Is-Tablet-Viewer": "false",
             "Cache-Control": "max-age=0",
             "User-Agent": "Custom User Agent String",
