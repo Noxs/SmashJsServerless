@@ -21,13 +21,21 @@ const configTest = {
                         "ROLE_ADMIN"
                     ]
                 }
+            },
+            "properties": {
+                "roles": "roles"
             }
         },
         "user_provider": {
             "repository": {
                 "file": "./database/testUser.js",
                 "method": "getUser",
-                "arguments": ["username"]
+                "arguments": [
+                    "username"
+                ],
+                "expose_properties": [
+                    "username"
+                ]
             }
         },
         "response": {
@@ -43,9 +51,7 @@ const configTest = {
     "codePipelineJobEvent": {
         "ENV": "prod"
     },
-    "cloudWatchEvent": {
-
-    }
+    "cloudWatchEvent": {}
 };
 
 describe('Config', function () {
