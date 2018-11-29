@@ -165,8 +165,8 @@ describe('UserProvider', function () {
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(link._spy.notCalled);
-        assert.isOk(end._spy.called);
+        assert.isOk(link._spy.called);
+        assert.isOk(end._spy.notCalled);
     });
 
     it('Test userProvider handle request without user', function () {
@@ -207,8 +207,8 @@ describe('UserProvider', function () {
 
         userProvider.handleRequest(request, response);
 
-        assert.isOk(link._spy.notCalled);
-        assert.isOk(end._spy.called);
+        assert.isOk(link._spy.called);
+        assert.isOk(end._spy.notCalled);
     });
 
     it('Test userProvider handle request with user not found', function () {
@@ -218,7 +218,7 @@ describe('UserProvider', function () {
         const link = new Link();
         const end = new End();
         const response = new Response(end);
-        request.user = {username: "test"};
+        request.user = { username: "test" };
         userProvider.attachRepository(repositoryNotFound);
 
         userProvider.setNext(link);
@@ -239,7 +239,7 @@ describe('UserProvider', function () {
         const link = new Link();
         const end = new End();
         const response = new Response(end);
-        request.user = {username: "test"};
+        request.user = { username: "test" };
         userProvider.attachRepository(repositoryFailure);
 
         userProvider.setNext(link);
@@ -260,7 +260,7 @@ describe('UserProvider', function () {
         const link = new Link();
         const end = new End();
         const response = new Response(end);
-        request.user = {username: "test"};
+        request.user = { username: "test" };
         userProvider.attachRepository(repositorySuccess);
 
         userProvider.setNext(link);
