@@ -19,7 +19,7 @@ describe('Event', function () {
         expect(function () {
             const event = new Event(rawEvent, context, terminateObject);
         }).to.throw(Error);
-        const terminate = () => { };
+        const terminate = { terminate: () => { } };
         expect(function () {
             const event = new Event(rawEvent, context, terminate);
         }).to.throw(Error);
@@ -87,6 +87,15 @@ describe('Event', function () {
             testProperty1: 'Foobar'
         };
         assert.deepEqual(event.message, message);
+    });
+
+    it('Test event parsing invalid', function () {
+        const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: 'testProperty=' } }] };
+        const context = {};
+        const terminate = { terminate: (error, data) => { } };
+        expect(function () {
+            const event = new Event(rawEvent, context, terminate);
+        }).to.throw(Error);
     });
 });
 
