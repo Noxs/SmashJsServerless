@@ -51,7 +51,12 @@ const configTest = {
     "codePipelineJobEvent": {
         "ENV": "prod"
     },
-    "cloudWatchEvent": {}
+    "cloudWatchEvent": {},
+    "dynamodb": {
+        "tableSuffix": {
+            "dev": "_dev"
+        }
+    }
 };
 
 describe('Config', function () {
