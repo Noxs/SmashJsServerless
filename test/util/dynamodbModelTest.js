@@ -6,22 +6,35 @@ const sinon = require('sinon');
 const DynamodbModel = require("../../lib/util/dynamodbModel.js");
 
 class TestEmpty extends DynamodbModel {
-
+    constructor(table) {
+        super(table);
+    }
 }
 
 class TestCleanEmpty extends DynamodbModel {
+    constructor(table) {
+        super(table);
+    }
+
     updateExclusion() {
         return [];
     }
 }
 
 class TestUpdateEmpty extends DynamodbModel {
+    constructor(table) {
+        super(table);
+    }
+
     cleanInclusion() {
         return [];
     }
 }
 
 class TestBadReturn extends DynamodbModel {
+    constructor(table) {
+        super(table);
+    }
     cleanInclusion() {
         return {};
     }
@@ -34,6 +47,9 @@ class TestBadReturn extends DynamodbModel {
 }
 
 class Test extends DynamodbModel {
+    constructor(table) {
+        super(table);
+    }
     cleanInclusion() {
         return ["id", "secret"];
     }
@@ -48,24 +64,24 @@ class Test extends DynamodbModel {
 describe('DynamodbModel', function () {
     it('Test DynamodbModel instance', function () {
         expect(function () {
-            const model = new DynamodbModel();
+            const model = new DynamodbModel("test");
         }).to.throw(Error);
 
         expect(function () {
-            const testEmpty = new TestEmpty();
-            const test = new Test();
+            const testEmpty = new TestEmpty("test");
+            const test = new Test("test");
         }).to.not.throw(Error);
 
     });
 
     it('Test update function context', function () {
-        const test = new Test();
+        const test = new Test("test");
         assert.isFunction(test.update);
         assert.isFunction(test.updateExclusion);
 
-        const testEmpty = new TestEmpty();
-        const testUpdateEmpty = new TestUpdateEmpty();
-        const testBadReturn = new TestBadReturn();
+        const testEmpty = new TestEmpty("test");
+        const testUpdateEmpty = new TestUpdateEmpty("test");
+        const testBadReturn = new TestBadReturn("test");
 
         expect(function () {
             testEmpty.update({}, {});
@@ -110,7 +126,7 @@ describe('DynamodbModel', function () {
     });
 
     it('Test update function context', function () {
-        const test = new Test();
+        const test = new Test("test");
         assert.isObject(test.update({}, {}));
 
         const empty = {};
@@ -138,13 +154,13 @@ describe('DynamodbModel', function () {
     });
 
     it('Test clean function', function () {
-        const test = new Test();
+        const test = new Test("test");
         assert.isFunction(test.clean);
         assert.isFunction(test.cleanInclusion);
 
-        const testEmpty = new TestEmpty();
-        const testCleanEmpty = new TestCleanEmpty();
-        const testBadReturn = new TestBadReturn();
+        const testEmpty = new TestEmpty("test");
+        const testCleanEmpty = new TestCleanEmpty("test");
+        const testBadReturn = new TestBadReturn("test");
 
         expect(function () {
             testEmpty.clean({});
@@ -180,7 +196,7 @@ describe('DynamodbModel', function () {
     });
 
     it('Test clean function context', function () {
-        const test = new Test();
+        const test = new Test("test");
         assert.isObject(test.clean({}));
 
         const frozenObject = Object.freeze({ foo: "bar", bar: "foo", id: "123456789", secret: "thisisasecret" });
@@ -198,7 +214,7 @@ describe('DynamodbModel', function () {
     });
 
     it('Test clean function context', function () {
-        const test = new Test();
+        const test = new Test("test");
         assert.isArray(test.clean([]));
 
         const frozenObject = Object.freeze({ foo: "bar", bar: "foo", id: "123456789", secret: "thisisasecret" });
@@ -221,13 +237,13 @@ describe('DynamodbModel', function () {
     });
 
     it('Test hasRequired function', function () {
-        const test = new Test();
+        const test = new Test("test");
         assert.isFunction(test.required);
         assert.isFunction(test.hasRequired);
 
-        const testEmpty = new TestEmpty();
-        const testCleanEmpty = new TestCleanEmpty();
-        const testBadReturn = new TestBadReturn();
+        const testEmpty = new TestEmpty("test");
+        const testCleanEmpty = new TestCleanEmpty("test");
+        const testBadReturn = new TestBadReturn("test");
 
         expect(function () {
             testEmpty.hasRequired({});

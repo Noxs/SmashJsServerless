@@ -19,7 +19,7 @@ describe('Event', function () {
         expect(function () {
             const event = new Event(rawEvent, context, terminateObject);
         }).to.throw(Error);
-        const terminate = () => { };
+        const terminate = { terminate: () => { } };
         expect(function () {
             const event = new Event(rawEvent, context, terminate);
         }).to.throw(Error);

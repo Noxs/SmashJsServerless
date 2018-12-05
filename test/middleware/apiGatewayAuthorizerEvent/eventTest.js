@@ -19,7 +19,7 @@ describe('Event', function () {
         expect(function () {
             const event = new Event(rawEvent, context, terminateObject);
         }).to.throw(Error);
-        const terminate = () => { };
+        const terminate = { terminate: () => { } };
         expect(function () {
             const event = new Event(rawEvent, context, terminate);
         }).to.throw(Error);
@@ -77,7 +77,7 @@ describe('Event', function () {
     });
 
     it('Test event allow', function () {
-        const rawEvent = {};
+        const rawEvent = { methodArn: "arn:aws:lambda:eu-west-1:xxxxxxxxxxxx:function:xxxxxxxxxx" };
         const context = {};
         const spy = sinon.spy();
         const terminate = {

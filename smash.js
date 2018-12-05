@@ -2,6 +2,7 @@ const glob = require('glob');
 const path = require('path');
 const Console = require("./lib/util/console.js");
 const Config = require("./lib/core/config.js");
+const Binder = require("./lib/core/binder.js");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -15,6 +16,7 @@ class Smash extends Console {
     constructor() {
         super();
         this._config = new Config();
+        this._binder = new Binder();
         this._middlewares = null;
         this._magics = [];
         this._handlers = null;
@@ -170,6 +172,10 @@ class Smash extends Console {
 
     get config() {
         return this._config;
+    }
+
+    get binder() {
+        return this._binder;
     }
 
     get DynamodbModel() {

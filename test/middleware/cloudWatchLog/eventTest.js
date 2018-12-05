@@ -19,9 +19,14 @@ describe('Event', function () {
         expect(function () {
             const event = new Event(rawEvent, context, terminateObject);
         }).to.throw(Error);
-        const terminate = () => { };
+        const wrongTerminate = { terminate: () => { } };
         expect(function () {
-            const event = new Event(rawEvent, context, terminate);
+            const event = new Event(rawEvent, context, wrongTerminate);
+        }).to.throw(Error);
+        const terminate = { terminate: (arg1, arg2) => { } };
+        const fakeObject = "NotAnObject";
+        expect(function () {
+            const event = new Event(fakeObject, context, terminate);
         }).to.throw(Error);
     });
 

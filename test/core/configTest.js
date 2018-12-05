@@ -2,7 +2,7 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
-const Config = require('../..//lib/core/config.js');
+const Config = require('../../lib/core/config.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -51,7 +51,12 @@ const configTest = {
     "codePipelineJobEvent": {
         "ENV": "prod"
     },
-    "cloudWatchEvent": {}
+    "cloudWatchEvent": {},
+    "dynamodb": {
+        "tableSuffix": {
+            "dev": "_dev"
+        }
+    }
 };
 
 describe('Config', function () {

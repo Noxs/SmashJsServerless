@@ -13,21 +13,33 @@ describe('Console', function () {
     it('Test console log function', function () {
         const console = new Console();
         assert.isFunction(console.log);
+        expect(function () {
+            console.log("log");
+        }).to.not.throw();
     });
 
     it('Test console info function', function () {
         const console = new Console();
         assert.isFunction(console.info);
+        expect(function () {
+            console.info("test");
+        }).to.not.throw();
     });
 
     it('Test console warn function', function () {
         const console = new Console();
         assert.isFunction(console.warn);
+        expect(function () {
+            console.warn("warn");
+        }).to.not.throw();
     });
 
     it('Test console error function', function () {
         const console = new Console();
         assert.isFunction(console.error);
+        expect(function () {
+            console.error("error");
+        }).to.not.throw();
     });
 
     it('Test console codes', function () {
@@ -51,19 +63,19 @@ describe('Console', function () {
 
         expect(function () {
             const error = console.buildError("test", 500);
-        }).to.not.throw(Error);
+        }).to.not.throw();
 
         expect(function () {
             const error = console.buildError();
-        }).to.not.throw(Error);
+        }).to.not.throw();
 
         expect(function () {
             const error = console.buildError("test");
-        }).to.not.throw(Error);
+        }).to.not.throw();
 
         expect(function () {
             const error = console.buildError(null, 200);
-        }).to.not.throw(Error);
+        }).to.not.throw();
 
         const error = console.buildError("test", 500);
         assert.equal(error.constructor, Error);
