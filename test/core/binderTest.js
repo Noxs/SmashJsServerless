@@ -82,10 +82,10 @@ describe('Binder', function () {
         const binder = new Binder();
 
         expect(function () {
-            binder._registerRequiredRule({ name: "test", way: "required", required_list: ["id"] });
+            binder._registerRequiredRule({ name: "test", way: "required", required: { id: {} } });
         }).to.not.throw();
 
-        const rule = { name: "foobar", way: "required", required_list: ["id"] }
+        const rule = { name: "foobar", way: "required", required: { id: {} } };
         binder._registerRequiredRule(rule);
         assert.deepEqual(binder._requiredConfiguration.foobar, rule);
     });
@@ -162,7 +162,7 @@ describe('Binder', function () {
         }).to.not.throw();
 
         expect(function () {
-            binder.registerRule({ name: "test", way: "required", required_list: ["id"] });
+            binder.registerRule({ name: "test", way: "required", required: { id: {} } });
         }).to.not.throw();
 
         const rule = { name: "foobar", way: "clean", mode: "restrictive", property_list: ["id"] }
@@ -186,7 +186,15 @@ describe('Binder', function () {
     it('Test binder hasRequired method success', function () {
         const binder = new Binder();
 
-        const rule1 = { name: "foobar", way: "required", required_list: ["id", "type"] };
+        const rule1 = {
+            name: "foobar",
+            way: "required",
+            way: "required",
+            required: {
+                id: {},
+                type: {}
+            }
+        };
         binder.registerRule(rule1);
 
         const data1 = { id: "123456789", type: "user" };
@@ -207,7 +215,14 @@ describe('Binder', function () {
     it('Test binder hasRequired method failure', function () {
         const binder = new Binder();
 
-        const rule = { name: "foobarwithmistake", way: "required", required_list: ["id", "type"] };
+        const rule = {
+            name: "foobarwithmistake",
+            way: "required",
+            required: {
+                id: {},
+                type: {}
+            }
+        };
         binder.registerRule(rule);
         const data = { id: "123456789", type: "user" };
         expect(function () {
