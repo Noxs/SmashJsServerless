@@ -202,23 +202,24 @@ describe('Binder', function () {
                 type: { type: "string", match: "^[a-z]{1,10}$" },
                 active: { type: "boolean" },
                 negative_integer: { type: "integer", max_value: -1, min_value: -99999999 },
+                array_number: { type: "array" }
             }
         };
         binder.registerRule(rule1);
 
-        const data1 = { id: 123456789, type: "user", active: false, negative_integer: -123456 };
-        const data2 = [{ id: 1, type: "user", active: true, negative_integer: -9123456 }, { id: 2, type: "user", active: false, negative_integer: -98123456 }];
+        const data1 = { id: 123456789, type: "user", active: false, negative_integer: -123456, array_number: [] };
+        const data2 = [{ id: 1, type: "user", active: true, negative_integer: -9123456, array_number: [] }, { id: 2, type: "user", active: false, negative_integer: -98123456, array_number: [] }];
         const data3 = {};
-        const data4 = [{ id: 1, active: "notaboolean" }, { type: "useruseruser" }, {}];
+        const data4 = [{ id: 1, active: "notaboolean" }, { id: -1, type: "useruseruser", negative_integer: 1 }, {}];
 
         assert.isTrue(binder.hasRequired(rule1.name, data1));
         assert.isTrue(binder.hasRequired(rule1.name, data2));
 
         const returnedMissing1 = binder.hasRequired(rule1.name, data3);
-        assert.deepEqual(returnedMissing1, [{ type: binder.Errors.MISSING, name: "id" }, { type: binder.Errors.MISSING, name: "type" }, { type: binder.Errors.MISSING, name: "active" }, { type: binder.Errors.MISSING, name: "negative_integer" }]);
+        assert.deepEqual(returnedMissing1, [{ type: binder.Errors.MISSING, name: "id" }, { type: binder.Errors.MISSING, name: "type" }, { type: binder.Errors.MISSING, name: "active" }, { type: binder.Errors.MISSING, name: "negative_integer" }, { type: binder.Errors.MISSING, name: "array_number" }]);
 
         const returnedMissing2 = binder.hasRequired(rule1.name, data4);
-        assert.deepEqual(returnedMissing2, [{ type: binder.Errors.MISSING, name: "type" }, { type: binder.Errors.TYPE, name: "active" }, { type: binder.Errors.MISSING, name: "negative_integer" }, { type: binder.Errors.MISSING, name: "id" }, { type: binder.Errors.MATCH, name: "type" }, { type: binder.Errors.MISSING, name: "active" }, { type: binder.Errors.MISSING, name: "negative_integer" }, { type: binder.Errors.MISSING, name: "id" }, { type: binder.Errors.MISSING, name: "type" }, { type: binder.Errors.MISSING, name: "active" }, { type: binder.Errors.MISSING, name: "negative_integer" }]);
+        assert.deepEqual(returnedMissing2, [{ type: binder.Errors.MISSING, name: "type" }, { type: binder.Errors.TYPE, name: "active" }, { type: binder.Errors.MISSING, name: "negative_integer" }, { type: binder.Errors.MISSING, name: "array_number" }, { type: binder.Errors.RANGE, name: "id" }, { type: binder.Errors.MATCH, name: "type" }, { type: binder.Errors.MISSING, name: "active" }, { type: binder.Errors.RANGE, name: "negative_integer" }, { type: binder.Errors.MISSING, name: "array_number" }, { type: binder.Errors.MISSING, name: "id" }, { type: binder.Errors.MISSING, name: "type" }, { type: binder.Errors.MISSING, name: "active" }, { type: binder.Errors.MISSING, name: "negative_integer" }, { type: binder.Errors.MISSING, name: "array_number" }]);
     });
 
     it('Test binder hasRequired method failure', function () {
