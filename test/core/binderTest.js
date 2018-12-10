@@ -198,10 +198,10 @@ describe('Binder', function () {
             name: "foobar",
             way: "required",
             required: {
-                id: { type: "unsigned integer" },
+                id: { type: "unsigned integer", min_value: 0, max_value: 999999999 },
                 type: { type: "string", match: "^[a-z]{1,10}$" },
                 active: { type: "boolean" },
-                negative_integer: { type: "integer" },
+                negative_integer: { type: "integer", max_value: -1, min_value: -99999999 },
             }
         };
         binder.registerRule(rule1);
