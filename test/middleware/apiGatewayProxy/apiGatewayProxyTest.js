@@ -126,7 +126,7 @@ describe('ApiGatewayProxy', function () {
 
         apiGatewayProxy._callback = sinon.spy();
         expect(function () {
-            apiGatewayProxy.handleResponse({code: "200", headers: {}, stringifiedBody: "fooBar"});
+            apiGatewayProxy.handleResponse({ code: "200", headers: {}, stringifiedBody: "fooBar" });
         }).to.not.throw(Error);
         assert.isOk(apiGatewayProxy._callback.called);
     });
