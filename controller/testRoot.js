@@ -1,5 +1,5 @@
-smash.get({ path: "/test" }, function (request, response) {
+smash.get({ path: "/test", action: "GetTest" }, function (request, response) {
     response.ok({ "data": { "foo": "bar" } });
-}).post({ path: "/error" }, function (request, response) {
+}).post({ path: "/error", action: "PostError" }, function (request, response) {
     response.internalServerError();
 });

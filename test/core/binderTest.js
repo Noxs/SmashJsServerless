@@ -208,12 +208,13 @@ describe('Binder', function () {
         };
         binder.registerRule(rule1);
 
-        const data1 = { id: 123456789, type: "user", active: false, negative_integer: -123456, array_number: [], custom_object: {} };
+        const data1 = { id: 123456789, type: "user", active: false, negative_integer: -123456, array_number: [], custom_object: {}, extra_field: "this is an extra field not registered as property" };
         const data2 = [{ id: 1, type: "user", active: true, negative_integer: -9123456, array_number: [], custom_object: {} }, { id: 2, type: "user", active: false, negative_integer: -98123456, array_number: [], custom_object: {} }];
         const data3 = {};
         const data4 = [{ id: 1, active: "notaboolean" }, { id: -1, type: "useruseruser", negative_integer: 1 }, { custom_object: true }];
 
         assert.isTrue(binder.hasRequired(rule1.name, data1));
+        assert.isUndefined(data1.extra_field);
         assert.isTrue(binder.hasRequired(rule1.name, data2));
 
         const returnedMissing1 = binder.hasRequired(rule1.name, data3);
