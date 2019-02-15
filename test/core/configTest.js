@@ -8,36 +8,6 @@ const path = require('path');
 
 const configTest = {
     "apiGatewayProxy": {
-        "authorization": {
-            "roles": {
-                "ROLE_USER": {},
-                "ROLE_ADMIN": {
-                    "childrens": [
-                        "ROLE_USER"
-                    ]
-                },
-                "ROLE_SUPER_ADMIN": {
-                    "childrens": [
-                        "ROLE_ADMIN"
-                    ]
-                }
-            },
-            "properties": {
-                "roles": "roles"
-            }
-        },
-        "user_provider": {
-            "repository": {
-                "file": "./database/testUser.js",
-                "method": "getUser",
-                "arguments": [
-                    "username"
-                ],
-                "expose_properties": [
-                    "username"
-                ]
-            }
-        },
         "response": {
             "headers": {
                 "default": {
@@ -48,9 +18,7 @@ const configTest = {
             }
         }
     },
-    "codePipelineJobEvent": {
-        "ENV": "prod"
-    },
+    "codePipelineJobEvent": {},
     "cloudWatchEvent": {},
     "dynamodb": {
         "tableSuffix": {

@@ -19,7 +19,7 @@ describe('Router', function () {
     it('Test router get', function () {
         const router = new Router();
         assert.lengthOf(router._routes, 0);
-        const route1 = router.get({path: "/foo"}, function (request, response) {
+        const route1 = router.get({ path: "/foo" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -28,7 +28,7 @@ describe('Router', function () {
         assert.equal(router._routes[0]._method, "GET");
         assert.equal(router._routes[0]._path, "/foo");
 
-        const route2 = router.get({path: "/bar"}, function (request, response) {
+        const route2 = router.get({ path: "/bar" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -41,7 +41,7 @@ describe('Router', function () {
     it('Test router post', function () {
         const router = new Router();
         assert.lengthOf(router._routes, 0);
-        const route1 = router.post({path: "/foo"}, function (request, response) {
+        const route1 = router.post({ path: "/foo" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -50,7 +50,7 @@ describe('Router', function () {
         assert.equal(router._routes[0]._method, "POST");
         assert.equal(router._routes[0]._path, "/foo");
 
-        const route2 = router.post({path: "/bar"}, function (request, response) {
+        const route2 = router.post({ path: "/bar" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -63,7 +63,7 @@ describe('Router', function () {
     it('Test router put', function () {
         const router = new Router();
         assert.lengthOf(router._routes, 0);
-        const route1 = router.put({path: "/foo"}, function (request, response) {
+        const route1 = router.put({ path: "/foo" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -72,7 +72,7 @@ describe('Router', function () {
         assert.equal(router._routes[0]._method, "PUT");
         assert.equal(router._routes[0]._path, "/foo");
 
-        const route2 = router.put({path: "/bar"}, function (request, response) {
+        const route2 = router.put({ path: "/bar" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -85,7 +85,7 @@ describe('Router', function () {
     it('Test router delete', function () {
         const router = new Router();
         assert.lengthOf(router._routes, 0);
-        const route1 = router.delete({path: "/foo"}, function (request, response) {
+        const route1 = router.delete({ path: "/foo" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -94,7 +94,7 @@ describe('Router', function () {
         assert.equal(router._routes[0]._method, "DELETE");
         assert.equal(router._routes[0]._path, "/foo");
 
-        const route2 = router.delete({path: "/bar"}, function (request, response) {
+        const route2 = router.delete({ path: "/bar" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -107,7 +107,7 @@ describe('Router', function () {
     it('Test router patch', function () {
         const router = new Router();
         assert.lengthOf(router._routes, 0);
-        const route1 = router.patch({path: "/foo"}, function (request, response) {
+        const route1 = router.patch({ path: "/foo" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -116,7 +116,7 @@ describe('Router', function () {
         assert.equal(router._routes[0]._method, "PATCH");
         assert.equal(router._routes[0]._path, "/foo");
 
-        const route2 = router.patch({path: "/bar"}, function (request, response) {
+        const route2 = router.patch({ path: "/bar" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -129,7 +129,7 @@ describe('Router', function () {
     it('Test router options', function () {
         const router = new Router();
         assert.lengthOf(router._routes, 0);
-        const route1 = router.options({path: "/foo"}, function (request, response) {
+        const route1 = router.options({ path: "/foo" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -138,7 +138,7 @@ describe('Router', function () {
         assert.equal(router._routes[0]._method, "OPTIONS");
         assert.equal(router._routes[0]._path, "/foo");
 
-        const route2 = router.options({path: "/bar"}, function (request, response) {
+        const route2 = router.options({ path: "/bar" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -151,7 +151,7 @@ describe('Router', function () {
     it('Test router head', function () {
         const router = new Router();
         assert.lengthOf(router._routes, 0);
-        const route1 = router.head({path: "/foo"}, function (request, response) {
+        const route1 = router.head({ path: "/foo" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working
@@ -160,7 +160,7 @@ describe('Router', function () {
         assert.equal(router._routes[0]._method, "HEAD");
         assert.equal(router._routes[0]._path, "/foo");
 
-        const route2 = router.head({path: "/bar"}, function (request, response) {
+        const route2 = router.head({ path: "/bar" }, function (request, response) {
         });
 
         //assert.instanceOf(route, Route); not working

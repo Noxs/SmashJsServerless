@@ -40,7 +40,7 @@ describe('Smash', function () {
             smash.boot();
         }).to.not.throw(Error);
 
-        assert.lengthOf(smash._handlers, 3);
+        assert.lengthOf(smash._handlers, 4);
     });
 
     it('Test smash process expose bad module', function () {
