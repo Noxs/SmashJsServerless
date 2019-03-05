@@ -162,7 +162,7 @@ describe('Route', function () {
         request4.path = "/foo/customid/bar/anotherid";
         const route4 = new Route("GET", { path: "/foo/:foo/bar/:bar", version: "01-01-2000", action: "Get" }, (request, response) => {
         });
-        assert.isTrue(route3.match(request3));
+        assert.isTrue(route4.match(request4));
     });
 
     it('Test route match parameters build', function () {
