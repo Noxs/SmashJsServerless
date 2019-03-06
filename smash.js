@@ -2,7 +2,7 @@ const glob = require('glob');
 const path = require('path');
 const Console = require("./lib/util/console.js");
 const Config = require("./lib/core/config.js");
-const Binder = require("./lib/core/binder.js");//FIX ME maybe incorrect name
+const Binder = require("./lib/core/binder.js");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -10,13 +10,14 @@ const MIDDLEWARE_PATH = "lib/middleware/*";
 const HANDLER_PATH = "controller";
 const DATABASE_PATH = "database";
 const UTIL_PATH = "util";
+const HELPER_PATH = "helper";
 const AWS_REGION = "AWS_REGION";
 
 class Smash extends Console {
     constructor() {
         super();
         this._config = new Config();
-        this._binder = new Binder();//FIX ME maybe incorrect name
+        this._binder = new Binder();
         this._middlewares = null;
         this._magics = [];
         this._handlers = null;
@@ -146,28 +147,34 @@ class Smash extends Console {
         this._env[key] = value;
     }
 
-    util(module) {
-        if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module));
-        }
+    loadModule(dir, module) {
         try {
-            return require(path.resolve(path.join(process.cwd(), UTIL_PATH, module + EXT_JS)));
+            return require(path.resolve(path.join(process.cwd(), dir, module + EXT_JS)));
         } catch (error) {
             this.error("Failed to load module " + module, error, error.stack);
             throw error;
         }
     }
 
-    database(module) {
+    util(module) {
         if (typeof module !== 'string' || module.length === 0) {
             throw new Error("First parameter of util must be a valid string, " + this.typeOf(module));
         }
-        try {
-            return require(path.resolve(path.join(process.cwd(), DATABASE_PATH, module + EXT_JS)));
-        } catch (error) {
-            this.error("Failed to load module " + module, error, error.stack);
-            throw error;
+        return this.loadModule(UTIL_PATH, module);
+    }
+
+    helper(module) {
+        if (typeof module !== 'string' || module.length === 0) {
+            throw new Error("First parameter of helper must be a valid string, " + this.typeOf(module));
         }
+        return this.loadModule(HELPER_PATH, module);
+    }
+
+    database(module) {
+        if (typeof module !== 'string' || module.length === 0) {
+            throw new Error("First parameter of database must be a valid string, " + this.typeOf(module));
+        }
+        return this.loadModule(DATABASE_PATH, module);
     }
 
     get config() {

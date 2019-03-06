@@ -114,6 +114,30 @@ describe('Smash', function () {
         }).to.throw(Error);
     });
 
+    it('Test smash helper success', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.helper("random");
+        }).to.not.throw(Error);
+    });
+
+    it('Test smash helper not found', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.helper("test");
+        }).to.throw(Error);
+    });
+
+    it('Test smash helper invalid', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.helper(1);
+        }).to.throw(Error);
+    });
+
     it('Test smash config', function () {
         smash.boot();
         assert.isObject(smash.config);
