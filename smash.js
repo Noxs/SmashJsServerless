@@ -2,7 +2,7 @@ const glob = require('glob');
 const path = require('path');
 const Console = require("./lib/util/console.js");
 const Config = require("./lib/core/config.js");
-const Binder = require("./lib/core/binder.js");
+const Binder = require("./lib/core/binder.js");//FIX ME maybe incorrect name
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -16,7 +16,7 @@ class Smash extends Console {
     constructor() {
         super();
         this._config = new Config();
-        this._binder = new Binder();
+        this._binder = new Binder();//FIX ME maybe incorrect name
         this._middlewares = null;
         this._magics = [];
         this._handlers = null;
@@ -176,6 +176,22 @@ class Smash extends Console {
 
     get binder() {
         return this._binder;
+    }
+
+    registerRequiredRule() {
+        return this.binder.registerRequiredRule.apply(this.binder, arguments);
+    }
+
+    registerMergeRule() {
+        return this.binder.registerMergeRule.apply(this.binder, arguments);
+    }
+
+    registerCleanRule() {
+        return this.binder.registerCleanRule.apply(this.binder, arguments);
+    }
+
+    mergeObject() {
+        return this.binder.mergeObject.apply(this.binder, arguments);
     }
 
     get DynamodbModel() {
