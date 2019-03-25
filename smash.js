@@ -3,6 +3,7 @@ const path = require('path');
 const Console = require("./lib/util/console.js");
 const Config = require("./lib/core/config.js");
 const Binder = require("./lib/core/binder.js");
+const SmashError = require("./lib/core/SmashError.js");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -215,6 +216,10 @@ class Smash extends Console {
 
     set Console(console) {
 
+    }
+
+    get error(options) {
+        return new SmashError(options);
     }
 }
 
