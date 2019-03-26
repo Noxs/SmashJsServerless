@@ -218,7 +218,7 @@ class Smash extends Console {
 
     }
 
-    get error(options) {
+    error(options) {
         return new SmashError(options);
     }
 }
