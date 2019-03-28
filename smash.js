@@ -140,6 +140,14 @@ class Smash extends Console {
         return this._env[key];
     }
 
+    getEnvs(keys) {
+        const array = [];
+        keys.forEach((key) => {
+            array.push(this.getEnv(key));
+        });
+        return array;
+    }
+
     getRegion() {
         return this._env[AWS_REGION];
     }
