@@ -229,6 +229,10 @@ class Smash extends Console {
     smashError(options) {
         return new SmashError(options);
     }
+
+    logger(namespace) {
+        return new Console(namespace);
+    }
 }
 
 if (!global.smash) {
