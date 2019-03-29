@@ -242,7 +242,16 @@ describe('Binder', function () {
             { type: binder.Errors.MISSING, name: "active" },
             { type: binder.Errors.MISSING, name: "negative_integer" },
             { type: binder.Errors.MISSING, name: "array_number" },
-            { type: binder.Errors.TYPE, name: "custom_object" }
+            { type: binder.Errors.TYPE, name: "custom_object" },
+        ]);
+
+        const returnedMissing3 = binder.hasRequired(rule1.name, null);
+        assert.deepEqual(returnedMissing3, [
+            { type: binder.Errors.MISSING, name: "id" },
+            { type: binder.Errors.MISSING, name: "type" },
+            { type: binder.Errors.MISSING, name: "active" },
+            { type: binder.Errors.MISSING, name: "negative_integer" },
+            { type: binder.Errors.MISSING, name: "array_number" },
         ]);
     });
 
