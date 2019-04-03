@@ -2,7 +2,7 @@ const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
-const SmashError = require('../../lib/util/smashError.js/index.js.js.js.js');
+const SmashError = require('../../lib/util/smashError.js');
 
 describe('SmashError', function () {
 	it('Test smashError instance', function () {
