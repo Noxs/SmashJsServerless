@@ -218,7 +218,7 @@ describe('Smash', function () {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
                 },
-                body: '{"code":404,"error":"Resource not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef"}',
+                body: '{"code":404,"error":"Route GET /notfound not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef"}',
             }, data);
             spy.call();
         };
