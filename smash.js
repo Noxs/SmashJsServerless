@@ -246,6 +246,20 @@ class Smash {
     logger(namespace) {
         return new Logger(namespace);
     }
+
+    //FIX ME remove for the next major ??
+    get codes() {
+        return {
+            badRequest: 400,
+            unauthorized: 401,
+            forbidden: 403,
+            notFound: 404,
+            conflict: 409,
+            internalServerError: 500,
+            notImplemented: 501,
+            serviceUnavailable: 502
+        };
+    }
 }
 
 if (!global.smash) {
