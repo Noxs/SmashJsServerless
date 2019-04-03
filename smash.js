@@ -1,22 +1,24 @@
 const glob = require('glob');
 const path = require('path');
-const Console = require("./lib/util/console.js");
-const Config = require("./lib/core/config.js");
-const Binder = require("./lib/core/binder.js");
-const SmashError = require("./lib/util/SmashError.js");
+const Logger = require("./lib/util/smashLogger");
+const Config = require("./lib/core/config");
+const Binder = require("./lib/core/binder");
+const logger = new Logger("SmashJsServerless");
+const SmashError = require("./lib/util/smashError");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
-const MIDDLEWARE_PATH = "lib/middleware/*";
-const HANDLER_PATH = "controller";
-const DATABASE_PATH = "database";
-const UTIL_PATH = "util";
-const HELPER_PATH = "helper";
+const PATHS = {
+    MIDDLEWARE: "lib/middleware/*",
+    HANDLER: "controller",
+    DATABASE: "database",
+    UTIL: "util",
+    HELPER: "helper",
+};
 const AWS_REGION = "AWS_REGION";
 
-class Smash extends Console {
+class Smash {
     constructor() {
-        super();
         this._config = new Config();
         this._binder = new Binder();
         this._middlewares = null;
@@ -35,14 +37,14 @@ class Smash extends Console {
 
     _processExpose(module) {
         if (typeof module !== 'object' || typeof module.expose !== 'function') {
-            this.error("Middlewares must be object with a function called expose, " + this.typeOf(module) + ' ' + this.typeOf(module.expose));
-            throw new Error("Middlewares must be object with a function called expose, " + this.typeOf(module) + ' ' + this.typeOf(module.expose));
+            logger.error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
+            throw new Error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
         }
         const expose = module.expose();
         const that = this;
         for (let i = 0, length = expose.length; i < length; i++) {
             if (this[expose[i].functionName]) {
-                this.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
+                logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
                 throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
             }
             this[expose[i].functionName] = function () {
@@ -57,19 +59,19 @@ class Smash extends Console {
     _registerMiddlewares() {
         this._clearExpose();
         this._middlewares = [];
-        const files = glob.sync(path.join(__dirname, MIDDLEWARE_PATH, FILE_EXT_JS));
+        const files = glob.sync(path.join(__dirname, PATHS.MIDDLEWARE, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
             const Module = require(path.resolve(files[i]));
             const module = new Module();
             this._processExpose(module);
             this._middlewares.push(module);
-            this.info("Register middleware: " + module.constructor.name);
+            logger.info("Register middleware: " + module.constructor.name);
         }
         return this;
     }
 
     _clearHandlers() {
-        const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH, DEEP_EXT_JS)));
+        const files = glob.sync(path.resolve(path.join(process.cwd(), PATHS.HANDLER, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
             delete require.cache[require.resolve(path.resolve(files[i]))]
         }
@@ -79,16 +81,16 @@ class Smash extends Console {
     _registerHandlers() {
         this._clearHandlers();
         this._handlers = [];
-        const files = glob.sync(path.resolve(path.join(process.cwd(), HANDLER_PATH, DEEP_EXT_JS)));
+        const files = glob.sync(path.resolve(path.join(process.cwd(), PATHS.HANDLER, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
             try {
                 this._handlers.push(require(path.resolve(files[i])));
             } catch (error) {
-                this.error("Failed to register handler " + files[i], error);
+                logger.error("Failed to register handler " + files[i], error);
                 throw new Error("Failed to boot smash");
             }
         }
-        this.info("Handler loaded: " + files.length);
+        logger.info("Handler loaded: " + files.length);
         return this;
     }
 
@@ -116,7 +118,7 @@ class Smash extends Console {
 
     handleEvent(event, context, callback) {
         if (this._middlewares === null) {
-            this.error("Smash has not been booted, you must call boot() first", event);
+            logger.error("Smash has not been booted, you must call boot() first", event);
             callback(new Error("Smash has not been booted, you must call boot() first"));
         } else {
             this._buildEnv(context);
@@ -126,7 +128,8 @@ class Smash extends Console {
                     return this;
                 }
             }
-            this.error("No middleware found to process event", event);
+            //FIX ME use smashError instead
+            logger.error("No middleware found to process event", event);
             callback(new Error("No middleware found to process event"));
         }
         return this;
@@ -160,30 +163,30 @@ class Smash extends Console {
         try {
             return require(path.resolve(path.join(process.cwd(), dir, module + EXT_JS)));
         } catch (error) {
-            this.error("Failed to load module " + module, error, error.stack);
+            logger.error("Failed to load module " + module, error, error.stack);
             throw error;
         }
     }
 
     util(module) {
         if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of util must be a valid string, " + this.typeOf(module));
+            throw new Error("First parameter of util must be a valid string, " + Logger.typeOf(module));
         }
-        return this.loadModule(UTIL_PATH, module);
+        return this.loadModule(PATHS.UTIL, module);
     }
 
     helper(module) {
         if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of helper must be a valid string, " + this.typeOf(module));
+            throw new Error("First parameter of helper must be a valid string, " + Logger.typeOf(module));
         }
-        return this.loadModule(HELPER_PATH, module);
+        return this.loadModule(PATHS.HELPER, module);
     }
 
     database(module) {
         if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of database must be a valid string, " + this.typeOf(module));
+            throw new Error("First parameter of database must be a valid string, " + Logger.typeOf(module));
         }
-        return this.loadModule(DATABASE_PATH, module);
+        return this.loadModule(PATHS.DATABASE, module);
     }
 
     get config() {
@@ -194,44 +197,54 @@ class Smash extends Console {
         return this._binder;
     }
 
-    registerRequiredRule() {
-        return this.binder.registerRequiredRule.apply(this.binder, arguments);
+    registerRequiredRule(...args) {
+        return this.binder.registerRequiredRule(...args);
     }
 
-    registerMergeRule() {
-        return this.binder.registerMergeRule.apply(this.binder, arguments);
+    registerMergeRule(...args) {
+        return this.binder.registerMergeRule(...args);
     }
 
-    registerCleanRule() {
-        return this.binder.registerCleanRule.apply(this.binder, arguments);
+    registerCleanRule(...args) {
+        return this.binder.registerCleanRule(...args);
     }
 
-    mergeObject() {
-        return this.binder.mergeObject.apply(this.binder, arguments);
+    mergeObject(...args) {
+        return this.binder.mergeObject(...args);
+    }
+
+    clean(...args) {
+        return this.binder.clean(...args);
     }
 
     get DynamodbModel() {
         return require(path.resolve(path.join(__dirname, "lib/util/dynamodbModel.js")));
     }
 
-    get DynamodbIndexModel() {
-        return require(path.resolve(path.join(__dirname, "lib/util/dynamodbIndexModel.js")));
+    get Logger() {
+        return require(path.resolve(path.join(__dirname, "lib/util/smashLogger.js")));
     }
 
     get Console() {
-        return require(path.resolve(path.join(__dirname, "lib/util/console.js")));
+        logger.deprecated("smash.Console is deprecated, use smash.Logger in the future");
+        return this.Logger;
     }
 
     set Console(console) {
 
     }
 
-    smashError(options) {
-        return new SmashError(options);
+    smashError(...args) {
+        logger.deprecated("Method smashError(options) is deprecated, use smash.errorUtil");
+        return new SmashError.SmashError(...args);
+    }
+
+    get SmashError() {
+        return SmashError;
     }
 
     logger(namespace) {
-        return new Console(namespace);
+        return new Logger(namespace);
     }
 }
 
