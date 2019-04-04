@@ -41,11 +41,19 @@ describe('SmashError', function () {
 		}).to.not.throw();
 	});
 
-	it('Test smashError badRequestError', function () {
+	it('Test smashError badRequestError with details', function () {
 		const errorUtil = new SmashError();
 		const error = errorUtil.badRequestError("Invalid body", { test: "FOOBAR" });
 		assert.equal(error.code, 400);
 		assert.deepEqual(error.body, { code: 400, error: "Invalid body", details: { test: "FOOBAR" }, requestId: undefined });
+
+	});
+
+	it('Test smashError badRequestError without details', function () {
+		const errorUtil = new SmashError();
+		const error = errorUtil.badRequestError("Invalid body");
+		assert.equal(error.code, 400);
+		assert.deepEqual(error.body, { code: 400, error: "Invalid body", requestId: undefined });
 	});
 
 	it('Test smashError unauthorizedError', function () {
