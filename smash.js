@@ -210,6 +210,11 @@ class Smash {
         return this._config;
     }
 
+    setCurrentEvent(event) {
+        this._currentEvent = event;
+        return this;
+    }
+
     get binder() {
         return this._binder;
     }
@@ -227,6 +232,9 @@ class Smash {
     }
 
     mergeObject(...args) {
+        if (args.length === 2 && this._currentEvent && this._currentEvent.route && this._currentEvent.route.action) {
+            args.unshift(this._currentEvent.route.action);
+        }
         return this.binder.mergeObject(...args);
     }
 
