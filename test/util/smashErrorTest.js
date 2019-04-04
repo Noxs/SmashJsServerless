@@ -63,9 +63,16 @@ describe('SmashError', function () {
 		assert.deepEqual(error.body, { code: 401, error: "Unauthorized", requestId: undefined });
 	});
 
-	it('Test smashError forbiddenError', function () {
+	it('Test smashError forbiddenError with message', function () {
 		const errorUtil = new SmashError();
-		const error = errorUtil.forbiddenError("User is unauthorized");
+		const error = errorUtil.forbiddenError("Password does not match foobar");
+		assert.equal(error.code, 403);
+		assert.deepEqual(error.body, { code: 403, error: "Password does not match foobar", requestId: undefined });
+	});
+
+	it('Test smashError forbiddenError without message', function () {
+		const errorUtil = new SmashError();
+		const error = errorUtil.forbiddenError(null, "Password does not match foobar");
 		assert.equal(error.code, 403);
 		assert.deepEqual(error.body, { code: 403, error: "Forbidden", requestId: undefined });
 	});
