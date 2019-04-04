@@ -14,6 +14,7 @@ const PATHS = {
     DATABASE: "database",
     UTIL: "util",
     HELPER: "helper",
+    GLOBAL: "global",
 };
 const AWS_REGION = "AWS_REGION";
 
@@ -70,6 +71,21 @@ class Smash {
         return this;
     }
 
+    _loadGlobals() {
+        const files = glob.sync(path.join(__dirname, PATHS.GLOBAL, FILE_EXT_JS));
+        for (let i = 0, length = files.length; i < length; i++) {
+            const filePath = path.resolve(files[i])
+            const name = path.parse(filePath).name;
+            const globalToExpose = require(filePath);
+            if (global[name]) {
+                throw new Error("Global variable " + name + " is already defined");
+            }
+            global[name] = globalToExpose;
+            logger.info("Load global: " + name);
+        }
+        return this;
+    }
+
     _clearHandlers() {
         const files = glob.sync(path.resolve(path.join(process.cwd(), PATHS.HANDLER, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
@@ -111,6 +127,7 @@ class Smash {
     }
 
     boot() {
+        this._loadGlobals();
         this._buildContainerEnv();
         this._registerMiddlewares();
         this._registerHandlers();
