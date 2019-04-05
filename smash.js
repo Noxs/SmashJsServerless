@@ -72,7 +72,7 @@ class Smash {
     }
 
     loadGlobals({ ignoreOverride } = { ignoreOverride: false }) {
-        const files = glob.sync(path.join(__dirname, PATHS.GLOBAL, FILE_EXT_JS));
+        const files = glob.sync(path.join(process.cwd(), PATHS.GLOBAL, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
             const filePath = path.resolve(files[i])
             const { name } = path.parse(filePath).name;
