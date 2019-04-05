@@ -71,7 +71,7 @@ class Smash {
         return this;
     }
 
-    loadGlobals({ ignoreOverride } = { ignoreOverride: false }) {
+    loadGlobals({ ignoreOverride, silent } = { ignoreOverride: false, silent: false }) {
         const files = glob.sync(path.join(process.cwd(), PATHS.GLOBAL, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
             const filePath = path.resolve(files[i]);
@@ -82,7 +82,9 @@ class Smash {
             }
             global[name] = globalToExpose;
             Object.freeze(globalToExpose);
-            logger.info("Load global: " + name);
+            if (silent === false) {
+                logger.info("Load global: " + name);
+            }
         }
         return this;
     }
