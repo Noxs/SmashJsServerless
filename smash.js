@@ -71,13 +71,13 @@ class Smash {
         return this;
     }
 
-    _loadGlobals() {
+    loadGlobals({ ignoreOverride } = { ignoreOverride: false }) {
         const files = glob.sync(path.join(__dirname, PATHS.GLOBAL, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
             const filePath = path.resolve(files[i])
             const name = path.parse(filePath).name;
             const globalToExpose = require(filePath);
-            if (global[name]) {
+            if (ignoreOverride === false && global[name]) {
                 throw new Error("Global variable " + name + " is already defined");
             }
             global[name] = globalToExpose;
@@ -127,7 +127,7 @@ class Smash {
     }
 
     boot() {
-        this._loadGlobals();
+        this.loadGlobals();
         this._buildContainerEnv();
         this._registerMiddlewares();
         this._registerHandlers();
@@ -197,6 +197,13 @@ class Smash {
             throw new Error("First parameter of helper must be a valid string, " + Logger.typeOf(module));
         }
         return this.loadModule(PATHS.HELPER, module);
+    }
+
+    global(module) {
+        if (typeof module !== 'string' || module.length === 0) {
+            throw new Error("First parameter of global must be a valid string, " + Logger.typeOf(module));
+        }
+        return this.loadModule(PATHS.GLOBAL, module);
     }
 
     database(module) {
