@@ -74,13 +74,14 @@ class Smash {
     loadGlobals({ ignoreOverride } = { ignoreOverride: false }) {
         const files = glob.sync(path.join(process.cwd(), PATHS.GLOBAL, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
-            const filePath = path.resolve(files[i])
-            const { name } = path.parse(filePath).name;
+            const filePath = path.resolve(files[i]);
+            const { name } = path.parse(filePath);
             const globalToExpose = require(filePath);
             if (ignoreOverride === false && global[name]) {
                 throw new Error("Global variable " + name + " is already defined");
             }
             global[name] = globalToExpose;
+            Object.freeze(globalToExpose);
             logger.info("Load global: " + name);
         }
         return this;
