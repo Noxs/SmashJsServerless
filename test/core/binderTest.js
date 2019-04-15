@@ -229,7 +229,7 @@ describe('Binder', function () {
         const returnedMissing2 = binder.hasRequired(rule1.name, data4);
         assert.deepEqual(returnedMissing2, [
             { type: binder.Errors.MISSING, name: "type" },
-            { type: binder.Errors.TYPE, name: "active" },
+            { type: binder.Errors.TYPE, name: "active", expected: "boolean", given: "notaboolean" },
             { type: binder.Errors.MISSING, name: "negative_integer" },
             { type: binder.Errors.MISSING, name: "array_number" },
             { type: binder.Errors.RANGE, name: "id" },
@@ -242,7 +242,7 @@ describe('Binder', function () {
             { type: binder.Errors.MISSING, name: "active" },
             { type: binder.Errors.MISSING, name: "negative_integer" },
             { type: binder.Errors.MISSING, name: "array_number" },
-            { type: binder.Errors.TYPE, name: "custom_object" },
+            { type: binder.Errors.TYPE, name: "custom_object", expected: "object", given: true },
         ]);
 
         const returnedMissing3 = binder.hasRequired(rule1.name, null);
