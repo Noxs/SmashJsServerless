@@ -113,6 +113,14 @@ class Smash {
         return this;
     }
 
+    getHandlers() {
+        let handlers = [];
+        for (let i = 0, length = this._middlewares.length; i < length; i++) {
+            handlers = handlers.concat(this._middlewares[i].getHandlers());
+        }
+        return handlers;
+    }
+
     _buildEnv(context) {
         delete this._env;
         this._env = {};
