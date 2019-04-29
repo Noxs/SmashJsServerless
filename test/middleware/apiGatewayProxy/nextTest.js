@@ -56,7 +56,7 @@ describe('Next', function () {
         }).to.throw(Error);
 
         expect(function () {
-            test.setNext(function () {});
+            test.setNext(function () { });
         }).to.throw(Error);
 
         expect(function () {
@@ -135,13 +135,5 @@ describe('Next', function () {
         }).to.not.throw(Error);
 
         assert.isOk(spy.called);
-    });
-
-    it('Test extends from console', function () {
-        const test = new Test();
-        assert.isFunction(test.log);
-        assert.isFunction(test.info);
-        assert.isFunction(test.warn);
-        assert.isFunction(test.error);
     });
 });

@@ -18,6 +18,14 @@ describe('Console', function () {
         }).to.not.throw();
     });
 
+    it('Test console debug function', function () {
+        const console = new Console();
+        assert.isFunction(console.debug);
+        expect(function () {
+            console.debug("debug");
+        }).to.not.throw();
+    });
+
     it('Test console info function', function () {
         const console = new Console();
         assert.isFunction(console.info);

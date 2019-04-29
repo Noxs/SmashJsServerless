@@ -40,7 +40,7 @@ describe('Smash', function () {
             smash.boot();
         }).to.not.throw(Error);
 
-        assert.lengthOf(smash._handlers, 3);
+        assert.lengthOf(smash._handlers, 4);
     });
 
     it('Test smash process expose bad module', function () {
@@ -111,6 +111,30 @@ describe('Smash', function () {
 
         expect(function () {
             smash.database(1);
+        }).to.throw(Error);
+    });
+
+    it('Test smash helper success', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.helper("random");
+        }).to.not.throw(Error);
+    });
+
+    it('Test smash helper not found', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.helper("test");
+        }).to.throw(Error);
+    });
+
+    it('Test smash helper invalid', function () {
+        smash.boot();
+
+        expect(function () {
+            smash.helper(1);
         }).to.throw(Error);
     });
 
@@ -194,7 +218,7 @@ describe('Smash', function () {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
                 },
-                body: '{"reason":"Not found"}'
+                body: '{"code":404,"error":"Route GET /notfound not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef"}',
             }, data);
             spy.call();
         };
@@ -211,12 +235,12 @@ describe('Smash', function () {
             assert.isObject(data);
             assert.deepEqual({
                 statusCode: 500,
+                body: '{"code":500,"error":"Internal Server Error","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef"}',
                 headers: {
                     'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'
                 },
-                body: ''
             }, data);
         };
         smash.handleEvent(event, context, callback);

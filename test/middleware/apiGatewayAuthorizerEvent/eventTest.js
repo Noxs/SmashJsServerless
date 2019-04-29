@@ -4,6 +4,7 @@ const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
 const Event = require('../../../lib/middleware/apiGatewayAuthorizerEvent/lib/event.js');
+const apiGatewayAuthorizerRequest = require('../../util/apiGatewayAuthorizerRequest.js');
 
 describe('Event', function () {
     it('Test event instance failure', function () {
@@ -26,7 +27,7 @@ describe('Event', function () {
     });
 
     it('Test event instance success', function () {
-        const rawEvent = {};
+        const rawEvent = apiGatewayAuthorizerRequest.good;
         const context = {};
         const terminate = { terminate: (error, data) => { } };
         expect(function () {
@@ -35,7 +36,7 @@ describe('Event', function () {
     });
 
     it('Test event internal server error', function () {
-        const rawEvent = {};
+        const rawEvent = apiGatewayAuthorizerRequest.good;
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -49,7 +50,7 @@ describe('Event', function () {
     });
 
     it('Test event unauthorized', function () {
-        const rawEvent = {};
+        const rawEvent = apiGatewayAuthorizerRequest.good;
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -63,7 +64,7 @@ describe('Event', function () {
     });
 
     it('Test event invalidToken', function () {
-        const rawEvent = {};
+        const rawEvent = apiGatewayAuthorizerRequest.good;
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -77,7 +78,7 @@ describe('Event', function () {
     });
 
     it('Test event allow', function () {
-        const rawEvent = { methodArn: "arn:aws:lambda:eu-west-1:xxxxxxxxxxxx:function:xxxxxxxxxx" };
+        const rawEvent = apiGatewayAuthorizerRequest.good;
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -86,12 +87,12 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.allow();
+        event.allow(new event.Context("id", "username", "region", "roles"));
         assert.isTrue(spy.called);
     });
 
     it('Test event deny', function () {
-        const rawEvent = {};
+        const rawEvent = apiGatewayAuthorizerRequest.good;
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -100,12 +101,12 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.deny();
+        event.deny(new event.Context("id", "username", "region", "roles"));
         assert.isTrue(spy.called);
     });
 
     it('Test event terminate', function () {
-        const rawEvent = {};
+        const rawEvent = apiGatewayAuthorizerRequest.good;
         const context = {};
         const spy = sinon.spy();
         const terminate = {

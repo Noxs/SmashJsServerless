@@ -14,7 +14,7 @@ const defaultHeaders = {
 describe('Response', function () {
     it('Test response instance success', function () {
         expect(function () {
-            const response = new Response(new ApiGatewayProxy());
+            const response = new Response(new ApiGatewayProxy(), {});
         }).to.not.throw(Error);
     });
 
@@ -27,7 +27,7 @@ describe('Response', function () {
     it('Test response handleError', function () {
         const apiGatewayProxy = new ApiGatewayProxy();
         apiGatewayProxy._callback = function () { };
-        const response = new Response(apiGatewayProxy);
+        const response = new Response(apiGatewayProxy, {});
         expect(function () {
             response.handleError(new Error());
         }).to.not.throw(Error);
@@ -36,7 +36,7 @@ describe('Response', function () {
     it('Test response handleError with error code', function () {
         const apiGatewayProxy = new ApiGatewayProxy();
         apiGatewayProxy._callback = function () { };
-        const response = new Response(apiGatewayProxy);
+        const response = new Response(apiGatewayProxy, {});
         expect(function () {
             const error = new Error("FOOBAR");
             error.statusCode = 500;

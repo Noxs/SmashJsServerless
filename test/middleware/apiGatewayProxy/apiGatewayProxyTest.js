@@ -88,8 +88,6 @@ describe('ApiGatewayProxy', function () {
 
         const apiGatewayProxy = new ApiGatewayProxy();
         assert.isFunction(apiGatewayProxy.router.next);
-        assert.isFunction(apiGatewayProxy.userProvider.next);
-        assert.isFunction(apiGatewayProxy.authorization.next);
     });
 
     it('Test handle event success', function () {
@@ -97,7 +95,7 @@ describe('ApiGatewayProxy', function () {
 
         const terminate = sinon.spy();
         apiGatewayProxy.handleEvent(lambdaEventSuccess, {}, terminate);
-
+        assert.isOk(terminate.called);
     });
 
     it('Test handle event failure', function () {
