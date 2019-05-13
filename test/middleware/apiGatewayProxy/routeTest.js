@@ -194,6 +194,17 @@ describe('Route', function () {
         route3.match(request3);
         assert.equal(route3.parameters['foo'], "customid");
         assert.equal(route3.parameters['bar'], "anotherid");
+
+
+        const request4 = new Request(apiGatewayProxyRequest.goodWithNumber);
+        request4.method = "GET";
+        request4.version = "01-01-2000";
+        request4.path = "/foo/number/1";
+        const route4 = new Route("GET", { path: "/foo/number/:id", version: "01-01-2000", action: "Get" }, (request, response) => {
+        });
+        route4.match(request4);
+        assert.equal(route4.parameters['id'], 1);
+        assert.isNumber(route4.parameters['id'], 1);
     });
 
     it('Test route match no parameters build', function () {
