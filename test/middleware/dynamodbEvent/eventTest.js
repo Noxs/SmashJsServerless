@@ -26,7 +26,18 @@ describe('Event', function () {
     });
 
     it('Test event instance success', function () {
-        const rawEvent = { eventName: "INSERT", eventSourceARN: "/table/foobar/stream" };
+        const rawEvent = {
+            Records:
+                [{
+                    eventID: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                    eventName: 'INSERT',
+                    eventVersion: '1.1',
+                    eventSource: 'aws:dynamodb',
+                    awsRegion: 'eu-west-1',
+                    dynamodb: { this_is_an_object: "this_is_an_object" },
+                    eventSourceARN: '"/table/foobar/stream"'
+                }]
+        };
         const context = {};
         const terminate = { terminate: (error, data) => { } };
         expect(function () {
@@ -35,7 +46,18 @@ describe('Event', function () {
     });
 
     it('Test event success', function () {
-        const rawEvent = { eventName: "MODIFY", eventSourceARN: "/table/foobar/stream" };
+        const rawEvent = {
+            Records:
+                [{
+                    eventID: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                    eventName: 'MODIFY',
+                    eventVersion: '1.1',
+                    eventSource: 'aws:dynamodb',
+                    awsRegion: 'eu-west-1',
+                    dynamodb: { this_is_an_object: "this_is_an_object" },
+                    eventSourceARN: '"/table/foobar/stream"'
+                }]
+        };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -49,7 +71,18 @@ describe('Event', function () {
     });
 
     it('Test event failure', function () {
-        const rawEvent = { eventName: "INSERT", eventSourceARN: "/table/foobar/stream" };
+        const rawEvent = {
+            Records:
+                [{
+                    eventID: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                    eventName: 'INSERT',
+                    eventVersion: '1.1',
+                    eventSource: 'aws:dynamodb',
+                    awsRegion: 'eu-west-1',
+                    dynamodb: { this_is_an_object: "this_is_an_object" },
+                    eventSourceARN: '"/table/foobar/stream"'
+                }]
+        };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -63,7 +96,18 @@ describe('Event', function () {
     });
 
     it('Test event terminate', function () {
-        const rawEvent = { eventName: "DELETE", eventSourceARN: "/table/foobar/stream" };
+        const rawEvent = {
+            Records:
+                [{
+                    eventID: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                    eventName: 'DELETE',
+                    eventVersion: '1.1',
+                    eventSource: 'aws:dynamodb',
+                    awsRegion: 'eu-west-1',
+                    dynamodb: { this_is_an_object: "this_is_an_object" },
+                    eventSourceARN: '"/table/foobar/stream"'
+                }]
+        };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
