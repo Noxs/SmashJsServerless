@@ -162,4 +162,68 @@ describe('SmashError', function () {
 		const error2 = new Error();
 		assert.isFalse(errorUtil.isSmashError(error2));
 	});
+
+	it('Test smashError isBadRequestError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.badRequestError("Invalid body", { test: "FOOBAR" });
+		assert.isTrue(errorUtil.isBadRequestError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isBadRequestError(error2));
+	});
+
+	it('Test smashError isUnauthorizedError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.unauthorizedError("User is unauthorized");
+		assert.isTrue(errorUtil.isUnauthorizedError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isUnauthorizedError(error2));
+	});
+
+	it('Test smashError isForbiddenError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.forbiddenError("Password does not match foobar");
+		assert.isTrue(errorUtil.isForbiddenError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isForbiddenError(error2));
+	});
+
+	it('Test smashError isNotFoundError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.notFoundError({ name: "User", primary: 42 });
+		assert.isTrue(errorUtil.isNotFoundError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isNotFoundError(error2));
+	});
+
+	it('Test smashError isConflictError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.conflictError({ name: "User", primary: 42 });
+		assert.isTrue(errorUtil.isConflictError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isConflictError(error2));
+	});
+
+	it('Test smashError isInternalServerError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.internalServerError("User is unauthorized");
+		assert.isTrue(errorUtil.isInternalServerError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isInternalServerError(error2));
+	});
+
+	it('Test smashError isNotImplementedError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.notImplementedError("User is unauthorized");
+		assert.isTrue(errorUtil.isNotImplementedError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isNotImplementedError(error2));
+	});
+
+	it('Test smashError isServiceUnavailableError', function () {
+		const errorUtil = new SmashError();
+		const error1 = errorUtil.serviceUnavailableError("User is unauthorized");
+		assert.isTrue(errorUtil.isServiceUnavailableError(error1));
+		const error2 = new Error();
+		assert.isFalse(errorUtil.isServiceUnavailableError(error2));
+	});
 });
