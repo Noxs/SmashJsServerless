@@ -90,6 +90,31 @@ class Smash {
         return this;
     }
 
+    clearGlobals({ ignoreOverride, silent } = { ignoreOverride: false, silent: false }) {
+        const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
+        for (let i = 0, length = files.length; i < length; i++) {
+            const filePath = path.resolve(files[i]);
+            const { name } = path.parse(filePath);
+            delete global[name];
+            Object.freeze(globalToExpose);
+            if (silent === false) {
+                logger.info("Load global: " + name);
+            }
+        }
+        return this;
+    }
+
+    shutdown() {
+        this.clearGlobals();
+        this._config = new Config();
+        this._binder = new Binder();
+        this._middlewares = null;
+        this._magics = [];
+        this._handlers = null;
+        this._containerEnv = {};
+        this._path = null;
+    }
+
     _clearHandlers() {
         const files = glob.sync(path.resolve(path.join(this._path, PATHS.HANDLER, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
