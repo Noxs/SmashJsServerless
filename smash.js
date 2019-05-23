@@ -31,8 +31,11 @@ class Smash {
 
     _clearExpose() {
         for (let i = 0, length = this._magics.length; i < length; i++) {
-            delete this[this._magics[i]];
+            // delete this[this._magics[i]];
+            this[this._magics[i]] = null;
+            console.log(" ------------------------ HERE");
         }
+        console.log(this._magics);
         this._magics = [];
         return this;
     }
@@ -45,6 +48,7 @@ class Smash {
         const expose = module.expose();
         const that = this;
         for (let i = 0, length = expose.length; i < length; i++) {
+            console.log(this[expose[i].functionName]);
             if (this[expose[i].functionName]) {
                 logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
                 throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
@@ -90,16 +94,12 @@ class Smash {
         return this;
     }
 
-    clearGlobals({ ignoreOverride, silent } = { ignoreOverride: false, silent: false }) {
+    clearGlobals() {
         const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
             const filePath = path.resolve(files[i]);
             const { name } = path.parse(filePath);
             delete global[name];
-            Object.freeze(globalToExpose);
-            if (silent === false) {
-                logger.info("Load global: " + name);
-            }
         }
         return this;
     }
@@ -109,6 +109,7 @@ class Smash {
         this._config = new Config();
         this._binder = new Binder();
         this._middlewares = null;
+        this._clearExpose();
         this._magics = [];
         this._handlers = null;
         this._containerEnv = {};
