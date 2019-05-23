@@ -191,7 +191,7 @@ class Smash {
 
     loadModule(dir, module) {
         try {
-            return require(path.resolve(path.join(process.cwd(), dir, module + EXT_JS)));
+            return require(path.resolve(path.join(this._path, dir, module + EXT_JS)));
         } catch (error) {
             logger.error("Failed to load module " + module, error, error.stack);
             throw error;
