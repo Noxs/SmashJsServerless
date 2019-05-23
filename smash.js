@@ -26,6 +26,7 @@ class Smash {
         this._magics = [];
         this._handlers = null;
         this._containerEnv = {};
+        this._path = null;
     }
 
     _clearExpose() {
@@ -72,7 +73,7 @@ class Smash {
     }
 
     loadGlobals({ ignoreOverride, silent } = { ignoreOverride: false, silent: false }) {
-        const files = glob.sync(path.join(process.cwd(), PATHS.GLOBAL, FILE_EXT_JS));
+        const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
         for (let i = 0, length = files.length; i < length; i++) {
             const filePath = path.resolve(files[i]);
             const { name } = path.parse(filePath);
@@ -90,7 +91,7 @@ class Smash {
     }
 
     _clearHandlers() {
-        const files = glob.sync(path.resolve(path.join(process.cwd(), PATHS.HANDLER, DEEP_EXT_JS)));
+        const files = glob.sync(path.resolve(path.join(this._path, PATHS.HANDLER, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
             delete require.cache[require.resolve(path.resolve(files[i]))]
         }
@@ -100,7 +101,7 @@ class Smash {
     _registerHandlers() {
         this._clearHandlers();
         this._handlers = [];
-        const files = glob.sync(path.resolve(path.join(process.cwd(), PATHS.HANDLER, DEEP_EXT_JS)));
+        const files = glob.sync(path.resolve(path.join(this._path, PATHS.HANDLER, DEEP_EXT_JS)));
         for (let i = 0, length = files.length; i < length; i++) {
             try {
                 this._handlers.push(require(path.resolve(files[i])));
@@ -137,7 +138,8 @@ class Smash {
         return this;
     }
 
-    boot() {
+    boot(path = process.cwd()) {
+        this._path = path;
         this.loadGlobals();
         this._buildContainerEnv();
         this._registerMiddlewares();
