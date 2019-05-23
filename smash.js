@@ -31,11 +31,8 @@ class Smash {
 
     _clearExpose() {
         for (let i = 0, length = this._magics.length; i < length; i++) {
-            // delete this[this._magics[i]];
             this[this._magics[i]] = null;
-            console.log(" ------------------------ HERE");
         }
-        console.log(this._magics);
         this._magics = [];
         return this;
     }
@@ -48,7 +45,6 @@ class Smash {
         const expose = module.expose();
         const that = this;
         for (let i = 0, length = expose.length; i < length; i++) {
-            console.log(this[expose[i].functionName]);
             if (this[expose[i].functionName]) {
                 logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
                 throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
