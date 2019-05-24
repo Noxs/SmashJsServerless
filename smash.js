@@ -26,7 +26,7 @@ class Smash {
         this._magics = [];
         this._handlers = null;
         this._containerEnv = {};
-        this._path = null;
+        this._path = "";
     }
 
     _clearExpose() {
@@ -109,7 +109,7 @@ class Smash {
         this._magics = [];
         this._handlers = null;
         this._containerEnv = {};
-        this._path = null;
+        this._path = "";
     }
 
     _clearHandlers() {
