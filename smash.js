@@ -26,12 +26,12 @@ class Smash {
         this._magics = [];
         this._handlers = null;
         this._containerEnv = {};
-        this._path = null;
+        this._path = "";
     }
 
     _clearExpose() {
         for (let i = 0, length = this._magics.length; i < length; i++) {
-            delete this[this._magics[i]];
+            this[this._magics[i]] = null;
         }
         this._magics = [];
         return this;
@@ -88,6 +88,28 @@ class Smash {
             }
         }
         return this;
+    }
+
+    clearGlobals() {
+        const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
+        for (let i = 0, length = files.length; i < length; i++) {
+            const filePath = path.resolve(files[i]);
+            const { name } = path.parse(filePath);
+            delete global[name];
+        }
+        return this;
+    }
+
+    shutdown() {
+        this.clearGlobals();
+        this._config = new Config();
+        this._binder = new Binder();
+        this._middlewares = null;
+        this._clearExpose();
+        this._magics = [];
+        this._handlers = null;
+        this._containerEnv = {};
+        this._path = "";
     }
 
     _clearHandlers() {
