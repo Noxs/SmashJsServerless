@@ -142,6 +142,15 @@ class Smash {
         return handlers;
     }
 
+    getRoutes() {
+        for (let i = 0, length = this._middlewares.length; i < length; i++) {
+            if (this._middlewares[i].getRoutes) {
+                return this._middlewares[i].getRoutes();
+            }
+        }
+        throw new Error("No middleware found to get routes");
+    }
+
     _buildEnv(context) {
         delete this._env;
         this._env = {};

@@ -256,4 +256,22 @@ describe('Smash', function () {
         };
         smash.handleEvent(event, context, callback);
     });
+
+    it('Test smash getRoutes', function () {
+        smash.shutdown();
+        expect(function () {
+            smash.getRoutes();
+        }).to.throw(Error);
+        smash.boot();
+        expect(function () {
+            assert.isArray(smash.getRoutes());
+        }).to.not.throw(Error);
+    });
+
+    it('Test smash getHandlers', function () {
+        smash.boot();
+        expect(function () {
+            assert.isArray(smash.getHandlers());
+        }).to.not.throw(Error);
+    });
 });
