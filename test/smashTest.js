@@ -8,6 +8,7 @@ const Config = require('../lib/core/config.js');
 const DynamodbModel = require('../lib/util/dynamodbModel.js');
 const Console = require('../lib/util/console.js');
 const cloudWatchEvent = require('./util/cloudWatchEvent.js');
+const codePipeline = require('./util/codePipelineJobEvent.js');
 const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
 
 const badModule = "badModule";
@@ -40,7 +41,7 @@ describe('Smash', function () {
             smash.boot();
         }).to.not.throw(Error);
 
-        assert.lengthOf(smash._handlers, 4);
+        assert.lengthOf(smash._handlers, 5);
     });
 
     it('Test smash process expose bad module', function () {
@@ -170,6 +171,32 @@ describe('Smash', function () {
     it('Test smash handle event cloud watch event not found', function () {
         smash.boot();
         const event = cloudWatchEvent.bad;
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
+        const spy = sinon.spy();
+        const callback = function (error, data) {
+            assert.isNotNull(error);
+            spy.call();
+        };
+        smash.handleEvent(event, context, callback);
+        assert.ok(spy.called);
+    });
+    
+    it('Test smash handle event codepipeline event success', function () {
+        smash.boot();
+        const event = codePipeline.goodgood;
+        const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
+        const spy = sinon.spy();
+        const callback = function (error, data) {
+            assert.isNull(error);
+            spy.call();
+        };
+        smash.handleEvent(event, context, callback);
+        assert.ok(spy.called);
+    });
+
+    it('Test smash handle event codepipeline event not found', function () {
+        smash.boot();
+        const event = codePipeline.bad;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const spy = sinon.spy();
         const callback = function (error, data) {
