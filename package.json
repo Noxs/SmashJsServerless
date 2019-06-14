@@ -1,6 +1,6 @@
 {
   "name": "smash-js-serverless",
-  "version": "4.5.1",
+  "version": "4.6.0",
   "description": "Javascript lambda framework",
   "main": "smash.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "codecov": "^3.5.0",
     "coveralls": "^3.0.3",
     "eslint": "^5.16.0",
-    "istanbul": "*",
+    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.0.0",
     "mocha-lcov-reporter": "^1.3.0",
     "sinon": "^7.3.2"

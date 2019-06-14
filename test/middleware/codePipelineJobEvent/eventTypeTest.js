@@ -3,6 +3,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const EventType = require('../../../lib/middleware/codePipelineJobEvent/lib/eventType.js');
+const codePipeline = require('../../util/codePipelineJobEvent.js');
 
 describe('EventType', function () {
     it('Test event instance failure', function () {
@@ -25,8 +26,31 @@ describe('EventType', function () {
     it('Test event match success', function () {
         const callback = (param) => { };
         const eventType = new EventType(callback);
-        const event = {};
+        const event = codePipeline.good;
         assert.isTrue(eventType.match(event));
+    });
+
+    it('Test event match success with route', function () {
+        const route = { task: "dataStackDeploy" };
+        const callback = (param) => { };
+        const eventType = new EventType(route, callback);
+        const event = codePipeline.goodgood;
+        assert.isTrue(eventType.match(event));
+    });
+
+    it('Test event match failure', function () {
+        const callback = (param) => { };
+        const eventType = new EventType(callback);
+        const event = codePipeline.bad;
+        assert.isFalse(eventType.match(event));
+    });
+
+    it('Test event match failure with route', function () {
+        const route = { task: "dataStackDeploy" };
+        const callback = (param) => { };
+        const eventType = new EventType(route, callback);
+        const event = codePipeline.badbad;
+        assert.isFalse(eventType.match(event));
     });
 
     it('Test event callback', function () {
