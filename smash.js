@@ -20,8 +20,12 @@ const AWS_REGION = "AWS_REGION";
 
 class Smash {
     constructor() {
-        this._config = new Config();
+        this._init();
+    }
+
+    _init() {
         this._binder = new Binder();
+        this._config = null;
         this._middlewares = null;
         this._magics = [];
         this._handlers = null;
@@ -102,14 +106,8 @@ class Smash {
 
     shutdown() {
         this.clearGlobals();
-        this._config = new Config();
-        this._binder = new Binder();
-        this._middlewares = null;
         this._clearExpose();
-        this._magics = [];
-        this._handlers = null;
-        this._containerEnv = {};
-        this._path = "";
+        this._init();
     }
 
     _clearHandlers() {
@@ -144,6 +142,15 @@ class Smash {
         return handlers;
     }
 
+    getRoutes() {
+        for (let i = 0, length = this._middlewares.length; i < length; i++) {
+            if (this._middlewares[i].getRoutes) {
+                return this._middlewares[i].getRoutes();
+            }
+        }
+        throw new Error("No middleware found to get routes");
+    }
+
     _buildEnv(context) {
         delete this._env;
         this._env = {};
@@ -162,6 +169,7 @@ class Smash {
 
     boot(path = process.cwd()) {
         this._path = path;
+        this._config = new Config(this._path);
         this.loadGlobals();
         this._buildContainerEnv();
         this._registerMiddlewares();
