@@ -21,6 +21,7 @@ const configTest = {
     "codePipelineJobEvent": {},
     "cloudWatchEvent": {},
     "dynamodb": {
+        "tablePrefix" : ["tableTest1, tableTest2"],
         "tableSuffix": {
             "dev": "_dev"
         }

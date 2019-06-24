@@ -8,7 +8,7 @@ module.exports = {
             "resourcePath": "/{proxy+}",
             "httpMethod": "POST",
             "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
-            "accountId": "123456789012",
+            "accountId": "0123456789ab",
             "identity": {
                 "apiKey": null,
                 "userArn": null,

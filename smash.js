@@ -5,6 +5,7 @@ const Config = require("./lib/core/config");
 const Binder = require("./lib/core/binder");
 const logger = new Logger("SmashJsServerless");
 const SmashError = require("./lib/util/smashError");
+const DatabaseFactory = require("./lib/util/databaseFactory");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -31,6 +32,7 @@ class Smash {
         this._handlers = null;
         this._containerEnv = {};
         this._path = "";
+        this._dynamodbs = [];
     }
 
     _clearExpose() {
@@ -168,12 +170,18 @@ class Smash {
     }
 
     boot(path = process.cwd()) {
-        this._path = path;
-        this._config = new Config(this._path);
-        this.loadGlobals();
-        this._buildContainerEnv();
-        this._registerMiddlewares();
-        this._registerHandlers();
+        return new Promise((resolve, reject) => {
+            this._path = path;
+            this._config = new Config(this._path);
+            this.loadGlobals();
+            this._buildContainerEnv();
+            const databaseFactory = new DatabaseFactory();
+
+            this._registerMiddlewares();
+            this._registerHandlers();
+        }).catch((error) => {
+            logger.error("Failed to boot, ", error);
+        });
     }
 
     handleEvent(event, context, callback) {
@@ -249,11 +257,21 @@ class Smash {
         return this.loadModule(PATHS.GLOBAL, module);
     }
 
-    database(module) {
-        if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of database must be a valid string, " + Logger.typeOf(module));
+    database(tableName) {
+        if (typeof tableName !== 'string') {
+            throw new Error("Database name must be a valid string, " + Logger.typeOf(tableName));
         }
-        return this.loadModule(PATHS.DATABASE, module);
+        //Get ENV
+        const buildedTableName = prefix + tableName + "_dev";
+        this._dynamodbs.forEach(dynamodb => {
+            console.log(dynamodb);
+            if (dynamodb.getTable === buildedTableName) {
+                console.log(dynamodb);
+                return dynamodb;
+            } else {
+                throw new Error("Failed to find config for database : " + buildedTableName, error);
+            }
+        });
     }
 
     get config() {

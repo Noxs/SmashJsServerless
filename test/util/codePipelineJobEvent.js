@@ -3,7 +3,7 @@ module.exports = {
         'CodePipeline.job':
         {
             id: "31ac5371-3eef-4036-8699-6dfae28a5021",
-            accountId: "583040870050",
+            accountId: "*",
             data:
             {
                 actionConfiguration: {
@@ -20,15 +20,15 @@ module.exports = {
             done: [],
             succeed: [],
             fail: [],
-            logGroupName: "/aws/lambda/SmashDeploy-dev",
-            logStreamName: "2019/06/12/[$LATEST]d0c60f1f90ba48d7b13deac20bbb5b23",
-            functionName: "SmashDeploy-dev",
+            logGroupName: "/aws/lambda/test",
+            logStreamName: "2019/06/12/[$LATEST]test",
+            functionName: "test",
             memoryLimitInMB: "128",
             functionVersion: "$LATEST",
             getRemainingTimeInMillis: [],
             invokeid: "6e276abb-959b-46ce-a907-7103874a2179",
             awsRequestId: "6e276abb-959b-46ce-a907-7103874a2179",
-            invokedFunctionArn: "arn:aws:lambda:eu-west-1:583040870050:function:SmashDeploy-dev"
+            invokedFunctionArn: "*:*:function:test"
         },
         _terminate: { _events: [], _callback: [] }
     },
@@ -36,7 +36,7 @@ module.exports = {
         'CodePipeline.job':
         {
             id: "31ac5371-3eef-4036-8699-6dfae28a5021",
-            accountId: "583040870050",
+            accountId: "*",
             data:
             {
                 actionConfiguration: {
@@ -55,15 +55,15 @@ module.exports = {
             done: [],
             succeed: [],
             fail: [],
-            logGroupName: "/aws/lambda/SmashDeploy-dev",
-            logStreamName: "2019/06/12/[$LATEST]d0c60f1f90ba48d7b13deac20bbb5b23",
-            functionName: "SmashDeploy-dev",
+            logGroupName: "/aws/lambda/test",
+            logStreamName: "2019/06/12/[$LATEST]test",
+            functionName: "test",
             memoryLimitInMB: "128",
             functionVersion: "$LATEST",
             getRemainingTimeInMillis: [],
             invokeid: "6e276abb-959b-46ce-a907-7103874a2179",
             awsRequestId: "6e276abb-959b-46ce-a907-7103874a2179",
-            invokedFunctionArn: "arn:aws:lambda:eu-west-1:583040870050:function:SmashDeploy-dev"
+            invokedFunctionArn: "*:*:function:test"
         },
         _terminate: { _events: [], _callback: [] }
     },
@@ -71,7 +71,7 @@ module.exports = {
         'CodePipeline.job':
         {
             id: "31ac5371-3eef-4036-8699-6dfae28a5021",
-            accountId: "583040870050",
+            accountId: "*",
             data:
             {
                 actionConfiguration: {
@@ -90,15 +90,15 @@ module.exports = {
             done: [],
             succeed: [],
             fail: [],
-            logGroupName: "/aws/lambda/SmashDeploy-dev",
-            logStreamName: "2019/06/12/[$LATEST]d0c60f1f90ba48d7b13deac20bbb5b23",
-            functionName: "SmashDeploy-dev",
+            logGroupName: "/aws/lambda/test",
+            logStreamName: "2019/06/12/[$LATEST]test",
+            functionName: "test",
             memoryLimitInMB: "128",
             functionVersion: "$LATEST",
             getRemainingTimeInMillis: [],
             invokeid: "6e276abb-959b-46ce-a907-7103874a2179",
             awsRequestId: "6e276abb-959b-46ce-a907-7103874a2179",
-            invokedFunctionArn: "arn:aws:lambda:eu-west-1:583040870050:function:SmashDeploy-dev"
+            invokedFunctionArn: "*:*:function:test"
         },
         _terminate: { _events: [], _callback: [] }
     },
@@ -106,7 +106,7 @@ module.exports = {
         'CodePipeline.job':
         {
             id: "31ac5371-3eef-4036-8699-6dfae28a5021",
-            accountId: "583040870050",
+            accountId: "*",
             data:
             {
                 actionConfiguration: {
@@ -125,15 +125,15 @@ module.exports = {
             done: [],
             succeed: [],
             fail: [],
-            logGroupName: "/aws/lambda/SmashDeploy-dev",
-            logStreamName: "2019/06/12/[$LATEST]d0c60f1f90ba48d7b13deac20bbb5b23",
-            functionName: "SmashDeploy-dev",
+            logGroupName: "/aws/lambda/test",
+            logStreamName: "2019/06/12/[$LATEST]test",
+            functionName: "test",
             memoryLimitInMB: "128",
             functionVersion: "$LATEST",
             getRemainingTimeInMillis: [],
             invokeid: "6e276abb-959b-46ce-a907-7103874a2179",
             awsRequestId: "6e276abb-959b-46ce-a907-7103874a2179",
-            invokedFunctionArn: "arn:aws:lambda:eu-west-1:583040870050:function:SmashDeploy-dev"
+            invokedFunctionArn: "*:*:function:test"
         },
         _terminate: { _events: [], _callback: [] }
     }
