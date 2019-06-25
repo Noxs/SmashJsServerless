@@ -4,7 +4,7 @@ const Config = require('../lib/core/config.js');
 const cloudWatchEvent = require('./util/cloudWatchEvent.js');
 const codePipeline = require('./util/codePipelineJobEvent.js');
 const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
-const DatabaseFactory = require("../lib/util/databaseFactory");
+const DynamodbFactory = require("../lib/util/dynamodbFactory");
 
 const badModule = "badModule";
 
@@ -99,9 +99,9 @@ describe('Smash', function () {
 
     it('Test smash database found', async function () {
         smash.boot();
-        const databaseFactory = new DatabaseFactory(keys, region);
-        await databaseFactory._buildConfigTables();
-        console.log(databaseFactory._dynamodbs);
+        const dynamodbFactory = new DynamodbFactory(keys, region);
+        await dynamodbFactory._buildConfigTables();
+        console.log(dynamodbFactory._dynamodbs);
         smash.database('transfer_transfer');
         expect(function () {
             smash.database("test");

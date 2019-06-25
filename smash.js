@@ -5,7 +5,7 @@ const Config = require("./lib/core/config");
 const Binder = require("./lib/core/binder");
 const logger = new Logger("SmashJsServerless");
 const SmashError = require("./lib/util/smashError");
-const DatabaseFactory = require("./lib/util/databaseFactory");
+const DynamodbFactory = require("./lib/util/dynamodbFactory");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -175,7 +175,7 @@ class Smash {
             this._config = new Config(this._path);
             this.loadGlobals();
             this._buildContainerEnv();
-            const databaseFactory = new DatabaseFactory();
+            const dynamodbFactory = new DynamodbFactory();
 
             this._registerMiddlewares();
             this._registerHandlers();

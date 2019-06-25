@@ -1,11 +1,11 @@
 const aws = require('aws-sdk');
 var MockDate = require('mockdate');
-const Dynamodb = require("../../lib/util/dynamodb.js");
-const configurationTest = require('./dynamodbData.js');
+const Dynamodb = require("../../lib/util/dynamodb");
+const configurationTest = require('./dynamodb.data');
 const dynamodbDataTypes = require('dynamodb-data-types').AttributeValue;
 
 describe('Dynamodb', function () {
-    const tableName = "TableName";
+    const tableName = "Transfer";
     it('Test Dynamodb instance failure', function () {
         expect(function () {
             const db = new Dynamodb();
@@ -136,6 +136,13 @@ describe('Dynamodb', function () {
     });
 
     it('Test Dynamodb client', function () {
+        const name = "application_code";
+        const configuration = configurationTest.goodDual;
+        const db = new Dynamodb(configuration);
+        expect(db._toCamelCase(name)).toBe('ApplicationCode');
+    });
+
+    it('Test Dynamodb client', function () {
 
     });
 
@@ -213,7 +220,7 @@ describe('Dynamodb', function () {
             limit: 1
         };
         const params = {
-            TableName: this.table,
+            TableName: this.name,
             KeyConditionExpression: "#partitionKey = :partitionKey",
             ExpressionAttributeValues: {
                 ':partitionKey': "partitionKey",
@@ -223,7 +230,7 @@ describe('Dynamodb', function () {
             }
         };
         const expectedParams = {
-            TableName: this.table,
+            TableName: this.name,
             KeyConditionExpression: "#partitionKey = :partitionKey",
             ExpressionAttributeValues: {
                 ':partitionKey': "partitionKey",
@@ -377,7 +384,7 @@ describe('Dynamodb mocked tests for primary index', function () {
     it('Test Dynamodb _findSingle', async function () {
         const configuration = configurationTest.goodDual;
         const db = new Dynamodb(configuration);
-        
+
         db.client.query = jest.fn((params, cb) => {
             cb(null, { Items: db.wrap([{ test: "test" }]) });
         });
@@ -668,7 +675,7 @@ describe('Dynamodb mocked tests with real function names and no sort key', funct
             cb(null, mockResult);
         });
 
-        const result = await db.getTableName("test");
+        const result = await db.getTransfer("test");
         expect(result.items).toStrictEqual([expectedResult]);
     });
 
@@ -676,7 +683,7 @@ describe('Dynamodb mocked tests with real function names and no sort key', funct
     //     const configuration = configurationTest.goodSingle;
     //     const db = new Dynamodb(configuration);
 
-    //     expect(db.getTableName()).toThrow(Error("Invalid parameters for function _getByIndexSingle"));
+    //     expect(db.getTransfer()).toThrow(Error("Invalid parameters for function _getByIndexSingle"));
     // });
 
 });
@@ -721,7 +728,7 @@ describe('Dynamodb mocked tests for secondary index with real names', function (
             cb(null, mockResult);
         });
 
-        const result = await db.getTableNameByIndexTest1("test");
+        const result = await db.getTransferByIndexTest1("test");
         expect(result.items).toStrictEqual([expectedResult]);
     });
 
@@ -758,7 +765,7 @@ describe('Dynamodb mocked tests for secondary index with real names', function (
             cb(null, mockResult);
         });
 
-        const result = await db.getTableNameByIndexTest1("test", { options });
+        const result = await db.getTransferByIndexTest1("test", { options });
         expect(result).toStrictEqual([expectedResult]);
     });
 
@@ -796,7 +803,7 @@ describe('Dynamodb mocked tests for secondary index with real names', function (
             cb(null, mockResult);
         });
 
-        const result = await db.getTableNamesByIndexTest1({ options });
+        const result = await db.getTransfersByIndexTest1({ options });
         expect(result.items).toStrictEqual([expectedResult]);
     });
 
@@ -834,7 +841,7 @@ describe('Dynamodb mocked tests for secondary index with real names', function (
             cb(null, mockResult);
         });
 
-        const result = await db.getTableNamesByIndexTest1("test", { options });
+        const result = await db.getTransfersByIndexTest1("test", { options });
         expect(result.items).toStrictEqual([expectedResult]);
     });
 

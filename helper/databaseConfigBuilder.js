@@ -1,14 +1,21 @@
-const MatchPrefix = require('./regexp');
 const Uppercase = require('./firstLetterUppercase');
 
 class DatabaseConfigBuilder {
-    constructor(tableDescription) {
+    constructor(prefix, suffix, tableDescription) {
+        this._prefix = prefix;
+        this._suffix = suffix;
         this._tableDescription = tableDescription;
         this._transformedDescription = {};
     }
 
     _capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    _computeTableName(name) {
+        let parsedName = name.replace(this._prefix + '_', '');
+        parsedName = parsedName.replace('_' + this._suffix, '');
+        return this._capitalizeFirstLetter(parsedName);
     }
 
     _isSortKey(keyType) {
@@ -92,8 +99,9 @@ class DatabaseConfigBuilder {
 
 
     _translateDescription() {
-        this._transformedDescription.table = Uppercase.capitalizeFirstLetter(this._tableDescription.TableName.split("_")[1]);
-        //Retrieve suffix 
+        this._transformedDescription.table = this._tableDescription.TableName;
+        this._transformedDescription.name = this._computeTableName(this._tableDescription.TableName);
+        console.log(this._transformedDescription);
         this._parsePrimaryIndex();
         this._parseSecondaryIndex();
     }
