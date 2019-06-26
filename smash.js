@@ -33,11 +33,8 @@ class Smash {
         this._handlers = null;
         this._containerEnv = {};
         this._path = "";
-<<<<<<< HEAD
         this._dynamodbs = [];
-=======
         this._singletons = {};
->>>>>>> develop
     }
 
     _clearExpose() {
