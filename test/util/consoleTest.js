@@ -1,7 +1,6 @@
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
-const should = chai.should();
 const Console = require('../../lib/util/console.js');
 
 describe('Console', function () {

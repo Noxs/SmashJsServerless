@@ -9,6 +9,7 @@ const DynamodbFactory = require("./lib/util/dynamodbFactory");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
+const UNDERSCORE = "_";
 const PATHS = {
     MIDDLEWARE: "lib/middleware/*",
     HANDLER: "controller",
@@ -33,7 +34,7 @@ class Smash {
         this._handlers = null;
         this._containerEnv = {};
         this._path = "";
-        this._dynamodbs = [];
+        this._dynamodbFactory = null;
         this._singletons = {};
     }
 
@@ -147,9 +148,11 @@ class Smash {
     }
 
     getRoutes() {
-        for (let i = 0, length = this._middlewares.length; i < length; i++) {
-            if (this._middlewares[i].getRoutes) {
-                return this._middlewares[i].getRoutes();
+        if (this._middlewares) {
+            for (let i = 0, length = this._middlewares.length; i < length; i++) {
+                if (this._middlewares[i].getRoutes) {
+                    return this._middlewares[i].getRoutes();
+                }
             }
         }
         throw new Error("No middleware found to get routes");
@@ -165,24 +168,31 @@ class Smash {
         return this;
     }
 
-    _buildContainerEnv() {
-        Object.assign(this._containerEnv, process.env);
+    _buildContainerEnv(envs = {}) {
+        Object.assign(this._containerEnv, process.env, envs);
         this._buildEnv();
         return this;
     }
 
-    boot(path = process.cwd()) {
-        return new Promise((resolve, reject) => {
-            this._path = path;
-            this._config = new Config(this._path);
-            this.loadGlobals();
-            this._buildContainerEnv();
-            const dynamodbFactory = new DynamodbFactory();
+    async _buildDatabases() {
+        this._dynamodbFactory = new DynamodbFactory(this.getEnv('TABLE_PREFIX'), this.getEnv('ENV'));
+        await this._dynamodbFactory.buildConfigTables();
+    }
 
-            this._registerMiddlewares();
-            this._registerHandlers();
-        }).catch((error) => {
-            logger.error("Failed to boot, ", error);
+    boot(path = process.cwd(), envs = {}) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                this._path = path;
+                this._config = new Config(this._path);
+                this.loadGlobals();
+                this._buildContainerEnv(envs);
+                await this._buildDatabases();
+                this._registerMiddlewares();
+                this._registerHandlers();
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
         });
     }
 
@@ -303,21 +313,12 @@ class Smash {
         return this.loadModule(PATHS.GLOBAL, module);
     }
 
-    database(tableName) {
-        if (typeof tableName !== 'string') {
-            throw new Error("Database name must be a valid string, " + Logger.typeOf(tableName));
+    database(name) {
+        if (typeof name !== 'string') {
+            throw new Error("Database name must be a valid string, " + Logger.typeOf(name));
         }
-        //Get ENV
-        const buildedTableName = prefix + tableName + "_dev";
-        this._dynamodbs.forEach(dynamodb => {
-            console.log(dynamodb);
-            if (dynamodb.getTable === buildedTableName) {
-                console.log(dynamodb);
-                return dynamodb;
-            } else {
-                throw new Error("Failed to find config for database : " + buildedTableName, error);
-            }
-        });
+        const buildedTableName = [smash.getEnv('TABLE_PREFIX'), name, smash.getEnv('ENV')].join(UNDERSCORE);
+        return this._dynamodbFactory.get(buildedTableName);
     }
 
     get config() {

@@ -150,6 +150,13 @@ describe('Dynamodb', function () {
     });
 
     it('Test Dynamodb client', function () {
+        const name = "report";
+        const configuration = configurationTest.goodDual;
+        const db = new Dynamodb(configuration);
+        expect(db._toCamelCase(name)).toBe('Report');
+    });
+
+    it('Test Dynamodb client', function () {
 
     });
 

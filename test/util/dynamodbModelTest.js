@@ -1,8 +1,6 @@
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
-const should = chai.should();
-const sinon = require('sinon');
 const DynamodbModel = require("../../lib/util/dynamodbModel.js");
 
 class TestEmpty extends DynamodbModel {

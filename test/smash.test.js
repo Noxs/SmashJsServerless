@@ -1,10 +1,8 @@
 const smash = require('../smash.js');
-const aws = require('aws-sdk');
 const Config = require('../lib/core/config.js');
 const cloudWatchEvent = require('./util/cloudWatchEvent.js');
 const codePipeline = require('./util/codePipelineJobEvent.js');
 const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
-const DynamodbFactory = require("../lib/util/dynamodbFactory");
 
 const badModule = "badModule";
 
@@ -14,28 +12,39 @@ const overwriteModule = {
     }
 };
 
+
 describe('Smash', function () {
-    it('Test smash boot', function () {
-        expect(function () {
-            smash.boot();
-        }).not.toThrow(Error);
+    beforeEach(() => {
+        jest.resetModules();
     });
 
-    it('Test smash register middleware', function () {
-        expect(function () {
-            smash.boot();
-        }).not.toThrow(Error);
-        expect(smash._middlewares).toHaveLength(8);
+    it('Test smash boot', async function () {
+        await expect(smash.boot()).rejects.toThrow();
+    });
 
-        smash.boot();
+    it('Test smash boot', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await expect(smash.boot(undefined, envs)).resolves.toEqual(undefined);
+    });
+
+    it('Test smash register middleware', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         expect(smash._middlewares).toHaveLength(8);
     });
 
-    it('Test smash register handlers', function () {
-        expect(function () {
-            smash.boot();
-        }).not.toThrow(Error);
-
+    it('Test smash register handlers', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         expect(smash._handlers).toHaveLength(5);
     });
 
@@ -62,102 +71,111 @@ describe('Smash', function () {
         }).toThrow();
     });
 
-    it('Test smash util success', function () {
-        smash.boot();
-
+    it('Test smash util success', async function () {
+        await smash.boot();
         expect(function () {
             smash.util("testUtil");
         }).not.toThrow();
     });
 
-    it('Test smash util not found', function () {
-        smash.boot();
+    it('Test smash util not found', async function () {
+        await smash.boot();
 
         expect(function () {
             smash.util("test");
         }).toThrow();
     });
 
-    it('Test smash util invalid', function () {
-        smash.boot();
+    it('Test smash util invalid', async function () {
+        await smash.boot();
 
         expect(function () {
             smash.util(1);
         }).toThrow();
     });
 
-    it('Test smash database success', function () {
-        smash.boot();
+    it('Test smash database success with primary index', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        }
+        await smash.boot(undefined, envs);
+        expect(smash.database('transfer')).toHaveProperty('getTransfer');
+        expect(smash.database('transfer')).toHaveProperty('getTransfers');
+        expect(smash.database('transfer')).toHaveProperty('findTransfer');
+        expect(smash.database('transfer')).toHaveProperty('deleteTransfer');
+    });
 
-        // const mockResult = dynamodbFactory_configuration.good;
-        // const db = new aws.DynamoDB();
-        // db.describeTable = jest.fn((params, cb) => {
-        //     cb(null, mockResult);
-        // });
-        // expect(smash.database("transfer_transfer")).not.toThrow();
+    it('Test smash database success with secondary index', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        }
+        await smash.boot(undefined, envs);
+        expect(smash.database('transfer')).toHaveProperty('getTransfersByAccountLegacy');
+        expect(smash.database('transfer')).toHaveProperty('getTransfersByAccountLegacy');
     });
 
     it('Test smash database found', async function () {
-        smash.boot();
-        const dynamodbFactory = new DynamodbFactory(keys, region);
-        await dynamodbFactory._buildConfigTables();
-        console.log(dynamodbFactory._dynamodbs);
-        smash.database('transfer_transfer');
+        await smash.boot();
         expect(function () {
             smash.database("test");
         }).toThrow();
     });
 
-    it('Test smash database invalid', function () {
-        smash.boot();
-
+    it('Test smash database invalid', async function () {
+        await smash.boot();
         expect(function () {
             smash.database(1);
         }).toThrow();
     });
 
-    it('Test smash helper success', function () {
-        smash.boot();
+    it('Test smash helper success', async function () {
+        await smash.boot();
 
         expect(function () {
             smash.helper("random");
         }).not.toThrow();
     });
 
-    it('Test smash helper not found', function () {
-        smash.boot();
+    it('Test smash helper not found', async function () {
+        await smash.boot();
 
         expect(function () {
             smash.helper("test");
         }).toThrow();
     });
 
-    it('Test smash helper invalid', function () {
-        smash.boot();
+    it('Test smash helper invalid', async function () {
+        await smash.boot();
 
         expect(function () {
             smash.helper(1);
         }).toThrow();
     });
 
-    it('Test smash config', function () {
-        smash.boot();
+    it('Test smash config', async function () {
+        await smash.boot();
         expect(typeof smash.config).toBe('object');
         expect(smash.config).toBeInstanceOf(Config);
     });
 
-    it('Test smash model', function () {
-        smash.boot();
+    it('Test smash model', async function () {
+        await smash.boot();
         expect(typeof smash.DynamodbModel).toBe('function');
     });
 
-    it('Test smash console', function () {
-        smash.boot();
+    it('Test smash console', async function () {
+        await smash.boot();
         expect(typeof smash.Console).toBe('function');;
     });
 
-    it('Test smash handle event cloud watch event success', function () {
-        smash.boot();
+    it('Test smash handle event cloud watch event success', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         const event = cloudWatchEvent.good;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = jest.fn((error, data) => {
@@ -168,8 +186,12 @@ describe('Smash', function () {
         expect(callback).toHaveBeenCalled();
     });
 
-    it('Test smash handle event cloud watch event not found', function () {
-        smash.boot();
+    it('Test smash handle event cloud watch event not found', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         const event = cloudWatchEvent.bad;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = jest.fn((error, data) => {
@@ -179,8 +201,12 @@ describe('Smash', function () {
         expect(callback).toHaveBeenCalled();
     });
 
-    it('Test smash handle event codepipeline event success', function () {
-        smash.boot();
+    it('Test smash handle event codepipeline event success', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         const event = codePipeline.goodgood;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = jest.fn((error, data) => {
@@ -190,9 +216,12 @@ describe('Smash', function () {
         expect(callback).toHaveBeenCalled();
     });
 
-    it('Test smash handle event codepipeline event not found', function () {
-        smash.boot();
-        const event = codePipeline.bad;
+    it('Test smash handle event codepipeline event not found', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);        const event = codePipeline.bad;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = jest.fn((error, data) => {
             expect(error).not.toBeNull();
@@ -201,8 +230,12 @@ describe('Smash', function () {
         expect(callback).toHaveBeenCalled();
     });
 
-    it('Test smash handle event api gateway proxy event success', function () {
-        smash.boot();
+    it('Test smash handle event api gateway proxy event success', async function (done) {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         const event = apiGatewayProxyRequest.goodWithoutUser;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = jest.fn((error, data) => {
@@ -217,13 +250,18 @@ describe('Smash', function () {
                 },
                 body: '{"data":{"foo":"bar"}}'
             });
+            done();
         });
         smash.handleEvent(event, context, callback);
         expect(callback).toHaveBeenCalled();
     });
 
-    it('Test smash handle event api gateway proxy event not found', function () {
-        smash.boot();
+    it('Test smash handle event api gateway proxy event not found', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         const event = apiGatewayProxyRequest.goodNotFound;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = jest.fn((error, data) => {
@@ -243,8 +281,12 @@ describe('Smash', function () {
         expect(callback).toHaveBeenCalled();
     });
 
-    it('Test smash handle event api gateway proxy event incorrect', function () {
-        smash.boot();
+    it('Test smash handle event api gateway proxy event incorrect', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         const event = apiGatewayProxyRequest.bad;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = jest.fn((error, data) => {
@@ -265,8 +307,12 @@ describe('Smash', function () {
         expect(callback).toHaveBeenCalled();
     });
 
-    it('Test smash handle event api gateway proxy event incorrect', function () {
-        smash.boot();
+    it('Test smash handle event api gateway proxy event incorrect', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         const event = apiGatewayProxyRequest.badbad;
         const context = { invokedFunctionArn: 'arn:aws:lambda:*******:*******:function:*************:prod' };
         const callback = function (error, data) {
@@ -276,15 +322,25 @@ describe('Smash', function () {
         smash.handleEvent(event, context, callback);
     });
 
-    it('Test smash getRoutes', function () {
+    it('Test smash getRoutes', async function () {
         smash.shutdown();
-        expect(smash.getRoutes()).toThrow(Error);
-        smash.boot();
+        expect(() => {
+            smash.getRoutes();          
+        }).toThrow();
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         expect(Array.isArray(smash.getRoutes())).toBe(true);
     });
 
-    it('Test smash getHandlers', function () {
-        smash.boot();
+    it('Test smash getHandlers', async function () {
+        const envs = {
+            'TABLE_PREFIX': 'transfer',
+            'ENV': 'dev',
+        };
+        await smash.boot(undefined, envs);
         expect(Array.isArray(smash.getHandlers())).toBe(true);
     });
 });

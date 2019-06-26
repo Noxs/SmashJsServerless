@@ -4,7 +4,7 @@
   "description": "Javascript lambda framework",
   "main": "smash.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --automock false ",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha  --reporter=lcovonly -- test --recursive"
   },
   "repository": {
@@ -26,17 +26,18 @@
     "codecov": "^3.5.0",
     "coveralls": "^3.0.3",
     "eslint": "^5.16.0",
+    "eslint-plugin-jest": "^22.7.1",
     "istanbul": "^1.1.0-alpha.1",
     "jest": "^24.8.0",
     "mocha": "^5.0.0",
     "mocha-lcov-reporter": "^1.3.0",
+    "mockdate": "^2.0.3",
     "sinon": "^7.3.2"
   },
   "dependencies": {
     "aws-sdk": "^2.478.0",
     "dynamodb-data-types": "^3.0.1",
     "glob": "^7.1.4",
-    "lodash": "^4.17.11",
-    "mockdate": "^2.0.3"
+    "lodash": "^4.17.11"
   }
 }

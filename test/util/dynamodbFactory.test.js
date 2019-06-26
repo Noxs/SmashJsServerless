@@ -1,4 +1,3 @@
-const aws = require('aws-sdk');
 const DynamodbFactory = require("../../lib/util/dynamodbFactory");
 const DynamodbFactoryData = require("./dynamodbFactory.data");
 
@@ -100,12 +99,23 @@ describe('DynamodbFactory', function () {
         const config = DynamodbFactoryData.description_table_good;
         const result = await dynamodbFactory._buildDynamodb(config['Table']);
         const tableName = 'Transfer';
-        console.log(result);
         expect(result).toHaveProperty('get' + tableName);
         expect(result).toHaveProperty('delete' + tableName);
         expect(result).toHaveProperty('post' + tableName);
         expect(result).toHaveProperty('put' + tableName);
         expect(result).toHaveProperty('get' + tableName + 's');
+    });
+
+    it('Test buildConfigTables success', async function () {
+        const dynamodbFactory = new DynamodbFactory('transfer', 'dev', {});
+        dynamodbFactory._client.listTables = jest.fn((params, cb) => {
+            cb(null, (DynamodbFactoryData.table_names_good));
+        });
+        dynamodbFactory._client.describeTable = jest.fn((params, cb) => {
+            cb(null, (DynamodbFactoryData.description_table_good));
+        });
+        await dynamodbFactory.buildConfigTables();
+        expect(dynamodbFactory.dynamodbs).toHaveLength(3);
     });
 
 });
