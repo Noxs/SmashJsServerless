@@ -143,6 +143,13 @@ describe('Dynamodb', function () {
     });
 
     it('Test Dynamodb client', function () {
+        const name = "application_code_test_code_dev";
+        const configuration = configurationTest.goodDual;
+        const db = new Dynamodb(configuration);
+        expect(db._toCamelCase(name)).toBe('ApplicationCode');
+    });
+
+    it('Test Dynamodb client', function () {
 
     });
 

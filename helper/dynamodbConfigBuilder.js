@@ -1,6 +1,4 @@
-const Uppercase = require('./firstLetterUppercase');
-
-class DatabaseConfigBuilder {
+class DynamodbConfigBuilder {
     constructor(prefix, suffix, tableDescription) {
         this._prefix = prefix;
         this._suffix = suffix;
@@ -107,4 +105,4 @@ class DatabaseConfigBuilder {
     }
 }
 
-module.exports = DatabaseConfigBuilder;
+module.exports = DynamodbConfigBuilder;
