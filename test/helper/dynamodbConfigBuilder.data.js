@@ -38,7 +38,7 @@ module.exports = {
         },
         "GlobalSecondaryIndexes": [
             {
-                "indexName": "account_legacy",
+                "IndexName": "account_legacy",
                 "KeySchema": [
                     {
                         "AttributeName": "account_legacy",
@@ -59,7 +59,7 @@ module.exports = {
                 "IndexArn": "arn:aws:dynamodb:eu-west-1:123456789:table/transfer_transfer_dev/index/account_legacy"
             },
             {
-                "indexName": "report",
+                "IndexName": "report",
                 "KeySchema": [
                     {
                         "AttributeName": "report",

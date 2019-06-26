@@ -99,7 +99,6 @@ class DynamodbConfigBuilder {
     _translateDescription() {
         this._transformedDescription.table = this._tableDescription.TableName;
         this._transformedDescription.name = this._computeTableName(this._tableDescription.TableName);
-        console.log(this._transformedDescription);
         this._parsePrimaryIndex();
         this._parseSecondaryIndex();
     }
