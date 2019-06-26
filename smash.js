@@ -15,6 +15,7 @@ const PATHS = {
     DATABASE: "database",
     UTIL: "util",
     HELPER: "helper",
+    SINGLETON: "singleton",
     GLOBAL: "global",
 };
 const AWS_REGION = "AWS_REGION";
@@ -32,7 +33,11 @@ class Smash {
         this._handlers = null;
         this._containerEnv = {};
         this._path = "";
+<<<<<<< HEAD
         this._dynamodbs = [];
+=======
+        this._singletons = {};
+>>>>>>> develop
     }
 
     _clearExpose() {
@@ -224,7 +229,11 @@ class Smash {
     }
 
     setEnv(key, value) {
+        if (!this._env) {
+            this._env = {};
+        }
         this._env[key] = value;
+        return this;
     }
 
     loadModule(dir, module) {
@@ -248,6 +257,46 @@ class Smash {
             throw new Error("First parameter of helper must be a valid string, " + Logger.typeOf(module));
         }
         return this.loadModule(PATHS.HELPER, module);
+    }
+
+    _loadSingletonModule(module) {
+        try {
+            return this.loadModule(PATHS.SINGLETON, module);
+        } catch (error) {
+            return require(module);
+        }
+    }
+
+    _instanciateModule(module) {
+        if (module.constructor) {
+            return new module();
+        }
+        return module;
+    }
+
+    _bootSingletonModule(module) {
+        if (this._singletons[module].load) {
+            this._singletons[module].load().catch(error => {
+                logger.error("Failed to boot singleton module " + module, error);
+            });
+        }
+    }
+
+    singleton(module) {
+        if (typeof module !== 'string' || module.length === 0) {
+            throw new Error("First parameter of singleton must be a valid string, " + Logger.typeOf(module));
+        }
+        if (this._singletons[module]) {
+            return this._singletons[module];
+        } else {
+            try {
+                const requiredModule = this._loadSingletonModule(module);
+                this._singletons[module] = this._instanciateModule(requiredModule);
+                this._bootSingletonModule(module);
+            } catch (error) {
+                throw new Error("Cannot find module " + module);
+            }
+        }
     }
 
     global(module) {
