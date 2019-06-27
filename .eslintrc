@@ -97,7 +97,6 @@
 		"no-catch-shadow": "warn",
 		"no-delete-var": "warn",
 		"no-undef-init": "warn",
-		"no-undefined": "error",
 		"global-require": "warn",
 		"array-bracket-newline": [
 			"warn",
