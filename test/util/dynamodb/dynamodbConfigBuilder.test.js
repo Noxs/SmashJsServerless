@@ -1,8 +1,7 @@
-const DynamodbConfigBuilder = require('../../lib/util/dynamodb/dynamodbConfigBuilder');
+const DynamodbConfigBuilder = require('../../../lib/util/dynamodb/dynamodbConfigBuilder');
 const DynamodbConfigBuilderData = require('./dynamodbConfigBuilder.data');
 
 describe('DynamodbConfigBuilder with good configs', () => {
-
 	it('Test _isSortKey false case 1', () => {
 		const dynamodbConfigBuilder = new DynamodbConfigBuilder("transfer", "dev", DynamodbConfigBuilderData.good);
 		expect(dynamodbConfigBuilder._isSortKey("HASH")).toBe(false);
@@ -79,16 +78,28 @@ describe('DynamodbConfigBuilder with good configs', () => {
 		expect(dynamodbConfigBuilder._parseKeySchema(keySchema)).toStrictEqual(expectedParsedKeySchema);
 	});
 
-	it('Test _parsePrimaryIndex success', () => {
+	it('Test _parsePrimaryIndex success case 1', () => {
 		const dynamodbConfigBuilder = new DynamodbConfigBuilder("transfer", "dev", DynamodbConfigBuilderData.good);
 		dynamodbConfigBuilder._parsePrimaryIndex();
 		expect(dynamodbConfigBuilder.transformedDescription).toStrictEqual(DynamodbConfigBuilderData.expectedParsedPrimaryIndex);
 	});
 
-	it('Test _parseSecondaryIndex success', () => {
+	it('Test _parsePrimaryIndex success case 2', () => {
+		const dynamodbConfigBuilder = new DynamodbConfigBuilder("transfer", "dev", DynamodbConfigBuilderData.good_with_sort_key);
+		dynamodbConfigBuilder._parsePrimaryIndex();
+		expect(dynamodbConfigBuilder.transformedDescription).toStrictEqual(DynamodbConfigBuilderData.expectedParsedPrimaryIndexWithSortKey);
+	});
+
+	it('Test _parseSecondaryIndex success case 1', () => {
 		const dynamodbConfigBuilder = new DynamodbConfigBuilder("transfer", "dev", DynamodbConfigBuilderData.good);
 		dynamodbConfigBuilder._parseSecondaryIndex();
 		expect(dynamodbConfigBuilder.transformedDescription).toStrictEqual(DynamodbConfigBuilderData.expectedParsedSecondaryIndex);
+	});
+
+	it('Test _parseSecondaryIndex success case 2', () => {
+		const dynamodbConfigBuilder = new DynamodbConfigBuilder("transfer", "dev", DynamodbConfigBuilderData.good_with_sort_key);
+		dynamodbConfigBuilder._parseSecondaryIndex();
+		expect(dynamodbConfigBuilder.transformedDescription).toStrictEqual(DynamodbConfigBuilderData.expectedParsedSecondaryIndexWithSortKey);
 	});
 
 	it('Test _computeTableName success', () => {
@@ -97,7 +108,7 @@ describe('DynamodbConfigBuilder with good configs', () => {
 		expect(computedName).toStrictEqual("Transfer");
 	});
 
-	it('Test _translateDescription', () => {
+	it('Test _transformDescription', () => {
 		const description = new DynamodbConfigBuilder("transfer", "dev", DynamodbConfigBuilderData.good);
 		const expectedResult = {
 			"table": "transfer_transfer_dev",
@@ -120,7 +131,4 @@ describe('DynamodbConfigBuilder with good configs', () => {
 		description.transformDescription();
 		expect(description.transformedDescription).toStrictEqual(expectedResult);
 	});
-
-	//MORE TESTS TO ADD, WHEN TOO MUCH KEYS IN INDEX FOR EXAMPLE
-
 });

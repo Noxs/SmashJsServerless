@@ -126,6 +126,13 @@ describe('Dynamodb', () => {
 		expect(db).not.toHaveProperty('findByIndexTest3');
 	});
 
+	it('Test setWrapper function', () => {
+		const configuration = configurationTest.goodDual;
+		const db = new Dynamodb(configuration);
+		db.setWrapper("AWRAPPER");
+		expect(db.wrapper).toBe("AWRAPPER");
+	});
+
 	it('Test Dynamodb wrapper wrap function', () => {
 		const configuration = configurationTest.goodDual;
 		const db = new Dynamodb(configuration);
@@ -133,6 +140,15 @@ describe('Dynamodb', () => {
 		const expectedWrappedItem = { test: { S: 'test' }, testArray: { SS: ['item1', 'item2'] } }
 		const wrappedItem = db.wrap(item);
 		expect(wrappedItem).toStrictEqual(expectedWrappedItem);
+	});
+
+	it('Test Dynamodb wrapper unwrap function with array', () => {
+		const configuration = configurationTest.goodDual;
+		const db = new Dynamodb(configuration);
+		const items = [{ test: { S: 'test' }, testArray: { SS: ['item1', 'item2'] } }, { test: { S: 'test' }, testArray: { SS: ['item1', 'item2'] } }];
+		const expectedWrappedItem = [{ test: "test", testArray: ["item1", "item2"] }, { test: "test", testArray: ["item1", "item2"] }];
+		const wrappedItem = db.unwrap(items);
+		expect(wrappedItem).toEqual(expectedWrappedItem);
 	});
 
 	it('Test Dynamodb wrapper unwrap function', () => {
@@ -181,7 +197,10 @@ describe('Dynamodb', () => {
 	});
 
 	it('Test Dynamodb client', () => {
-
+		const configuration = configurationTest.goodDual;
+		const db = new Dynamodb(configuration);
+		db.setClient("TESTCLIENT");
+		expect(db.client).toBe("TESTCLIENT");
 	});
 
 	it('Test Dynamodb prefix', () => {
@@ -312,6 +331,21 @@ describe('Dynamodb', () => {
 		expect(db._addOptions(params, options)).toStrictEqual(expectedParams);
 	});
 
+	it('Test Dynamodb buildArgsForReadSingle failure', () => {
+		const configuration = configurationTest.goodDual;
+		const db = new Dynamodb(configuration);
+		const args = [1, 2, 3, 4];
+		expect(() => db.buildArgsForReadSingle(args)).toThrow();
+	});
+
+	it('Test Dynamodb buildArgsForReadSingle zero args', () => {
+		const configuration = configurationTest.goodDual;
+		const db = new Dynamodb(configuration);
+		const args = [];
+		const expectedReturnedArgs = [null, {}];
+		expect(db.buildArgsForReadSingle(args)).toStrictEqual(expectedReturnedArgs);
+	});
+
 	it('Test Dynamodb buildArgsForReadSingle two args', () => {
 		const configuration = configurationTest.goodDual;
 		const db = new Dynamodb(configuration);
@@ -348,6 +382,14 @@ describe('Dynamodb', () => {
 		const configuration = configurationTest.goodDual;
 		const db = new Dynamodb(configuration);
 		const args = ["test1", "test2"];
+		const expectedReturnedArgs = ["test1", "test2", {}];
+		expect(db.buildArgsForReadDual(args)).toEqual(expectedReturnedArgs);
+	});
+
+	it('Test Dynamodb buildArgsForReadDual 3 args (partitionKey, sortKey, options)', () => {
+		const configuration = configurationTest.goodDual;
+		const db = new Dynamodb(configuration);
+		const args = ["test1", "test2", {}];
 		const expectedReturnedArgs = ["test1", "test2", {}];
 		expect(db.buildArgsForReadDual(args)).toEqual(expectedReturnedArgs);
 	});
@@ -401,6 +443,13 @@ describe('Dynamodb', () => {
 		const args = [{}];
 		expect(() => db.buildArgsForWrite(args)).not.toThrow();
 		expect(db.buildArgsForWrite(args)).toEqual([{}, {}]);
+	});
+
+	it('Test Dynamodb buildArgsForWrite failure', () => {
+		const configuration = configurationTest.goodDual;
+		const db = new Dynamodb(configuration);
+		const args = [{}, {}, {}];
+		expect(() => db.buildArgsForWrite(args)).toThrow();
 	});
 
 	it('Test Dynamodb buildArgsForWrite success with 2 args (object, option)', () => {
