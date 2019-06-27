@@ -5,405 +5,396 @@ const Config = require("./lib/core/config");
 const Binder = require("./lib/core/binder");
 const logger = new Logger("SmashJsServerless");
 const SmashError = require("./lib/util/smashError");
-const DynamodbFactory = require("./lib/util/dynamodbFactory");
+const DynamodbFactory = require("./lib/util/dynamodb/dynamodbFactory");
 const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
 const UNDERSCORE = "_";
 const PATHS = {
-    MIDDLEWARE: "lib/middleware/*",
-    HANDLER: "controller",
-    DATABASE: "database",
-    UTIL: "util",
-    HELPER: "helper",
-    SINGLETON: "singleton",
-    GLOBAL: "global",
+	MIDDLEWARE: "lib/middleware/*",
+	HANDLER: "controller",
+	DATABASE: "database",
+	UTIL: "util",
+	HELPER: "helper",
+	SINGLETON: "singleton",
+	GLOBAL: "global",
 };
 const AWS_REGION = "AWS_REGION";
 
 class Smash {
-    constructor() {
-        this._init();
-    }
+	constructor() {
+		this._init();
+	}
 
-    _init() {
-        this._binder = new Binder();
-        this._config = null;
-        this._middlewares = null;
-        this._magics = [];
-        this._handlers = null;
-        this._containerEnv = {};
-        this._path = "";
-        this._dynamodbFactory = null;
-        this._singletons = {};
-    }
+	_init() {
+		this._binder = new Binder();
+		this._config = null;
+		this._middlewares = null;
+		this._magics = [];
+		this._handlers = null;
+		this._containerEnv = {};
+		this._path = "";
+		this._dynamodbFactory = null;
+		this._singletons = {};
+	}
 
-    _clearExpose() {
-        for (let i = 0, length = this._magics.length; i < length; i++) {
-            this[this._magics[i]] = null;
-        }
-        this._magics = [];
-        return this;
-    }
+	_clearExpose() {
+		for (let i = 0, length = this._magics.length; i < length; i++) {
+			this[this._magics[i]] = null;
+		}
+		this._magics = [];
+		return this;
+	}
 
-    _processExpose(module) {
-        if (typeof module !== 'object' || typeof module.expose !== 'function') {
-            logger.error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
-            throw new Error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
-        }
-        const expose = module.expose();
-        const that = this;
-        for (let i = 0, length = expose.length; i < length; i++) {
-            if (this[expose[i].functionName]) {
-                logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
-                throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
-            }
-            this[expose[i].functionName] = function () {
-                module[expose[i].function].apply(module, arguments);
-                return that;
-            };
-            this._magics.push(expose[i].functionName);
-        }
-        return this;
-    }
+	_processExpose(module) {
+		if (typeof module !== 'object' || typeof module.expose !== 'function') {
+			logger.error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
+			throw new Error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
+		}
+		const expose = module.expose();
+		const that = this;
+		for (let i = 0, length = expose.length; i < length; i++) {
+			if (this[expose[i].functionName]) {
+				logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
+				throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
+			}
+			this[expose[i].functionName] = function () {
+				module[expose[i].function].apply(module, arguments);
+				return that;
+			};
+			this._magics.push(expose[i].functionName);
+		}
+		return this;
+	}
 
-    _registerMiddlewares() {
-        this._clearExpose();
-        this._middlewares = [];
-        const files = glob.sync(path.join(__dirname, PATHS.MIDDLEWARE, FILE_EXT_JS));
-        for (let i = 0, length = files.length; i < length; i++) {
-            const Module = require(path.resolve(files[i]));
-            const module = new Module();
-            this._processExpose(module);
-            this._middlewares.push(module);
-            logger.info("Register middleware: " + module.constructor.name);
-        }
-        return this;
-    }
+	_registerMiddlewares() {
+		this._clearExpose();
+		this._middlewares = [];
+		const files = glob.sync(path.join(__dirname, PATHS.MIDDLEWARE, FILE_EXT_JS));
+		for (let i = 0, length = files.length; i < length; i++) {
+			const Module = require(path.resolve(files[i]));
+			const module = new Module();
+			this._processExpose(module);
+			this._middlewares.push(module);
+			logger.info("Register middleware: " + module.constructor.name);
+		}
+		return this;
+	}
 
-    loadGlobals({ ignoreOverride, silent } = { ignoreOverride: false, silent: false }) {
-        const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
-        for (let i = 0, length = files.length; i < length; i++) {
-            const filePath = path.resolve(files[i]);
-            const { name } = path.parse(filePath);
-            const globalToExpose = require(filePath);
-            if (ignoreOverride === false && global[name]) {
-                throw new Error("Global variable " + name + " is already defined");
-            }
-            global[name] = globalToExpose;
-            Object.freeze(globalToExpose);
-            if (silent === false) {
-                logger.info("Load global: " + name);
-            }
-        }
-        return this;
-    }
+	loadGlobals({ ignoreOverride, silent } = { ignoreOverride: false, silent: false }) {
+		const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
+		for (let i = 0, length = files.length; i < length; i++) {
+			const filePath = path.resolve(files[i]);
+			const { name } = path.parse(filePath);
+			const globalToExpose = require(filePath);
+			if (ignoreOverride === false && global[name]) {
+				throw new Error("Global variable " + name + " is already defined");
+			}
+			global[name] = globalToExpose;
+			Object.freeze(globalToExpose);
+			if (silent === false) {
+				logger.info("Load global: " + name);
+			}
+		}
+		return this;
+	}
 
-    clearGlobals() {
-        const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
-        for (let i = 0, length = files.length; i < length; i++) {
-            const filePath = path.resolve(files[i]);
-            const { name } = path.parse(filePath);
-            delete global[name];
-        }
-        return this;
-    }
+	clearGlobals() {
+		const files = glob.sync(path.join(this._path, PATHS.GLOBAL, FILE_EXT_JS));
+		for (let i = 0, length = files.length; i < length; i++) {
+			const filePath = path.resolve(files[i]);
+			const { name } = path.parse(filePath);
+			delete global[name];
+		}
+		return this;
+	}
 
-    shutdown() {
-        this.clearGlobals();
-        this._clearExpose();
-        this._init();
-    }
+	shutdown() {
+		this.clearGlobals();
+		this._clearExpose();
+		this._init();
+	}
 
-    _clearHandlers() {
-        const files = glob.sync(path.resolve(path.join(this._path, PATHS.HANDLER, DEEP_EXT_JS)));
-        for (let i = 0, length = files.length; i < length; i++) {
-            delete require.cache[require.resolve(path.resolve(files[i]))]
-        }
-        return this;
-    }
+	_clearHandlers() {
+		const files = glob.sync(path.resolve(path.join(this._path, PATHS.HANDLER, DEEP_EXT_JS)));
+		for (let i = 0, length = files.length; i < length; i++) {
+			delete require.cache[require.resolve(path.resolve(files[i]))]
+		}
+		return this;
+	}
 
-    _registerHandlers() {
-        this._clearHandlers();
-        this._handlers = [];
-        const files = glob.sync(path.resolve(path.join(this._path, PATHS.HANDLER, DEEP_EXT_JS)));
-        for (let i = 0, length = files.length; i < length; i++) {
-            try {
-                this._handlers.push(require(path.resolve(files[i])));
-            } catch (error) {
-                logger.error("Failed to register handler " + files[i], error);
-                throw new Error("Failed to boot smash");
-            }
-        }
-        logger.info("Handler loaded: " + files.length);
-        return this;
-    }
+	_registerHandlers() {
+		this._clearHandlers();
+		this._handlers = [];
+		const files = glob.sync(path.resolve(path.join(this._path, PATHS.HANDLER, DEEP_EXT_JS)));
+		for (let i = 0, length = files.length; i < length; i++) {
+			try {
+				this._handlers.push(require(path.resolve(files[i])));
+			} catch (error) {
+				logger.error("Failed to register handler " + files[i], error);
+				throw new Error("Failed to boot smash");
+			}
+		}
+		logger.info("Handler loaded: " + files.length);
+		return this;
+	}
 
-    getHandlers() {
-        let handlers = [];
-        for (let i = 0, length = this._middlewares.length; i < length; i++) {
-            handlers = handlers.concat(this._middlewares[i].getHandlers());
-        }
-        return handlers;
-    }
+	getHandlers() {
+		let handlers = [];
+		for (let i = 0, length = this._middlewares.length; i < length; i++) {
+			handlers = handlers.concat(this._middlewares[i].getHandlers());
+		}
+		return handlers;
+	}
 
-    getRoutes() {
-        if (this._middlewares) {
-            for (let i = 0, length = this._middlewares.length; i < length; i++) {
-                if (this._middlewares[i].getRoutes) {
-                    return this._middlewares[i].getRoutes();
-                }
-            }
-        }
-        throw new Error("No middleware found to get routes");
-    }
+	getRoutes() {
+		if (this._middlewares) {
+			for (let i = 0, length = this._middlewares.length; i < length; i++) {
+				if (this._middlewares[i].getRoutes) {
+					return this._middlewares[i].getRoutes();
+				}
+			}
+		}
+		throw new Error("No middleware found to get routes");
+	}
 
-    _buildEnv(context) {
-        delete this._env;
-        this._env = {};
-        Object.assign(this._env, this._containerEnv);
-        if (typeof module === 'object') {
-            Object.assign(this._env, context);
-        }
-        return this;
-    }
+	_buildEnv(context) {
+		delete this._env;
+		this._env = {};
+		Object.assign(this._env, this._containerEnv);
+		if (typeof module === 'object') {
+			Object.assign(this._env, context);
+		}
+		return this;
+	}
 
-    _buildContainerEnv(envs = {}) {
-        Object.assign(this._containerEnv, process.env, envs);
-        this._buildEnv();
-        return this;
-    }
+	_buildContainerEnv(envs = {}) {
+		Object.assign(this._containerEnv, process.env, envs);
+		this._buildEnv();
+		return this;
+	}
 
-    async _buildDatabases() {
-        this._dynamodbFactory = new DynamodbFactory(this.getEnv('TABLE_PREFIX'), this.getEnv('ENV'));
-        await this._dynamodbFactory.buildConfigTables();
-    }
+	async _buildDatabases() {
+		this._dynamodbFactory = new DynamodbFactory(this.getEnv('TABLE_PREFIX'), this.getEnv('ENV'));
+		await this._dynamodbFactory.buildConfigTables();
+	}
 
-    boot(path = process.cwd(), envs = {}) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                this._path = path;
-                this._config = new Config(this._path);
-                this.loadGlobals();
-                this._buildContainerEnv(envs);
-                await this._buildDatabases();
-                this._registerMiddlewares();
-                this._registerHandlers();
-                resolve();
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }
+	boot(path = process.cwd(), envs = {}) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				this._path = path;
+				this._config = new Config(this._path);
+				this.loadGlobals();
+				this._buildContainerEnv(envs);
+				await this._buildDatabases();
+				this._registerMiddlewares();
+				this._registerHandlers();
+				resolve();
+			} catch (error) {
+				reject(error);
+			}
+		});
+	}
 
-    handleEvent(event, context, callback) {
-        if (this._middlewares === null) {
-            logger.error("Smash has not been booted, you must call boot() first", event);
-            callback(new Error("Smash has not been booted, you must call boot() first"));
-        } else {
-            this._buildEnv(context);
-            for (let i = 0, length = this._middlewares.length; i < length; i++) {
-                if (this._middlewares[i].isEvent(event)) {
-                    this._middlewares[i].handleEvent(event, context, callback);
-                    return this;
-                }
-            }
-            //FIX ME use smashError instead
-            logger.error("No middleware found to process event", event);
-            callback(new Error("No middleware found to process event"));
-        }
-        return this;
-    }
+	handleEvent(event, context, callback) {
+		if (this._middlewares === null) {
+			logger.error("Smash has not been booted, you must call boot() first", event);
+			callback(new Error("Smash has not been booted, you must call boot() first"));
+		} else {
+			this._buildEnv(context);
+			for (let i = 0, length = this._middlewares.length; i < length; i++) {
+				if (this._middlewares[i].isEvent(event)) {
+					this._middlewares[i].handleEvent(event, context, callback);
+					return this;
+				}
+			}
+			//FIX ME use smashError instead
+			logger.error("No middleware found to process event", event);
+			callback(new Error("No middleware found to process event"));
+		}
+		return this;
+	}
 
-    get env() {
-        return this._env;
-    }
+	get env() {
+		return this._env;
+	}
 
-    getEnv(key) {
-        return this._env[key];
-    }
+	getEnv(key) {
+		return this._env[key];
+	}
 
-    getEnvs(keys) {
-        const array = [];
-        keys.forEach((key) => {
-            array.push(this.getEnv(key));
-        });
-        return array;
-    }
+	getEnvs(keys) {
+		return keys.map(key => { this.getEnv(key) });
+	}
 
-    getRegion() {
-        return this._env[AWS_REGION];
-    }
+	getRegion() {
+		return this._env[AWS_REGION];
+	}
 
-    setEnv(key, value) {
-        if (!this._env) {
-            this._env = {};
-        }
-        this._env[key] = value;
-        return this;
-    }
+	setEnv(key, value) {
+		if (!this._env) {
+			this._env = {};
+		}
+		this._env[key] = value;
+		return this;
+	}
 
-    loadModule(dir, module) {
-        try {
-            return require(path.resolve(path.join(this._path, dir, module + EXT_JS)));
-        } catch (error) {
-            logger.error("Failed to load module " + module, error, error.stack);
-            throw error;
-        }
-    }
+	loadModule(dir, module) {
+		try {
+			return require(path.resolve(path.join(this._path, dir, module + EXT_JS)));
+		} catch (error) {
+			logger.error("Failed to load module " + module, error, error.stack);
+			throw error;
+		}
+	}
 
-    util(module) {
-        if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of util must be a valid string, " + Logger.typeOf(module));
-        }
-        return this.loadModule(PATHS.UTIL, module);
-    }
+	util(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of util must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.UTIL, module);
+	}
 
-    helper(module) {
-        if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of helper must be a valid string, " + Logger.typeOf(module));
-        }
-        return this.loadModule(PATHS.HELPER, module);
-    }
+	helper(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of helper must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.HELPER, module);
+	}
 
-    _loadSingletonModule(module) {
-        try {
-            return this.loadModule(PATHS.SINGLETON, module);
-        } catch (error) {
-            return require(module);
-        }
-    }
+	_loadSingletonModule(module) {
+		try {
+			return this.loadModule(PATHS.SINGLETON, module);
+		} catch (error) {
+			return require(module);
+		}
+	}
 
-    _instanciateModule(module) {
-        if (module.constructor) {
-            return new module();
-        }
-        return module;
-    }
+	_instanciateModule(module) {
+		if (module.constructor) {
+			return new module();
+		}
+		return module;
+	}
 
-    _bootSingletonModule(module) {
-        if (this._singletons[module].load) {
-            this._singletons[module].load().catch(error => {
-                logger.error("Failed to boot singleton module " + module, error);
-            });
-        }
-    }
+	_bootSingletonModule(module) {
+		if (this._singletons[module].load) {
+			this._singletons[module].load().catch(error => {
+				logger.error("Failed to boot singleton module " + module, error);
+			});
+		}
+	}
 
-    singleton(module) {
-        if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of singleton must be a valid string, " + Logger.typeOf(module));
-        }
-        if (this._singletons[module]) {
-            return this._singletons[module];
-        } else {
-            try {
-                const requiredModule = this._loadSingletonModule(module);
-                this._singletons[module] = this._instanciateModule(requiredModule);
-                this._bootSingletonModule(module);
-            } catch (error) {
-                throw new Error("Cannot find module " + module);
-            }
-        }
-    }
+	singleton(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of singleton must be a valid string, " + Logger.typeOf(module));
+		}
+		if (this._singletons[module]) {
+			return this._singletons[module];
+		}
+		try {
+			const requiredModule = this._loadSingletonModule(module);
+			this._singletons[module] = this._instanciateModule(requiredModule);
+			this._bootSingletonModule(module);
+		} catch (error) {
+			throw new Error("Cannot find module " + module);
+		}
+	}
 
-    global(module) {
-        if (typeof module !== 'string' || module.length === 0) {
-            throw new Error("First parameter of global must be a valid string, " + Logger.typeOf(module));
-        }
-        return this.loadModule(PATHS.GLOBAL, module);
-    }
+	global(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of global must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.GLOBAL, module);
+	}
 
-    database(name) {
-        if (typeof name !== 'string') {
-            throw new Error("Database name must be a valid string, " + Logger.typeOf(name));
-        }
-        const buildedTableName = [smash.getEnv('TABLE_PREFIX'), name, smash.getEnv('ENV')].join(UNDERSCORE);
-        return this._dynamodbFactory.get(buildedTableName);
-    }
+	database(name) {
+		if (typeof name !== 'string') {
+			throw new Error("Database name must be a valid string, " + Logger.typeOf(name));
+		}
+		const buildedTableName = [this.getEnv('TABLE_PREFIX'), name, this.getEnv('ENV')].join(UNDERSCORE);
+		return this._dynamodbFactory.get(buildedTableName);
+	}
 
-    get config() {
-        return this._config;
-    }
+	get config() {
+		return this._config;
+	}
 
-    setCurrentEvent(event) {
-        this._currentEvent = event;
-        return this;
-    }
+	setCurrentEvent(event) {
+		this._currentEvent = event;
+		return this;
+	}
 
-    get binder() {
-        return this._binder;
-    }
+	get binder() {
+		return this._binder;
+	}
 
-    registerRequiredRule(...args) {
-        return this.binder.registerRequiredRule(...args);
-    }
+	registerRequiredRule(...args) {
+		return this.binder.registerRequiredRule(...args);
+	}
 
-    registerMergeRule(...args) {
-        return this.binder.registerMergeRule(...args);
-    }
+	registerMergeRule(...args) {
+		return this.binder.registerMergeRule(...args);
+	}
 
-    registerCleanRule(...args) {
-        return this.binder.registerCleanRule(...args);
-    }
+	registerCleanRule(...args) {
+		return this.binder.registerCleanRule(...args);
+	}
 
-    mergeObject(...args) {
-        if (args.length === 2 && this._currentEvent && this._currentEvent.route && this._currentEvent.route.action) {
-            args.unshift(this._currentEvent.route.action);
-        }
-        return this.binder.mergeObject(...args);
-    }
+	mergeObject(...args) {
+		if (args.length === 2 && this._currentEvent && this._currentEvent.route && this._currentEvent.route.action) {
+			args.unshift(this._currentEvent.route.action);
+		}
+		return this.binder.mergeObject(...args);
+	}
 
-    clean(...args) {
-        return this.binder.clean(...args);
-    }
+	clean(...args) {
+		return this.binder.clean(...args);
+	}
 
-    get DynamodbModel() {
-        return require(path.resolve(path.join(__dirname, "lib/util/dynamodbModel.js")));
-    }
+	get Logger() {
+		return require(path.resolve(path.join(__dirname, "lib/util/smashLogger.js")));
+	}
 
-    get Logger() {
-        return require(path.resolve(path.join(__dirname, "lib/util/smashLogger.js")));
-    }
+	get Console() {
+		logger.deprecated("smash.Console is deprecated, use smash.Logger in the future");
+		return this.Logger;
+	}
 
-    get Console() {
-        logger.deprecated("smash.Console is deprecated, use smash.Logger in the future");
-        return this.Logger;
-    }
+	set Console(console) {
 
-    set Console(console) {
+	}
 
-    }
+	smashError(...args) {
+		logger.deprecated("Method smashError(options) is deprecated, use smash.errorUtil");
+		return new SmashError.SmashError(...args);
+	}
 
-    smashError(...args) {
-        logger.deprecated("Method smashError(options) is deprecated, use smash.errorUtil");
-        return new SmashError.SmashError(...args);
-    }
+	get SmashError() {
+		return SmashError;
+	}
 
-    get SmashError() {
-        return SmashError;
-    }
+	logger(namespace) {
+		return new Logger(namespace);
+	}
 
-    logger(namespace) {
-        return new Logger(namespace);
-    }
-
-    //FIX ME remove for the next major ??
-    get codes() {
-        return {
-            badRequest: 400,
-            unauthorized: 401,
-            forbidden: 403,
-            notFound: 404,
-            conflict: 409,
-            internalServerError: 500,
-            notImplemented: 501,
-            serviceUnavailable: 502
-        };
-    }
+	//FIX ME remove for the next major ??
+	get codes() {
+		return {
+			badRequest: 400,
+			unauthorized: 401,
+			forbidden: 403,
+			notFound: 404,
+			conflict: 409,
+			internalServerError: 500,
+			notImplemented: 501,
+			serviceUnavailable: 502
+		};
+	}
 }
 
 if (!global.smash) {
-    global.smash = new Smash();
+	global.smash = new Smash();
 }
 module.exports = global.smash;
 
