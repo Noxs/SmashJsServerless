@@ -1,15 +1,15 @@
-const smash = require('../smash.js');
+const smash = require('../smash');
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Config = require('../lib/core/config.js');
-const DynamodbModel = require('../lib/util/dynamodbModel.js');
-const Console = require('../lib/util/console.js');
-const cloudWatchEvent = require('./util/cloudWatchEvent.js');
-const codePipeline = require('./util/codePipelineJobEvent.js');
-const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest.js');
+const Config = require('../lib/core/config');
+const DynamodbModel = require('../lib/util/dynamodbModel');
+const Console = require('../lib/util/console');
+const cloudWatchEvent = require('./util/cloudWatchEvent');
+const codePipeline = require('./util/codePipelineJobEvent');
+const apiGatewayProxyRequest = require('./util/apiGatewayProxyRequest');
 
 const badModule = "badModule";
 
@@ -30,10 +30,10 @@ describe('Smash', function () {
         expect(function () {
             smash.boot();
         }).to.not.throw(Error);
-        assert.lengthOf(smash._middlewares, 8);
+        assert.lengthOf(smash._middlewares, 9);
 
         smash.boot();
-        assert.lengthOf(smash._middlewares, 8);
+        assert.lengthOf(smash._middlewares, 9);
     });
 
     it('Test smash register handlers', function () {
@@ -180,7 +180,7 @@ describe('Smash', function () {
         smash.handleEvent(event, context, callback);
         assert.ok(spy.called);
     });
-    
+
     it('Test smash handle event codepipeline event success', function () {
         smash.boot();
         const event = codePipeline.goodgood;
