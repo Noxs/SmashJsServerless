@@ -3,10 +3,10 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Route = require('../../../lib/middleware/apiGatewayProxy/lib/route.js');
-const Request = require('../../../lib/middleware/apiGatewayProxy/lib/request.js');
-const Console = require('../../../lib/util/console.js');
-const apiGatewayProxyRequest = require('../../util/apiGatewayProxyRequest.js');
+const Route = require('../../../lib/middleware/apiGatewayProxyRest/lib/route');
+const Request = require('../../../lib/middleware/apiGatewayProxyRest/lib/request');
+const Console = require('../../../lib/util/console');
+const apiGatewayProxyRequest = require('../../util/apiGatewayProxyRequest');
 
 describe('Route', function () {
     it('Test route build instance success', function () {

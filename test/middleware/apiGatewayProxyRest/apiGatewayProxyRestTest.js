@@ -1,11 +1,10 @@
-const smash = require('../../../smash.js');
+const smash = require('../../../smash');
 const chai = require('chai');
 const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const ApiGatewayProxy = require('../../../lib/middleware/apiGatewayProxy/apiGatewayProxy.js');
-
+const ApiGatewayProxyRest = require('../../../lib/middleware/apiGatewayProxyRest/apiGatewayProxyRest');
 
 const lambdaEventSuccess = {
     "body": "{\"test\":\"body\"}",
@@ -15,7 +14,7 @@ const lambdaEventSuccess = {
         "apiId": "1234567890",
         "resourcePath": "/{proxy+}",
         "httpMethod": "POST",
-        "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
+        "requestId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         "accountId": "123456789012",
         "identity": {
             "apiKey": null,
@@ -41,7 +40,7 @@ const lambdaEventSuccess = {
         "source": "fubiz"
     },
     "headers": {
-        "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
+        "Via": "1.1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.cloudfront.net (CloudFront)",
         "Accept-Language": "en-US,en;q=0.8",
         "CloudFront-Is-Desktop-Viewer": "true",
         "CloudFront-Is-SmartTV-Viewer": "false",
@@ -53,7 +52,7 @@ const lambdaEventSuccess = {
         "X-Forwarded-Port": "443",
         "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
         "X-Forwarded-Proto": "https",
-        "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
+        "X-Amz-Cf-Id": "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
         "CloudFront-Is-Tablet-Viewer": "false",
         "Cache-Control": "max-age=0",
         "User-Agent": "Custom User Agent String",
@@ -75,38 +74,38 @@ const lambdaEventFailure = {
     "source": "not ApiGateway event"
 };
 
-describe('ApiGatewayProxy', function () {
+describe('apiGatewayProxyRest', function () {
 
     beforeEach(function () {
         smash.boot();
     });
 
-    it('Test ApiGatewayProxy instance success', function () {
+    it('Test apiGatewayProxyRest instance success', function () {
         expect(function () {
-            const apiGatewayProxy = new ApiGatewayProxy();
+            const apiGatewayProxyRest = new ApiGatewayProxyRest();
         }).to.not.throw(Error);
 
-        const apiGatewayProxy = new ApiGatewayProxy();
-        assert.isFunction(apiGatewayProxy.router.next);
+        const apiGatewayProxyRest = new ApiGatewayProxyRest();
+        assert.isFunction(apiGatewayProxyRest.router.next);
     });
 
     it('Test handle event success', function () {
-        const apiGatewayProxy = new ApiGatewayProxy();
+        const apiGatewayProxyRest = new ApiGatewayProxyRest();
 
         const terminate = sinon.spy();
-        apiGatewayProxy.handleEvent(lambdaEventSuccess, {}, terminate);
+        apiGatewayProxyRest.handleEvent(lambdaEventSuccess, {}, terminate);
         assert.isOk(terminate.called);
     });
 
     it('Test handle event failure', function () {
-        const apiGatewayProxy = new ApiGatewayProxy();
+        const apiGatewayProxyRest = new ApiGatewayProxyRest();
 
         expect(function () {
-            apiGatewayProxy.handleEvent(lambdaEventSuccess);
+            apiGatewayProxyRest.handleEvent(lambdaEventSuccess);
         }).to.throw(Error);
 
         const terminate = sinon.spy();
-        apiGatewayProxy.handleEvent("", {}, terminate);
+        apiGatewayProxyRest.handleEvent("", {}, terminate);
 
         assert.isOk(terminate.called);
     });
@@ -120,46 +119,46 @@ describe('ApiGatewayProxy', function () {
     });
 
     it('Test handle response success', function () {
-        const apiGatewayProxy = new ApiGatewayProxy();
+        const apiGatewayProxyRest = new ApiGatewayProxyRest();
 
-        apiGatewayProxy._callback = sinon.spy();
+        apiGatewayProxyRest._callback = sinon.spy();
         expect(function () {
-            apiGatewayProxy.handleResponse({ code: "200", headers: {}, stringifiedBody: "fooBar" });
+            apiGatewayProxyRest.handleResponse({ code: "200", headers: {}, stringifiedBody: "fooBar" });
         }).to.not.throw(Error);
-        assert.isOk(apiGatewayProxy._callback.called);
+        assert.isOk(apiGatewayProxyRest._callback.called);
     });
 
     it('Test handle response failure', function () {
-        const apiGatewayProxy = new ApiGatewayProxy();
+        const apiGatewayProxyRest = new ApiGatewayProxyRest();
 
-        apiGatewayProxy._callback = sinon.spy();
+        apiGatewayProxyRest._callback = sinon.spy();
         expect(function () {
-            apiGatewayProxy.handleResponse({});
+            apiGatewayProxyRest.handleResponse({});
         }).to.not.throw(Error);
-        assert.isOk(apiGatewayProxy._callback.called);
+        assert.isOk(apiGatewayProxyRest._callback.called);
 
         expect(function () {
-            apiGatewayProxy.handleResponse();
+            apiGatewayProxyRest.handleResponse();
         }).to.throw(Error);
-        assert.isOk(apiGatewayProxy._callback.called);
+        assert.isOk(apiGatewayProxyRest._callback.called);
     });
 
     it('Test isEvent() true', function () {
-        const apiGatewayProxy = new ApiGatewayProxy();
+        const apiGatewayProxyRest = new ApiGatewayProxyRest();
         expect(function () {
-            assert.equal(apiGatewayProxy.isEvent(lambdaEventSuccess), true);
+            assert.equal(apiGatewayProxyRest.isEvent(lambdaEventSuccess), true);
         }).to.not.throw(Error);
     });
 
     it('Test isEvent() false', function () {
-        const apiGatewayProxy = new ApiGatewayProxy();
+        const apiGatewayProxyRest = new ApiGatewayProxyRest();
 
         expect(function () {
-            assert.equal(apiGatewayProxy.isEvent(""), false);
+            assert.equal(apiGatewayProxyRest.isEvent(""), false);
         }).to.not.throw(Error);
 
         expect(function () {
-            assert.equal(apiGatewayProxy.isEvent(lambdaEventFailure), false);
+            assert.equal(apiGatewayProxyRest.isEvent(lambdaEventFailure), false);
         }).to.not.throw(Error);
     });
 });
