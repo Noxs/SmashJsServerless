@@ -34,6 +34,6 @@
   "dependencies": {
     "dynamodb-data-types": "^3.0.1",
     "glob": "^7.1.4",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.14"
   }
 }
