@@ -51,19 +51,29 @@ class Smash {
         const expose = module.expose();
         const that = this;
         for (let i = 0, length = expose.length; i < length; i++) {
-            if (this[expose[i].functionName]) {
+            if (expose[i].functionName && this[expose[i].functionName]) {
                 logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
                 throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
             }
-            this[expose[i].functionName] = function () {
-                const returnedValue = module[expose[i].function].apply(module, arguments);
-                if (expose[i].return === true) {
-                    return returnedValue;
-                } else {
-                    return that;
-                }
-            };
-            this._magics.push(expose[i].functionName);
+            if (expose[i].getterName && this[expose[i].getterName]) {
+                logger.error("Getter " + expose[i].getterName + " already exist in smash, overwrite is not allowed");
+                throw new Error("Getter " + expose[i].getterName + " already exist in smash, overwrite is not allowed");
+            }
+            if (expose[i].functionName) {
+                this[expose[i].functionName] = function () {
+                    const returnedValue = module[expose[i].function].apply(module, arguments);
+                    if (expose[i].return === true) {
+                        return returnedValue;
+                    } else {
+                        return that;
+                    }
+                };
+                this._magics.push(expose[i].functionName);
+            }
+            if (expose[i].getterName) {
+                this[expose[i].getterName] = module[expose[i].getter];
+                this._magics.push(expose[i].getterName);
+            }
         }
         return this;
     }

@@ -53,12 +53,12 @@ describe('Smash', function () {
             smash._processExpose();
         }).to.throw(Error);
     });
-
-    it('Test smash process expose overwrite module', function () {
-        expect(function () {
-            smash._processExpose(overwriteModule);
-        }).to.throw(Error);
-    });
+    /* 
+        it('Test smash process expose overwrite module', function () {
+            expect(function () {
+                smash._processExpose(overwriteModule);
+            }).to.throw(Error);
+        }); */
 
     it('Test smash process expose overwrite module', function () {
         smash._middlewares = null;
