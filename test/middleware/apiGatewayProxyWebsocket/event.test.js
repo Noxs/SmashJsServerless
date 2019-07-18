@@ -1,4 +1,4 @@
-const Event = require('../../../lib/middleware/apiGatewayProxyWebsocket/lib/event.js');
+const Event = require('../../../lib/middleware/apiGatewayProxyWebsocket/lib/event');
 
 describe('Event', function () {
     /*     it('Test event instance failure', function () {
