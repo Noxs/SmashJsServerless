@@ -56,8 +56,12 @@ class Smash {
                 throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
             }
             this[expose[i].functionName] = function () {
-                module[expose[i].function].apply(module, arguments);
-                return that;
+                const returnedValue = module[expose[i].function].apply(module, arguments);
+                if (expose[i].return === true) {
+                    return returnedValue;
+                } else {
+                    return that;
+                }
             };
             this._magics.push(expose[i].functionName);
         }
