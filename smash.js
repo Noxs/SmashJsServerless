@@ -184,7 +184,7 @@ class Smash {
         return this;
     }
 
-    boot({ path, global, env } = { path: process.cwd(), global: {}, env: {} }) {
+    boot({ path = process.cwd(), global = {}, env = {} } = { path: process.cwd(), global: {}, env: {} }) {
         this._path = path;
         this._config = new Config(this._path);
         this.loadGlobals(global);
