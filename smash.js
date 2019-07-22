@@ -177,17 +177,18 @@ class Smash {
         return this;
     }
 
-    _buildContainerEnv() {
+    _buildContainerEnv(env = {}) {
+        Object.assign(this._containerEnv, env);
         Object.assign(this._containerEnv, process.env);
         this._buildEnv();
         return this;
     }
 
-    boot(path = process.cwd()) {
+    boot({ path, global, env } = { path: process.cwd(), global: {}, env: {} }) {
         this._path = path;
         this._config = new Config(this._path);
-        this.loadGlobals();
-        this._buildContainerEnv();
+        this.loadGlobals(global);
+        this._buildContainerEnv(env);
         this._registerMiddlewares();
         this._registerHandlers();
     }
