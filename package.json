@@ -1,6 +1,6 @@
 {
   "name": "smash-js-serverless",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "Javascript lambda framework",
   "main": "smash.js",
   "scripts": {
@@ -32,8 +32,10 @@
     "sinon": "^7.3.2"
   },
   "dependencies": {
+    "aws4": "^1.8.0",
     "dynamodb-data-types": "^3.0.1",
     "glob": "^7.1.4",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.14",
+    "request": "^2.88.0"
   }
 }

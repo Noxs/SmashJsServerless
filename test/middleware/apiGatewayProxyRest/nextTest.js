@@ -3,10 +3,10 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Next = require('../../../lib/middleware/apiGatewayProxy/lib/next.js');
-const Request = require('../../../lib/middleware/apiGatewayProxy/lib/request.js');
-const Response = require('../../../lib/middleware/apiGatewayProxy/lib/response.js');
-const apiGatewayProxyRequest = require('../../util/apiGatewayProxyRequest.js');
+const Next = require('../../../lib/middleware/apiGatewayProxyRest/lib/next');
+const Request = require('../../../lib/middleware/apiGatewayProxyRest/lib/request');
+const Response = require('../../../lib/middleware/apiGatewayProxyRest/lib/response');
+const apiGatewayProxyRequest = require('../../util/apiGatewayProxyRequest');
 
 class Test extends Next {
 

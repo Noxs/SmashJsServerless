@@ -3,7 +3,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Event = require('../../../lib/middleware/apiGatewayAuthorizerEvent/apiGatewayAuthorizerEvent.js');
+const Event = require('../../../lib/middleware/apiGatewayAuthorizerEvent/apiGatewayAuthorizerEvent');
 
 describe('ApiGatewayAuthorizerEvent', function () {
 
