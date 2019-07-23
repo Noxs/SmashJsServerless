@@ -5,7 +5,6 @@ const Config = require("./lib/core/config");
 const Binder = require("./lib/core/binder");
 const logger = new Logger("SmashJsServerless");
 const SmashError = require("./lib/util/smashError");
-const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
 const PATHS = {
@@ -242,7 +241,7 @@ class Smash {
 
     loadModule(dir, module) {
         try {
-            return require(path.resolve(path.join(this._path, dir, module + EXT_JS)));
+            return require(path.resolve(path.join(this._path, dir, module)));
         } catch (error) {
             logger.error("Failed to load module " + module, error, error.stack);
             throw error;
