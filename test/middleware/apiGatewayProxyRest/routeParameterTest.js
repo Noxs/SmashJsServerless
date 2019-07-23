@@ -3,7 +3,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const RouteParameter = require('../../../lib/middleware/apiGatewayProxy/lib/routeParameter.js');
+const RouteParameter = require('../../../lib/middleware/apiGatewayProxyRest/lib/routeParameter');
 
 describe('RouteParameter', function () {
     it('Test RouteParameter build success', function () {

@@ -51,15 +51,29 @@ class Smash {
         const expose = module.expose();
         const that = this;
         for (let i = 0, length = expose.length; i < length; i++) {
-            if (this[expose[i].functionName]) {
+            if (expose[i].functionName && this[expose[i].functionName]) {
                 logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
                 throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
             }
-            this[expose[i].functionName] = function () {
-                module[expose[i].function].apply(module, arguments);
-                return that;
-            };
-            this._magics.push(expose[i].functionName);
+            if (expose[i].getterName && this[expose[i].getterName]) {
+                logger.error("Getter " + expose[i].getterName + " already exist in smash, overwrite is not allowed");
+                throw new Error("Getter " + expose[i].getterName + " already exist in smash, overwrite is not allowed");
+            }
+            if (expose[i].functionName) {
+                this[expose[i].functionName] = function () {
+                    const returnedValue = module[expose[i].function].apply(module, arguments);
+                    if (expose[i].return === true) {
+                        return returnedValue;
+                    } else {
+                        return that;
+                    }
+                };
+                this._magics.push(expose[i].functionName);
+            }
+            if (expose[i].getterName) {
+                this[expose[i].getterName] = module[expose[i].getter];
+                this._magics.push(expose[i].getterName);
+            }
         }
         return this;
     }
@@ -163,17 +177,18 @@ class Smash {
         return this;
     }
 
-    _buildContainerEnv() {
+    _buildContainerEnv(env = {}) {
+        Object.assign(this._containerEnv, env);
         Object.assign(this._containerEnv, process.env);
         this._buildEnv();
         return this;
     }
 
-    boot(path = process.cwd()) {
+    boot({ path = process.cwd(), global = {}, env = {} } = { path: process.cwd(), global: {}, env: {} }) {
         this._path = path;
         this._config = new Config(this._path);
-        this.loadGlobals();
-        this._buildContainerEnv();
+        this.loadGlobals(global);
+        this._buildContainerEnv(env);
         this._registerMiddlewares();
         this._registerHandlers();
     }
