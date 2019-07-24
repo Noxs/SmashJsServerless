@@ -291,7 +291,7 @@ class Smash {
         }
         try {
             const requiredModule = this._loadSingletonModule(module);
-            if (requireOnly === true) {
+            if (options.requireOnly === true) {
                 return requiredModule;
             } else if (this._singletons[module]) {
                 return this._singletons[module];
