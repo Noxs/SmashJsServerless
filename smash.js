@@ -243,7 +243,7 @@ class Smash {
         try {
             return require(path.resolve(path.join(this._path, dir, module)));
         } catch (error) {
-            logger.error("Failed to load module " + module, error, error.stack);
+            logger.error("Failed to load " + dir + " module " + module, error, error.stack);
             throw error;
         }
     }
@@ -289,23 +289,19 @@ class Smash {
         if (typeof module !== 'string' || module.length === 0) {
             throw new Error("First parameter of singleton must be a valid string, " + Logger.typeOf(module));
         }
-        try {
-            const requiredModule = this._loadSingletonModule(module);
-            if (options.requireOnly === true) {
-                return requiredModule;
-            } else if (this._singletons[module]) {
-                return this._singletons[module];
-            } else {
-                if (options.instanciate) {
-                    this._singletons[module] = this._instanciateModule(requiredModule);
-                }
-                if (options.boot) {
-                    this._bootSingletonModule(module);
-                }
-                return this._singletons[module];
+        const requiredModule = this._loadSingletonModule(module);
+        if (options.requireOnly === true) {
+            return requiredModule;
+        } else if (this._singletons[module]) {
+            return this._singletons[module];
+        } else {
+            if (options.instanciate) {
+                this._singletons[module] = this._instanciateModule(requiredModule);
             }
-        } catch (error) {
-            throw new Error("Cannot find module " + module);
+            if (options.boot) {
+                this._bootSingletonModule(module);
+            }
+            return this._singletons[module];
         }
     }
 
