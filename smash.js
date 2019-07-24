@@ -142,7 +142,7 @@ class Smash {
                 this._handlers.push(require(path.resolve(files[i])));
             } catch (error) {
                 logger.error("Failed to register handler " + files[i], error);
-                throw new Error("Failed to boot smash");
+                throw new Error("Failed to boot smash: " + error.message);
             }
         }
         logger.info("Handler loaded: " + files.length);
