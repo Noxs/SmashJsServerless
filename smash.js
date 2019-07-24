@@ -302,6 +302,7 @@ class Smash {
                 if (options.boot) {
                     this._bootSingletonModule(module);
                 }
+                return this._singletons[module];
             }
         } catch (error) {
             throw new Error("Cannot find module " + module);
