@@ -285,20 +285,26 @@ class Smash {
         }
     }
 
-    singleton(module) {
+    singleton(module, options = { instanciate: true, boot: true, requireOnly: false }) {
         if (typeof module !== 'string' || module.length === 0) {
             throw new Error("First parameter of singleton must be a valid string, " + Logger.typeOf(module));
         }
-        if (this._singletons[module]) {
-            return this._singletons[module];
-        } else {
-            try {
-                const requiredModule = this._loadSingletonModule(module);
-                this._singletons[module] = this._instanciateModule(requiredModule);
-                this._bootSingletonModule(module);
-            } catch (error) {
-                throw new Error("Cannot find module " + module);
+        try {
+            const requiredModule = this._loadSingletonModule(module);
+            if (requireOnly === true) {
+                return requiredModule;
+            } else if (this._singletons[module]) {
+                return this._singletons[module];
+            } else {
+                if (options.instanciate) {
+                    this._singletons[module] = this._instanciateModule(requiredModule);
+                }
+                if (options.boot) {
+                    this._bootSingletonModule(module);
+                }
             }
+        } catch (error) {
+            throw new Error("Cannot find module " + module);
         }
     }
 
