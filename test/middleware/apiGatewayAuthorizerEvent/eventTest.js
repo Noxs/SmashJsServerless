@@ -5,7 +5,7 @@ const should = chai.should();
 const sinon = require('sinon');
 const Event = require('../../../lib/middleware/apiGatewayAuthorizerEvent/lib/event');
 const ApiGatewayAuthorizerRequest = require('../../util/apiGatewayAuthorizerRequest');
-
+smash.setCurrentEvent({ methodArn: "" });
 describe('Event', function () {
     it('Test event instance failure', function () {
         expect(function () {
