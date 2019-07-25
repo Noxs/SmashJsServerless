@@ -329,6 +329,10 @@ class Smash {
         return this;
     }
 
+    getCurrentEvent() {
+        return this._currentEvent;
+    }
+
     get binder() {
         return this._binder;
     }
