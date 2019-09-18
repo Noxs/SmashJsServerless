@@ -73,7 +73,7 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.allow(new event.Context("id", "username", "region", "roles"));
+        event.allow(new event.Context({ id: "id", username: "username", region: "region", roles: "roles" }));
         assert.isTrue(spy.called);
     });
 
@@ -87,7 +87,7 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.deny(new event.Context("id", "username", "region", "roles"));
+        event.deny(new event.Context({ id: "id", username: "username", region: "region", roles: "roles" }));
         assert.isTrue(spy.called);
     });
 
