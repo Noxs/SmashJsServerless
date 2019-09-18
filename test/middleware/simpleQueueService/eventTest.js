@@ -26,7 +26,7 @@ describe('Event', function () {
     });
 
     it('Test event instance success', function () {
-        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', body: "testProperty=\'this is a string\'" }] };
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "testProperty=\'this is a string\'" }] };
         const context = {};
         const terminate = { terminate: (error, data) => { } };
         expect(function () {
@@ -35,7 +35,7 @@ describe('Event', function () {
     });
 
     it('Test event success', function () {
-        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', body: "{\"testProperty\":\"this is a string\"}" }] };
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "{\"testProperty\":\"this is a string\"}" }] };
         const spy = sinon.spy();
         const terminate = {
             terminate: (error, data) => {
@@ -48,7 +48,7 @@ describe('Event', function () {
     });
 
     it('Test event failure', function () {
-        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', body: "testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'" }] };
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'" }] };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -62,7 +62,7 @@ describe('Event', function () {
     });
 
     it('Test event terminate', function () {
-        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', body: "testProperty=null" }] };
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "testProperty=null" }] };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -76,7 +76,7 @@ describe('Event', function () {
     });
 
     it('Test event parsing', function () {
-        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', body: 'testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'\ntestProperty1=\'Foobar\'' }] };
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: 'testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'\ntestProperty1=\'Foobar\'' }] };
         const context = {};
         const terminate = { terminate: (error, data) => { } };
         const event = new Event(rawEvent, context, terminate);
@@ -90,7 +90,7 @@ describe('Event', function () {
     });
 
     it('Test event parsing invalid', function () {
-        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', body: 'testProperty=' }] };
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: 'testProperty=' }] };
         const context = {};
         const terminate = { terminate: (error, data) => { } };
         expect(function () {
