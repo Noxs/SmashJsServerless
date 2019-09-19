@@ -32,6 +32,7 @@ class Smash {
         this._containerEnv = {};
         this._path = "";
         this._singletons = {};
+        this._singletonOptions = null;
     }
 
     _clearExpose() {
@@ -183,13 +184,19 @@ class Smash {
         return this;
     }
 
-    boot({ path = process.cwd(), global = {}, env = {}, verbose = {} } = { path: process.cwd(), global: {}, env: {}, verbose: {} }) {
+    _setupSingletonOptions(options = {}) {
+        this._singletonOptions = options;
+        return this;
+    }
+
+    boot({ path = process.cwd(), global = {}, env = {}, verbose = {}, singleton = {} } = { path: process.cwd(), global: {}, env: {}, verbose: {}, singleton: {} }) {
         logger.verbose(verbose);
         this._path = path;
         this._config = new Config(this._path);
         this.loadGlobals(global);
         this._buildContainerEnv(env);
         this._registerMiddlewares();
+        this._setupSingletonOptions(singleton);
         this._registerHandlers();
     }
 
@@ -286,7 +293,9 @@ class Smash {
         }
     }
 
-    singleton(module, options = { instanciate: true, boot: true, requireOnly: false }) {
+    singleton(module, optionsOverwrite = { instanciate: true, boot: true, requireOnly: false }) {
+
+        const options = { ...optionsOverwrite, ...this._singletonOptions };
         if (typeof module !== 'string' || module.length === 0) {
             throw new Error("First parameter of singleton must be a valid string, " + Logger.typeOf(module));
         }
