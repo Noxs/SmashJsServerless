@@ -6,6 +6,7 @@ const sinon = require('sinon');
 const Event = require('../../../lib/middleware/apiGatewayAuthorizerEvent/lib/event');
 const ApiGatewayAuthorizerRequest = require('../../util/apiGatewayAuthorizerRequest');
 smash.setCurrentEvent({ methodArn: "" });
+
 describe('Event', function () {
     it('Test event instance failure', function () {
         expect(function () {
@@ -73,7 +74,8 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.allow(new event.Context({ id: "id", username: "username", region: "region", roles: "roles" }));
+        event.generatePermissionContext({ id: "id", username: "username", region: "region", roles: "roles" });
+        event.allow();
         assert.isTrue(spy.called);
     });
 
@@ -87,7 +89,8 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.deny(new event.Context({ id: "id", username: "username", region: "region", roles: "roles" }));
+        event.generatePermissionContext({ id: "id", username: "username", region: "region", roles: "roles" });
+        event.deny();
         assert.isTrue(spy.called);
     });
 
