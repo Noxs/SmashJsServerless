@@ -5,7 +5,6 @@ const Config = require("./lib/core/config");
 const Binder = require("./lib/core/binder");
 const logger = new Logger("SmashJsServerless");
 const SmashError = require("./lib/util/smashError");
-const EXT_JS = ".js";
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
 const PATHS = {
@@ -33,6 +32,7 @@ class Smash {
         this._containerEnv = {};
         this._path = "";
         this._singletons = {};
+        this._singletonOptions = null;
     }
 
     _clearExpose() {
@@ -143,7 +143,7 @@ class Smash {
                 this._handlers.push(require(path.resolve(files[i])));
             } catch (error) {
                 logger.error("Failed to register handler " + files[i], error);
-                throw new Error("Failed to boot smash");
+                throw new Error("Failed to boot smash: " + error.message);
             }
         }
         logger.info("Handler loaded: " + files.length);
@@ -184,12 +184,19 @@ class Smash {
         return this;
     }
 
-    boot({ path = process.cwd(), global = {}, env = {} } = { path: process.cwd(), global: {}, env: {} }) {
+    _setupSingletonOptions(options = {}) {
+        this._singletonOptions = options;
+        return this;
+    }
+
+    boot({ path = process.cwd(), global = {}, env = {}, verbose = {}, singleton = {} } = { path: process.cwd(), global: {}, env: {}, verbose: {}, singleton: {} }) {
+        logger.verbose(verbose);
         this._path = path;
         this._config = new Config(this._path);
         this.loadGlobals(global);
         this._buildContainerEnv(env);
         this._registerMiddlewares();
+        this._setupSingletonOptions(singleton);
         this._registerHandlers();
     }
 
@@ -242,9 +249,9 @@ class Smash {
 
     loadModule(dir, module) {
         try {
-            return require(path.resolve(path.join(this._path, dir, module + EXT_JS)));
+            return require(path.resolve(path.join(this._path, dir, module)));
         } catch (error) {
-            logger.error("Failed to load module " + module, error, error.stack);
+            logger.error("Failed to load " + dir + " module " + module, error, error.stack);
             throw error;
         }
     }
@@ -286,20 +293,25 @@ class Smash {
         }
     }
 
-    singleton(module) {
+    singleton(module, optionsOverwrite = { instanciate: true, boot: true, requireOnly: false }) {
+
+        const options = { ...optionsOverwrite, ...this._singletonOptions };
         if (typeof module !== 'string' || module.length === 0) {
             throw new Error("First parameter of singleton must be a valid string, " + Logger.typeOf(module));
         }
-        if (this._singletons[module]) {
+        const requiredModule = this._loadSingletonModule(module);
+        if (options.requireOnly === true) {
+            return requiredModule;
+        } else if (this._singletons[module]) {
             return this._singletons[module];
         } else {
-            try {
-                const requiredModule = this._loadSingletonModule(module);
+            if (options.instanciate) {
                 this._singletons[module] = this._instanciateModule(requiredModule);
-                this._bootSingletonModule(module);
-            } catch (error) {
-                throw new Error("Cannot find module " + module);
             }
+            if (options.boot) {
+                this._bootSingletonModule(module);
+            }
+            return this._singletons[module];
         }
     }
 
@@ -324,6 +336,10 @@ class Smash {
     setCurrentEvent(event) {
         this._currentEvent = event;
         return this;
+    }
+
+    getCurrentEvent() {
+        return this._currentEvent;
     }
 
     get binder() {

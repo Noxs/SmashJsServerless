@@ -3,9 +3,7 @@ const assert = chai.assert;
 const expect = chai.expect;
 const should = chai.should();
 const sinon = require('sinon');
-const Event = require('../../../lib/middleware/apiGatewayAuthorizerEvent/lib/event');
-const ApiGatewayAuthorizerRequest = require('../../util/apiGatewayAuthorizerRequest');
-smash.setCurrentEvent({ methodArn: "" });
+const Event = require('../../../lib/middleware/simpleQueueService/lib/event.js');
 
 describe('Event', function () {
     it('Test event instance failure', function () {
@@ -28,7 +26,7 @@ describe('Event', function () {
     });
 
     it('Test event instance success', function () {
-        const rawEvent = ApiGatewayAuthorizerRequest.good;
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "testProperty=\'this is a string\'" }] };
         const context = {};
         const terminate = { terminate: (error, data) => { } };
         expect(function () {
@@ -36,9 +34,8 @@ describe('Event', function () {
         }).to.not.throw(Error);
     });
 
-    it('Test event internal server error', function () {
-        const rawEvent = ApiGatewayAuthorizerRequest.good;
-        const context = {};
+    it('Test event success', function () {
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "{\"testProperty\":\"this is a string\"}" }] };
         const spy = sinon.spy();
         const terminate = {
             terminate: (error, data) => {
@@ -46,12 +43,12 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.internalServerError(new Error("An error"));
+        event.success();
         assert.isTrue(spy.called);
     });
 
-    it('Test event unauthorized', function () {
-        const rawEvent = ApiGatewayAuthorizerRequest.good;
+    it('Test event failure', function () {
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'" }] };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -60,42 +57,12 @@ describe('Event', function () {
             }
         };
         const event = new Event(rawEvent, context, terminate);
-        event.unauthorized();
-        assert.isTrue(spy.called);
-    });
-
-    it('Test event allow', function () {
-        const rawEvent = ApiGatewayAuthorizerRequest.good;
-        const context = {};
-        const spy = sinon.spy();
-        const terminate = {
-            terminate: (error, data) => {
-                spy();
-            }
-        };
-        const event = new Event(rawEvent, context, terminate);
-        event.generatePermissionContext({ id: "id", username: "username", region: "region", roles: "roles" });
-        event.allow();
-        assert.isTrue(spy.called);
-    });
-
-    it('Test event deny', function () {
-        const rawEvent = ApiGatewayAuthorizerRequest.good;
-        const context = {};
-        const spy = sinon.spy();
-        const terminate = {
-            terminate: (error, data) => {
-                spy();
-            }
-        };
-        const event = new Event(rawEvent, context, terminate);
-        event.generatePermissionContext({ id: "id", username: "username", region: "region", roles: "roles" });
-        event.deny();
+        event.failure(new Error("Foobar"));
         assert.isTrue(spy.called);
     });
 
     it('Test event terminate', function () {
-        const rawEvent = ApiGatewayAuthorizerRequest.good;
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: "testProperty=null" }] };
         const context = {};
         const spy = sinon.spy();
         const terminate = {
@@ -107,5 +74,30 @@ describe('Event', function () {
         event.terminate(null);
         assert.isTrue(spy.called);
     });
+
+    it('Test event parsing', function () {
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: 'testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'\ntestProperty1=\'Foobar\'' }] };
+        const context = {};
+        const terminate = { terminate: (error, data) => { } };
+        const event = new Event(rawEvent, context, terminate);
+        const message = {
+            testProperty: {
+                testJSONProperty: 'this is a string'
+            },
+            testProperty1: 'Foobar'
+        };
+        assert.deepEqual(event.message, message);
+    });
+
+    it('Test event parsing invalid', function () {
+        const rawEvent = { Records: [{ eventSourceARN: 'arn:aws:sqs:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x', body: 'testProperty=' }] };
+        const context = {};
+        const terminate = { terminate: (error, data) => { } };
+        expect(function () {
+            const event = new Event(rawEvent, context, terminate);
+        }).to.throw(Error);
+    });
 });
+
+
 
