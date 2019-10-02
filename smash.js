@@ -33,7 +33,6 @@ class Smash {
         this._path = "";
         this._singletons = {};
         this._singletonOptions = null;
-        this.currentAction = null;
     }
 
     _clearExpose() {
@@ -143,8 +142,9 @@ class Smash {
             try {
                 this._handlers.push(require(path.resolve(files[i])));
             } catch (error) {
-                logger.error("Failed to register handler " + files[i], error);
-                throw new Error("Failed to boot smash: " + error.message);
+                logger.error("Failed to register handler " + files[i]);
+                logger.error("Failed to boot smash");
+                throw error;
             }
         }
         logger.info("Handler loaded: " + files.length);
@@ -213,7 +213,6 @@ class Smash {
                     return this;
                 }
             }
-            //FIX ME use smashError instead
             logger.error("No middleware found to process event", event);
             callback(new Error("No middleware found to process event"));
         }
@@ -229,11 +228,7 @@ class Smash {
     }
 
     getEnvs(keys) {
-        const array = [];
-        keys.forEach((key) => {
-            array.push(this.getEnv(key));
-        });
-        return array;
+        return keys.map((key) => this.getEnv(key));
     }
 
     getRegion() {
@@ -348,20 +343,19 @@ class Smash {
     }
 
     for(action) {
-        this.currentAction = action;
-        return this;
+        return this.binder.for(action);
     }
 
     registerRequiredRule(item) {
-        return this.binder.registerRequiredRule({ ...item, name: this.currentAction });
+        return this.binder.registerRequiredRule(item);
     }
 
     registerMergeRule(item) {
-        return this.binder.registerMergeRule({ ...item, name: this.currentAction });
+        return this.binder.registerMergeRule(item);
     }
 
     registerCleanRule(item) {
-        return this.binder.registerCleanRule({ ...item, name: this.currentAction });
+        return this.binder.registerCleanRule(item);
     }
 
     mergeObject(...args) {
@@ -383,40 +377,16 @@ class Smash {
         return require(path.resolve(path.join(__dirname, "lib/util/smashLogger.js")));
     }
 
-    get Console() {
-        logger.deprecated("smash.Console is deprecated, use smash.Logger in the future");
-        return this.Logger;
-    }
-
-    set Console(console) {
-
-    }
-
-    smashError(...args) {
-        logger.deprecated("Method smashError(options) is deprecated, use smash.errorUtil");
-        return new SmashError.SmashError(...args);
-    }
-
     get SmashError() {
         return SmashError;
     }
 
     logger(namespace) {
-        return new Logger(namespace);
-    }
-
-    //FIX ME remove for the next major ??
-    get codes() {
-        return {
-            badRequest: 400,
-            unauthorized: 401,
-            forbidden: 403,
-            notFound: 404,
-            conflict: 409,
-            internalServerError: 500,
-            notImplemented: 501,
-            serviceUnavailable: 502
+        const logger = new Logger(namespace);
+        logger.errorUtil = () => {
+            return new SmashError(namespace);
         };
+        return logger;
     }
 }
 
