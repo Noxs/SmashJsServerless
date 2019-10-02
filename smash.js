@@ -102,6 +102,7 @@ class Smash {
                 throw new Error("Global variable " + name + " is already defined");
             }
             global[name] = globalToExpose;
+            global = { ...this.global, ...globalToExpose };
             Object.freeze(globalToExpose);
             if (silent === false) {
                 logger.info("Load global: " + name);
@@ -171,16 +172,15 @@ class Smash {
     _buildEnv(context) {
         delete this._env;
         this._env = {};
-        Object.assign(this._env, this._containerEnv);
+        this._env = { ...this._env, ...this._containerEnv }
         if (typeof module === 'object') {
-            Object.assign(this._env, context);
+            this._env = { ...this._env, ...context }
         }
         return this;
     }
 
     _buildContainerEnv(env = {}) {
-        Object.assign(this._containerEnv, env);
-        Object.assign(this._containerEnv, process.env);
+        this._containerEnv = { ...this._containerEnv, ...env, ...process.env }
         this._buildEnv();
         return this;
     }
