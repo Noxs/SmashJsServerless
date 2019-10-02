@@ -33,6 +33,7 @@ class Smash {
         this._path = "";
         this._singletons = {};
         this._singletonOptions = null;
+        this.currentAction = null;
     }
 
     _clearExpose() {
@@ -346,16 +347,21 @@ class Smash {
         return this._binder;
     }
 
-    registerRequiredRule(...args) {
-        return this.binder.registerRequiredRule(...args);
+    for(action) {
+        this.currentAction = action;
+        return this;
     }
 
-    registerMergeRule(...args) {
-        return this.binder.registerMergeRule(...args);
+    registerRequiredRule(item) {
+        return this.binder.registerRequiredRule({ ...item, name: this.currentAction });
     }
 
-    registerCleanRule(...args) {
-        return this.binder.registerCleanRule(...args);
+    registerMergeRule(item) {
+        return this.binder.registerMergeRule({ ...item, name: this.currentAction });
+    }
+
+    registerCleanRule(item) {
+        return this.binder.registerCleanRule({ ...item, name: this.currentAction });
     }
 
     mergeObject(...args) {
