@@ -381,12 +381,12 @@ class Smash {
         return SmashError;
     }
 
-    logger(namespace) {
-        const logger = new Logger(namespace);
-        logger.errorUtil = () => {
-            return new SmashError(namespace);
-        };
-        return logger;
+    errorUtil(namepace = SmashError.getNamespace()) {
+        return new SmashError(namepace);
+    }
+
+    logger(namespace = SmashError.getNamespace()) {
+        return new Logger(namespace);
     }
 }
 
