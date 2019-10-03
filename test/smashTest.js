@@ -150,11 +150,6 @@ describe('Smash', function () {
         assert.isFunction(smash.DynamodbModel);
     });
 
-    it('Test smash console', function () {
-        smash.boot();
-        assert.isFunction(smash.Console);
-    });
-
     it('Test smash handle event cloud watch event success', function () {
         smash.boot();
         const event = cloudWatchEvent.good;

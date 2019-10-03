@@ -102,6 +102,7 @@ class Smash {
                 throw new Error("Global variable " + name + " is already defined");
             }
             global[name] = globalToExpose;
+            global = { ...this.global, ...globalToExpose };
             Object.freeze(globalToExpose);
             if (silent === false) {
                 logger.info("Load global: " + name);
@@ -142,8 +143,9 @@ class Smash {
             try {
                 this._handlers.push(require(path.resolve(files[i])));
             } catch (error) {
-                logger.error("Failed to register handler " + files[i], error);
-                throw new Error("Failed to boot smash: " + error.message);
+                logger.error("Failed to register handler " + files[i]);
+                logger.error("Failed to boot smash");
+                throw error;
             }
         }
         logger.info("Handler loaded: " + files.length);
@@ -170,16 +172,15 @@ class Smash {
     _buildEnv(context) {
         delete this._env;
         this._env = {};
-        Object.assign(this._env, this._containerEnv);
+        this._env = { ...this._env, ...this._containerEnv }
         if (typeof module === 'object') {
-            Object.assign(this._env, context);
+            this._env = { ...this._env, ...context }
         }
         return this;
     }
 
     _buildContainerEnv(env = {}) {
-        Object.assign(this._containerEnv, env);
-        Object.assign(this._containerEnv, process.env);
+        this._containerEnv = { ...this._containerEnv, ...env, ...process.env }
         this._buildEnv();
         return this;
     }
@@ -212,7 +213,6 @@ class Smash {
                     return this;
                 }
             }
-            //FIX ME use smashError instead
             logger.error("No middleware found to process event", event);
             callback(new Error("No middleware found to process event"));
         }
@@ -228,11 +228,7 @@ class Smash {
     }
 
     getEnvs(keys) {
-        const array = [];
-        keys.forEach((key) => {
-            array.push(this.getEnv(key));
-        });
-        return array;
+        return keys.map((key) => this.getEnv(key));
     }
 
     getRegion() {
@@ -346,16 +342,20 @@ class Smash {
         return this._binder;
     }
 
-    registerRequiredRule(...args) {
-        return this.binder.registerRequiredRule(...args);
+    for(action) {
+        return this.binder.for(action);
     }
 
-    registerMergeRule(...args) {
-        return this.binder.registerMergeRule(...args);
+    registerRequiredRule(item) {
+        return this.binder.registerRequiredRule(item);
     }
 
-    registerCleanRule(...args) {
-        return this.binder.registerCleanRule(...args);
+    registerMergeRule(item) {
+        return this.binder.registerMergeRule(item);
+    }
+
+    registerCleanRule(item) {
+        return this.binder.registerCleanRule(item);
     }
 
     mergeObject(...args) {
@@ -377,40 +377,16 @@ class Smash {
         return require(path.resolve(path.join(__dirname, "lib/util/smashLogger.js")));
     }
 
-    get Console() {
-        logger.deprecated("smash.Console is deprecated, use smash.Logger in the future");
-        return this.Logger;
-    }
-
-    set Console(console) {
-
-    }
-
-    smashError(...args) {
-        logger.deprecated("Method smashError(options) is deprecated, use smash.errorUtil");
-        return new SmashError.SmashError(...args);
-    }
-
     get SmashError() {
         return SmashError;
     }
 
-    logger(namespace) {
-        return new Logger(namespace);
+    errorUtil(namepace = SmashError.getNamespace()) {
+        return new SmashError(namepace);
     }
 
-    //FIX ME remove for the next major ??
-    get codes() {
-        return {
-            badRequest: 400,
-            unauthorized: 401,
-            forbidden: 403,
-            notFound: 404,
-            conflict: 409,
-            internalServerError: 500,
-            notImplemented: 501,
-            serviceUnavailable: 502
-        };
+    logger(namespace = SmashError.getNamespace()) {
+        return new Logger(namespace);
     }
 }
 
