@@ -1,3 +1,3 @@
-smash.cloudWatchEvent({ source: "aws.codecommit", version: "0" }, function (event) {
-    event.success();
+smash.cloudWatchEvent({ source: "aws.codecommit", version: "0" }, event => {
+	event.success();
 });

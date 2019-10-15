@@ -1,0 +1,84 @@
+const Event = require('../../../../lib/middleware/simpleNotificationService/lib/event.js');
+
+describe('Event', () => {
+	it('Test event instance failure', () => {
+		expect(() => new Event()).toThrow();
+		const rawEvent = {};
+		expect(() => new Event(rawEvent)).toThrow();
+		const context = {};
+		const terminateObject = {};
+		expect(() => new Event(rawEvent, context, terminateObject)).toThrow();
+		const terminate = { terminate: () => { } };
+		expect(() => new Event(rawEvent, context, terminate)).toThrow();
+	});
+
+	it('Test event instance success', () => {
+		const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=\'this is a string\'" } }] };
+		const context = {};
+		const terminate = { terminate: (error, data) => { } };
+		expect(() => new Event(rawEvent, context, terminate)).not.toThrow();
+	});
+
+	it('Test event success', done => {
+		const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "{\"testProperty\":\"this is a string\"}" } }] };
+		const context = {};
+		const terminate = {
+			terminate: (error, data) => {
+				expect(error).toBe(null);
+				expect(data).not.toBe(null);
+				done();
+			},
+		};
+		const event = new Event(rawEvent, context, terminate);
+		event.success();
+	});
+
+	it('Test event failure', done => {
+		const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'" } }] };
+		const context = {};
+		const terminate = {
+			terminate: (error, data) => {
+				expect(error).not.toBe(null);
+				expect(data).toBe(null);
+				done();
+			},
+		};
+		const event = new Event(rawEvent, context, terminate);
+		event.failure(new Error("Foobar"));
+	});
+
+	it('Test event terminate', done => {
+		const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: "testProperty=null" } }] };
+		const context = {};
+		const terminate = {
+			terminate: (error, data) => {
+				expect(error).toBe(null);
+				expect(data).toBe(undefined);
+				done();
+			},
+		};
+		const event = new Event(rawEvent, context, terminate);
+		event.terminate(null);
+	});
+
+	it('Test event parsing', () => {
+		const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: 'testProperty=\'{\"testJSONProperty\":\"this is a string\"}\'\ntestProperty1=\'Foobar\'' } }] };
+		const context = {};
+		const terminate = { terminate: (error, data) => { } };
+		const event = new Event(rawEvent, context, terminate);
+		const message = {
+			testProperty: {
+				testJSONProperty: 'this is a string',
+			},
+			testProperty1: 'Foobar',
+		};
+		expect(event.message).toStrictEqual(message);
+	});
+
+	it('Test event parsing invalid', () => {
+		const rawEvent = { Records: [{ EventSubscriptionArn: 'arn:aws:sns:xx-xxxx-x:xxxxxxxxxxxxx:xxxxxxxxxxxxxxx-ActionTest-env-one-region-x:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', Sns: { Type: "Notification", Subject: "Test subject", Message: 'testProperty=' } }] };
+		const context = {};
+		const terminate = { terminate: (error, data) => { } };
+		expect(() => new Event(rawEvent, context, terminate)).toThrow();
+	});
+});

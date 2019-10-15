@@ -1,3 +1,3 @@
-smash.codePipelineJobEvent( { task : "dataStackDeploy" }, function (event) {
-    event.success();
+smash.codePipelineJobEvent({ task: "dataStackDeploy" }, event => {
+	event.success();
 });
