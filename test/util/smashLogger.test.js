@@ -1,4 +1,5 @@
 const Logger = require('../../lib/util/smashLogger.js');
+Logger.verbose({ level: "disable" });
 
 describe('Logger', () => {
 	it('Test logger instance', () => {

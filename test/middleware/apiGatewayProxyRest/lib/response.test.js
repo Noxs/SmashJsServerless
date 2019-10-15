@@ -1,3 +1,5 @@
+const SmashLogger = require('../../../../lib/util/smashLogger');
+SmashLogger.verbose({ level: "disable" });
 const Response = require('../../../../lib/middleware/apiGatewayProxyRest/lib/response');
 const ApiGatewayProxyRest = require('../../../../lib/middleware/apiGatewayProxyRest/apiGatewayProxyRest');
 const defaultHeaders = {

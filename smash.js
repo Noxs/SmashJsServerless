@@ -5,7 +5,6 @@ const path = require('path');
 const Logger = require("./lib/util/smashLogger");
 const Config = require("./lib/core/config");
 const Filter = require("./lib/core/filter/filter");
-const logger = new Logger("SmashJsServerless");
 const SmashError = require("./lib/util/smashError");
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -17,6 +16,7 @@ const PATHS = {
 	HELPER: "helper",
 	SINGLETON: "singleton",
 	GLOBAL: "global",
+	API: "api",
 };
 const AWS_REGION = "AWS_REGION";
 
@@ -26,6 +26,7 @@ class Smash {
 	}
 
 	_init() {
+		this._logger = null;
 		this._filter = null;
 		this._config = null;
 		this._middlewares = null;
@@ -47,18 +48,18 @@ class Smash {
 
 	_processExpose(module) {
 		if (typeof module !== 'object' || typeof module.expose !== 'function') {
-			logger.error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
+			this._logger.error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
 			throw new Error("Middlewares must be object with a function called expose, " + Logger.typeOf(module, module.expose));
 		}
 		const expose = module.expose();
 		const that = this;
 		for (let i = 0, length = expose.length; i < length; i++) {
 			if (expose[i].functionName && this[expose[i].functionName]) {
-				logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
+				this._logger.error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
 				throw new Error("Function " + expose[i].functionName + " already exist in smash, overwrite is not allowed");
 			}
 			if (expose[i].getterName && this[expose[i].getterName]) {
-				logger.error("Getter " + expose[i].getterName + " already exist in smash, overwrite is not allowed");
+				this._logger.error("Getter " + expose[i].getterName + " already exist in smash, overwrite is not allowed");
 				throw new Error("Getter " + expose[i].getterName + " already exist in smash, overwrite is not allowed");
 			}
 			if (expose[i].functionName) {
@@ -88,7 +89,7 @@ class Smash {
 			const module = new Module();
 			this._processExpose(module);
 			this._middlewares.push(module);
-			logger.info("Register middleware: " + module.constructor.name);
+			this._logger.info("Register middleware: " + module.constructor.name);
 		}
 		return this;
 	}
@@ -103,10 +104,10 @@ class Smash {
 				throw new Error("Global variable " + name + " is already defined");
 			}
 			global[name] = globalToExpose;
-			global = { ...this.global, ...globalToExpose };
+			Object.assign(global, globalToExpose);
 			Object.freeze(globalToExpose);
 			if (silent === false) {
-				logger.info("Load global: " + name);
+				this._logger.info("Load global: " + name);
 			}
 		}
 		return this;
@@ -143,12 +144,12 @@ class Smash {
 				require(path.resolve(files[i]));
 				this._handlers.push(path.resolve(files[i]));
 			} catch (error) {
-				logger.error("Failed to register handler " + files[i]);
-				logger.error("Failed to boot smash");
+				this._logger.error("Failed to register handler " + files[i]);
+				this._logger.error("Failed to boot smash");
 				throw error;
 			}
 		}
-		logger.info("Handler loaded: " + files.length);
+		this._logger.info("Handler loaded: " + files.length);
 		return this;
 	}
 
@@ -191,7 +192,8 @@ class Smash {
 	}
 
 	boot({ path = process.cwd(), global = {}, env = {}, verbose = {}, singleton = {} } = { path: process.cwd(), global: {}, env: {}, verbose: {}, singleton: {} }) {
-		logger.verbose(verbose);
+		Logger.verbose(verbose);
+		this._logger = new Logger("SmashJsServerless");
 		this._path = path;
 		this._config = new Config(this._path);
 		this._filter = new Filter();
@@ -204,7 +206,7 @@ class Smash {
 
 	handleEvent(event, context, callback) {
 		if (this._middlewares === null) {
-			logger.error("Smash has not been booted, you must call boot() first", event);
+			this._logger.error("Smash has not been booted, you must call boot() first", event);
 			callback(new Error("Smash has not been booted, you must call boot() first"));
 		} else {
 			this._buildEnv(context);
@@ -214,7 +216,7 @@ class Smash {
 					return this;
 				}
 			}
-			logger.error("No middleware found to process event", event);
+			this._logger.error("No middleware found to process event", event);
 			callback(new Error("No middleware found to process event"));
 		}
 		return this;
@@ -248,7 +250,7 @@ class Smash {
 		try {
 			return require(path.resolve(path.join(this._path, dir, module)));
 		} catch (error) {
-			logger.error("Failed to load " + dir + " module " + module, error, error.stack);
+			this._logger.error("Failed to load " + dir + " module " + module, error, error.stack);
 			throw error;
 		}
 	}
@@ -285,7 +287,7 @@ class Smash {
 	_bootSingletonModule(module) {
 		if (this._singletons[module].load) {
 			this._singletons[module].load().catch(error => {
-				logger.error("Failed to boot singleton module " + module, error);
+				this._logger.error("Failed to boot singleton module " + module, error);
 			});
 		}
 	}

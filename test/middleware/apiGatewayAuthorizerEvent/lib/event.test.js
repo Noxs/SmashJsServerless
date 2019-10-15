@@ -1,3 +1,5 @@
+const SmashLogger = require('../../../../lib/util/smashLogger');
+SmashLogger.verbose({ level: "disable" });
 const smash = require('../../../../smash');
 const Event = require('../../../../lib/middleware/apiGatewayAuthorizerEvent/lib/event');
 const ApiGatewayAuthorizerRequest = require('../../../apiGatewayAuthorizerRequest');

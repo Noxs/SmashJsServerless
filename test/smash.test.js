@@ -8,7 +8,6 @@ const overwriteModule = {
 
 describe('Smash', () => {
 	let smash = null;
-	let Config = null;
 	let cloudWatchEvent = null;
 	let codePipeline = null;
 	let apiGatewayProxyRequest = null;
@@ -16,7 +15,6 @@ describe('Smash', () => {
 	beforeEach(() => {
 		jest.resetModules();
 		smash = require('../smash');
-		Config = require('../lib/core/config');
 		cloudWatchEvent = require('./cloudWatchEvent');
 		codePipeline = require('./codePipelineJobEvent');
 		apiGatewayProxyRequest = require('./apiGatewayProxyRequest');
@@ -42,11 +40,6 @@ describe('Smash', () => {
 		expect(() => smash._processExpose(badModule)).toThrow();
 		expect(() => smash._processExpose()).toThrow();
 	});
-
-	//FIX ME
-	// it('Test smash process expose overwrite module', () => {
-	//	expect(() => smash._processExpose(overwriteModule)).toThrow();
-	//}); 
 
 	it('Test smash handle event without boot', () => {
 		smash._middlewares = null;
