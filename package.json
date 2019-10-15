@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "codecov": "codecov"
   },
   "repository": {
     "type": "git",
@@ -38,13 +39,15 @@
       "^/helper/",
       "^/util/",
       "^/api/"
-    ]
+    ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
   },
   "dependencies": {
     "aws4": "^1.8.0",
+    "codecov": "^3.6.1",
     "dynamodb-data-types": "^3.0.1",
     "glob": "^7.1.4",
-    "lodash": "^4.17.15",
     "request": "^2.88.0"
   }
 }
