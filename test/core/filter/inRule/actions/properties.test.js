@@ -8,7 +8,7 @@ describe('Properties', () => {
 		jest.resetAllMocks();
 		require('../../../../../smash');
 		jest.mock("../../../../../lib/core/filter/util/moduleLoader");
-		RuleProcessor = require("../../../../../lib/core/filter/ruleProcessor");
+		RuleProcessor = require("../../../../../lib/core/filter/inRule/inRuleProcessor");
 		properties = require("../../../../../lib/core/filter/inRule/actions/properties");
 	});
 
@@ -28,7 +28,7 @@ describe('Properties', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "optional",
@@ -64,7 +64,7 @@ describe('Properties', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "userInput",
@@ -105,7 +105,7 @@ describe('Properties', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "userInput",
@@ -146,7 +146,7 @@ describe('Properties', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",
@@ -180,7 +180,7 @@ describe('Properties', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",
@@ -214,7 +214,7 @@ describe('Properties', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",
@@ -250,7 +250,7 @@ describe('Properties', () => {
 				resolve(true);
 			});
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "userInput",
@@ -293,7 +293,7 @@ describe('Properties', () => {
 				resolve(true);
 			});
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "userInput",

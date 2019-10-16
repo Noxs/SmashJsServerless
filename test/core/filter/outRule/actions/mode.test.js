@@ -6,7 +6,7 @@ describe('Mode', () => {
 	beforeAll(() => {
 		jest.resetAllMocks();
 		require('../../../../../smash');
-		mode = require("../../../../../lib/core/filter/mergeRule/actions/mode");
+		mode = require("../../../../../lib/core/filter/outRule/actions/mode");
 	});
 
 	beforeEach(() => {
@@ -34,35 +34,35 @@ describe('Mode', () => {
 					value: { mode: "restrictive", properties: { test: { type: "string" } } },
 				},
 			],
-			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "mergeRule" },
+			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "outRule" },
 		})).toBe(true);
 	});
 
-	it('Test execute case #1', () => {
+	it('Test execute case #1', async () => {
 		const data = {
-			current: { name: "parameters", value: { foo: "bar", bar: "foo" } },
+			current: { name: "none", value: { foo: "bar", bar: "foo" } },
 			initialData: { foo: "bar", bar: "foo" },
 			parents: [{ name: "none", value: { foo: "bar", bar: "foo" } }],
 		};
-		expect(mode.execute({
+		await expect(mode.execute({
 			rule: {
 				current: {
 					name: "mode",
 					value: "restrictive",
 				},
-				initalRule: { mode: "restrictive", properties: { foor: {}, bar: {} } },
+				initalRule: { mode: "restrictive", properties: { foo: {}, bar: {} } },
 				parents: [
 					{
 						name: "none",
-						value: { mode: "restrictive", properties: { foor: {}, bar: {} } },
+						value: { mode: "restrictive", properties: { foo: {}, bar: {} } },
 					},
 				],
-				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "mergeRule" },
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "outRule" },
 			},
 			data,
-		})).toBe(true);
+		})).resolves.toBe(true);
 		expect(data).toStrictEqual({
-			current: { name: "parameters", value: { foo: "bar", bar: "foo" } },
+			current: { name: "none", value: { foo: "bar", bar: "foo" } },
 			initialData: { foo: "bar", bar: "foo" },
 			parents: [{ name: "none", value: { foo: "bar", bar: "foo" } }],
 			mode: "restrictive",

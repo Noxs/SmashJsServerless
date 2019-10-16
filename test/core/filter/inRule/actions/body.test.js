@@ -8,7 +8,7 @@ describe('Body', () => {
 		jest.resetAllMocks();
 		require('../../../../../smash');
 		jest.mock("../../../../../lib/core/filter/util/moduleLoader");
-		RuleProcessor = require("../../../../../lib/core/filter/ruleProcessor");
+		RuleProcessor = require("../../../../../lib/core/filter/inRule/inRuleProcessor");
 		body = require("../../../../../lib/core/filter/inRule/actions/body");
 	});
 
@@ -28,7 +28,7 @@ describe('Body', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",
@@ -64,7 +64,7 @@ describe('Body', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",
@@ -100,7 +100,7 @@ describe('Body', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",
@@ -138,7 +138,7 @@ describe('Body', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",
@@ -176,7 +176,7 @@ describe('Body', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "properties",

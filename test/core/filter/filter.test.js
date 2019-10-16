@@ -92,6 +92,33 @@ describe('Filter', () => {
 			await expect(filter.cleanIn({ action: "MyFooBarAction", version: "01-2019" }, request)).resolves.not.toBeUndefined();
 			expect(request).toStrictEqual(requestCleaned);
 		});
+
+		it('Test cleanOut', async () => {
+			const data = {
+				language: "fr",
+				duration: 123,
+				titleToClean: "YOLO",
+				preview: "FULL",
+			};
+
+			const dataCleaned = {
+				language: "fr",
+				duration: 123,
+				preview: "FULL",
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).outRule({
+				properties: {
+					language: { type: 'string' },
+					duration: { type: 'unsigned integer' },
+					preview: { type: "string" },
+				},
+			})).not.toThrow();
+			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();
+			expect(data).toStrictEqual(dataCleaned);
+		});
 	});
 
 	describe('Filter mocked', () => {

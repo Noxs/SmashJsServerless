@@ -8,7 +8,7 @@ describe('BeforeMerge', () => {
 		jest.resetAllMocks();
 		require('../../../../../smash');
 		jest.mock("../../../../../lib/core/filter/util/moduleLoader");
-		RuleProcessor = require("../../../../../lib/core/filter/ruleProcessor");
+		RuleProcessor = require("../../../../../lib/core/filter/mergeRule/mergeRuleProcessor");
 		beforeMerge = require("../../../../../lib/core/filter/mergeRule/actions/beforeMerge");
 	});
 

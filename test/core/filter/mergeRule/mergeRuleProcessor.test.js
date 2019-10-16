@@ -4,9 +4,9 @@ describe('RuleProcessor', () => {
 
 		beforeAll(() => {
 			jest.resetAllMocks();
-			require('../../../smash');
-			jest.mock("../../../lib/core/filter/util/moduleLoader");
-			RuleProcessor = require("../../../lib/core/filter/ruleProcessor");
+			require('../../../../smash');
+			jest.mock("../../../../lib/core/filter/util/moduleLoader");
+			RuleProcessor = require("../../../../lib/core/filter/mergeRule/mergeRuleProcessor");
 		});
 
 		beforeEach(() => {
@@ -25,7 +25,7 @@ describe('RuleProcessor', () => {
 				writable: true,
 				value: { version: "01-2019" },
 			});
-			const processor = new RuleProcessor("inRule");
+			const processor = new RuleProcessor();
 			const mockFunction = jest.fn(({ current, parents, rule, processor, ruleConfig }) => {
 				expect(current).not.toBeUndefined();
 				expect(parents).toStrictEqual([{ name: "none", value: rule }]);
@@ -51,7 +51,7 @@ describe('RuleProcessor', () => {
 				writable: true,
 				value: { version: "01-2019" },
 			});
-			const processor = new RuleProcessor("inRule");
+			const processor = new RuleProcessor();
 			const mockFunction = jest.fn(({ current, parents, rule, processor, ruleConfig }) => {
 				expect(current).not.toBeUndefined();
 				expect(parents).toStrictEqual([{ name: "none", value: rule }]);
@@ -92,7 +92,7 @@ describe('RuleProcessor', () => {
 				writable: true,
 				value: { version: "01-2019" },
 			});
-			const processor = new RuleProcessor("inRule");
+			const processor = new RuleProcessor();
 			const mockFunction = jest.fn(({ current, parents, rule, processor, ruleConfig }) => {
 				expect(current).toStrictEqual({});
 				expect(parents).toStrictEqual([{ name: "none", value: rule }]);

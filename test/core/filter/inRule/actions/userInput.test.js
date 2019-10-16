@@ -8,7 +8,7 @@ describe('UserInput', () => {
 		jest.resetAllMocks();
 		require('../../../../../smash');
 		jest.mock("../../../../../lib/core/filter/util/moduleLoader");
-		RuleProcessor = require("../../../../../lib/core/filter/ruleProcessor");
+		RuleProcessor = require("../../../../../lib/core/filter/inRule/inRuleProcessor");
 		userInput = require("../../../../../lib/core/filter/inRule/actions/userInput");
 	});
 
@@ -27,7 +27,7 @@ describe('UserInput', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "castTo",
@@ -65,7 +65,7 @@ describe('UserInput', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "castTo",
@@ -101,7 +101,7 @@ describe('UserInput', () => {
 				resolve(true);
 			});
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "castTo",
@@ -159,7 +159,7 @@ describe('UserInput', () => {
 				resolve(true);
 			});
 		});
-		const processor = new RuleProcessor("inRule");
+		const processor = new RuleProcessor();
 		processor.modules = [
 			{
 				name: "userInput",

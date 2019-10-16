@@ -2,8 +2,11 @@ describe('Processor', () => {
 	describe('Processor mocked', () => {
 		let Processor = null;
 		beforeAll(() => {
+			jest.resetModules();
 			jest.resetAllMocks();
-			jest.mock("../../../lib/core/filter/ruleProcessor");
+			jest.mock("../../../lib/core/filter/inRule/inRuleProcessor");
+			jest.mock("../../../lib/core/filter/mergeRule/mergeRuleProcessor");
+			jest.mock("../../../lib/core/filter/outRule/outRuleProcessor");
 			Processor = require("../../../lib/core/filter/processor");
 		});
 
@@ -123,7 +126,7 @@ describe('Processor', () => {
 
 		it('Test validate', async () => {
 			const processor = new Processor();
-			await expect(() => processor.validate()).not.toThrow();
+			await expect(() => processor.validate("inRule", {})).not.toThrow();
 		});
 	});
 
