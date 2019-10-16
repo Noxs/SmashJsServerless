@@ -23,7 +23,7 @@ describe('Filter', () => {
 
 		});
 
-		it('Test cleanIn', async () => {
+		it('Test cleanIn case #1', async () => {
 			const validateDurationMocked = jest.fn(({ name, value }) => {
 				return true;
 			});
@@ -93,18 +93,20 @@ describe('Filter', () => {
 			expect(request).toStrictEqual(requestCleaned);
 		});
 
-		it('Test cleanOut', async () => {
+		it('Test cleanOut case #1', async () => {
 			const data = {
 				language: "fr",
 				duration: 123,
 				titleToClean: "YOLO",
 				preview: "FULL",
+				foo: { bar: "foo", toRemove: true },
 			};
 
 			const dataCleaned = {
 				language: "fr",
 				duration: 123,
 				preview: "FULL",
+				foo: { bar: "foo" },
 			};
 
 			const filter = new Filter();
@@ -114,6 +116,7 @@ describe('Filter', () => {
 					language: { type: 'string' },
 					duration: { type: 'unsigned integer' },
 					preview: { type: "string" },
+					foo: { type: "object", properties: { bar: { type: "string" } } },
 				},
 			})).not.toThrow();
 			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();

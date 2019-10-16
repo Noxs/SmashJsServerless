@@ -262,6 +262,46 @@ describe('RuleUtil', () => {
 		});
 	});
 
+	it('Test removeCurrentValue case #1', () => {
+		const current = { name: "item", value: { foo: "bar" } };
+		const parents = [
+			{
+				name: "none",
+				value: {
+					item: { foo: "bar" },
+				},
+			},
+		];
+		const initialData = {
+			item: { foo: "bar" },
+		};
+		ruleUtil.removeCurrentValue({ current, parents, initialData });
+		expect(initialData).toStrictEqual({});
+	});
+
+	it('Test removeCurrentValue case #2', () => {
+		const current = { name: "foo", value: "bar" };
+		const parents = [
+			{
+				name: "none",
+				value: {
+					item: { foo: "bar" },
+				},
+			},
+			{
+				name: "item",
+				value: { foo: "bar" },
+			},
+		];
+		const initialData = {
+			item: { foo: "bar" },
+		};
+		ruleUtil.removeCurrentValue({ current, parents, initialData });
+		expect(initialData).toStrictEqual({
+			item: {},
+		});
+	});
+
 	it('Test match case #1', () => {
 		const finded = { name: "type", match: "^(string)$" };
 		const itemToTest = { name: "type", value: "string" };
