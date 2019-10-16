@@ -108,14 +108,18 @@ describe('Properties', () => {
 		const processor = new RuleProcessor();
 		processor.modules = [
 			{
-				name: "userInput",
+				name: "type",
+				validate: mockedFunction,
+			},
+			{
+				name: "optional",
 				validate: mockedFunction,
 			},
 		];
 		expect(properties.validate({
 			current: {
 				name: "properties",
-				value: { myValue: { type: "string", optional: true } },
+				value: { type: "string", optional: true },
 			},
 			rule: { body: { properties: { test: { type: "array", properties: { type: "string", optional: true } } }, optional: true } },
 			parents: [
@@ -242,6 +246,51 @@ describe('Properties', () => {
 				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
 			});
 		}).toThrow();
+	});
+
+	it('Test validate case #7', () => {
+		const mockedFunction = jest.fn(() => {
+			return true;
+		});
+		const processor = new RuleProcessor();
+		processor.modules = [
+			{
+				name: "userInput",
+				validate: mockedFunction,
+			},
+			{
+				name: "optional",
+				validate: mockedFunction,
+			},
+		];
+		expect(properties.validate({
+			current: {
+				name: "properties",
+				value: { myValue: { type: "string", optional: true } },
+			},
+			rule: { body: { properties: { test: { type: "object", properties: { myValue: { type: "string", optional: true } } } }, optional: true } },
+			parents: [
+				{
+					name: "none",
+					value: { body: { properties: { test: { type: "object", properties: { myValue: { type: "string", optional: true } } } }, optional: true } },
+				},
+				{
+					name: "body",
+					value: { properties: { test: { type: "object", properties: { myValue: { type: "string", optional: true } } } }, optional: true },
+				},
+				{
+					name: "properties",
+					value: { test: { type: "object", properties: { myValue: { type: "string", optional: true } } } },
+				},
+				{
+					name: "test",
+					value: { type: "object", properties: { myValue: { type: "string", optional: true } } },
+					type: "userInput",
+				},
+			],
+			processor,
+			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+		})).toBe(true);
 	});
 
 	it('Test execute case #1', async () => {

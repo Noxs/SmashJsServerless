@@ -77,6 +77,10 @@ describe('Filter', () => {
 							type: "object",
 							optional: true,
 							validate: validateDeliveryMocked,
+							properties: {
+								sender: { type: "string", optional: true },
+								receiver: { type: "array", optional: true, properties: { type: "string" } },
+							},
 						},
 						preview: { type: "string", optional: true, match: "^(NONE|FULL)$" },
 						password: { type: 'string', optional: true, match: "^.+$" },
@@ -99,6 +103,7 @@ describe('Filter', () => {
 				duration: 123,
 				titleToClean: "YOLO",
 				preview: "FULL",
+				listToFilter: [1, "test"],
 				foo: { bar: "foo", toRemove: true },
 			};
 
@@ -106,6 +111,7 @@ describe('Filter', () => {
 				language: "fr",
 				duration: 123,
 				preview: "FULL",
+				listToFilter: ["test"],
 				foo: { bar: "foo" },
 			};
 
@@ -116,6 +122,7 @@ describe('Filter', () => {
 					language: { type: 'string' },
 					duration: { type: 'unsigned integer' },
 					preview: { type: "string" },
+					listToFilter: { type: "array", properties: { type: "string" } },
 					foo: { type: "object", properties: { bar: { type: "string" } } },
 				},
 			})).not.toThrow();

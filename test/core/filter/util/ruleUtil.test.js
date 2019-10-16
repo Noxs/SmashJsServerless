@@ -1,3 +1,5 @@
+const { USER_INPUT, OPTIONAL, TYPE, CAST_TO, MATCH, VALIDATE, INT, UINT, DEFAULT, MIN, MAX, STRING, NUMBER, INTEGER, UNSIGNED_INTEGER, ARRAY, OBJECT, BOOLEAN, PROPERTIES } = require("../../../../lib/core/filter/constant");
+
 describe('RuleUtil', () => {
 	let ruleUtil = null;
 
@@ -171,6 +173,172 @@ describe('RuleUtil', () => {
 			{ name: 'id', value: { castTo: 'string' }, type: 'userInput' },
 		];
 		expect(() => ruleUtil.getLatestFromNames(config, parents, 2, "foobar")).toThrow();
+	});
+
+	it('Test getLatestFromNames case #5', () => {
+		const depth = 2;
+		const config = {
+			parameters: {
+				properties: {
+					siblings: [
+						{ name: USER_INPUT },
+					],
+					children: [
+						{ name: TYPE, match: "^(" + [STRING, NUMBER, INT, UINT, INTEGER, UNSIGNED_INTEGER, ARRAY, OBJECT, BOOLEAN].join("|") + ")$" },
+						{ name: CAST_TO, match: "^(" + [STRING, NUMBER, BOOLEAN].join("|") + ")$" },
+						{ name: MATCH, match: "^.*$" },
+						{ name: VALIDATE },
+						{ name: MIN },
+						{ name: MAX },
+						{ name: PROPERTIES },
+					],
+				},
+			},
+			body: {
+				properties: {
+					siblings: [
+						{ name: USER_INPUT },
+					],
+					children: [
+						{ name: TYPE, match: "^(" + [STRING, NUMBER, INT, UINT, INTEGER, UNSIGNED_INTEGER, ARRAY, OBJECT, BOOLEAN].join("|") + ")$" },
+						{ name: CAST_TO, match: "^(" + [STRING, NUMBER, BOOLEAN].join("|") + ")$" },
+						{ name: MATCH, match: "^.*$" },
+						{ name: VALIDATE },
+						{ name: MIN },
+						{ name: MAX },
+						{ name: USER_INPUT },
+						{ name: OPTIONAL },
+						{ name: DEFAULT },
+						{ name: PROPERTIES },
+					],
+				},
+			},
+			userInput: {
+				properties: {
+					siblings: [
+						{ name: USER_INPUT },
+					],
+					children: [
+						{ name: TYPE, match: "^(" + [STRING, NUMBER, INT, UINT, INTEGER, UNSIGNED_INTEGER, ARRAY, OBJECT, BOOLEAN].join("|") + ")$" },
+						{ name: CAST_TO, match: "^(" + [STRING, NUMBER, BOOLEAN].join("|") + ")$" },
+						{ name: MATCH, match: "^.*$" },
+						{ name: VALIDATE },
+						{ name: DEFAULT },
+						{ name: MIN },
+						{ name: MAX },
+						{ name: USER_INPUT },
+						{ name: PROPERTIES },
+					],
+				},
+			},
+		};
+		const parents = [
+			{
+				name: 'none',
+				value: {
+					parameters: {
+						properties: {
+							id: { castTo: "string" },
+						},
+					},
+					body: {
+						properties: {
+							language: { type: 'string', match: "^[A-Za-z]{2}(-[A-Za-z]{2})?$", optional: true },
+							duration: { type: 'unsigned integer', optional: true, validate: () => { } },
+							title: { type: 'string', optional: true },
+							delivery: {
+								type: "object",
+								optional: true,
+								validate: () => { },
+								properties: {
+									sender: { type: "string", optional: true },
+									receiver: { type: "array", optional: true, properties: { type: "string" } },
+								},
+							},
+							preview: { type: "string", optional: true, match: "^(NONE|FULL)$" },
+							password: { type: 'string', optional: true, match: "^.+$" },
+							type: { type: 'string', optional: true, match: "^(NONE|ALL)$" },
+							description: { type: 'string', optional: true, match: "^.+$" },
+							domain: { type: 'string', match: "^.+$", optional: true, default: () => { } },
+							customUrl: { type: 'string', optional: true, match: "^.+$", validate: () => { } },
+						},
+						optional: true,
+					},
+				},
+			},
+			{
+				name: 'body',
+				value: {
+					properties: {
+						language: { type: 'string', match: "^[A-Za-z]{2}(-[A-Za-z]{2})?$", optional: true },
+						duration: { type: 'unsigned integer', optional: true, validate: () => { } },
+						title: { type: 'string', optional: true },
+						delivery: {
+							type: "object",
+							optional: true,
+							validate: () => { },
+							properties: {
+								sender: { type: "string", optional: true },
+								receiver: { type: "array", optional: true, properties: { type: "string" } },
+							},
+						},
+						preview: { type: "string", optional: true, match: "^(NONE|FULL)$" },
+						password: { type: 'string', optional: true, match: "^.+$" },
+						type: { type: 'string', optional: true, match: "^(NONE|ALL)$" },
+						description: { type: 'string', optional: true, match: "^.+$" },
+						domain: { type: 'string', match: "^.+$", optional: true, default: () => { } },
+						customUrl: { type: 'string', optional: true, match: "^.+$", validate: () => { } },
+					},
+					optional: true,
+				},
+			},
+			{
+				name: 'properties',
+				value:
+				{
+					language: { type: 'string', match: "^[A-Za-z]{2}(-[A-Za-z]{2})?$", optional: true },
+					duration: { type: 'unsigned integer', optional: true, validate: () => { } },
+					title: { type: 'string', optional: true },
+					delivery: {
+						type: "object",
+						optional: true,
+						validate: () => { },
+						properties: {
+							sender: { type: "string", optional: true },
+							receiver: { type: "array", optional: true, properties: { type: "string" } },
+						},
+					},
+					preview: { type: "string", optional: true, match: "^(NONE|FULL)$" },
+					password: { type: 'string', optional: true, match: "^.+$" },
+					type: { type: 'string', optional: true, match: "^(NONE|ALL)$" },
+					description: { type: 'string', optional: true, match: "^.+$" },
+					domain: { type: 'string', match: "^.+$", optional: true, default: () => { } },
+					customUrl: { type: 'string', optional: true, match: "^.+$", validate: () => { } },
+				},
+			},
+			{
+				name: 'delivery',
+				value:
+				{
+					type: "object",
+					optional: true,
+					validate: () => { },
+					properties: {
+						sender: { type: "string", optional: true },
+						receiver: { type: "array", optional: true, properties: { type: "string" } },
+					},
+				},
+				type: 'userInput',
+			},
+			{
+				name: 'properties',
+				value: {
+					sender: { type: "string", optional: true },
+					receiver: { type: "array", optional: true, properties: { type: "string" } },
+				},
+			},
+		];
+		expect(() => ruleUtil.getLatestFromNames(config, parents, depth, "foobar")).not.toThrow();
 	});
 
 	it('Test loadCurrentValue case #1', () => {
