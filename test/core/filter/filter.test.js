@@ -104,6 +104,7 @@ describe('Filter', () => {
 				titleToClean: "YOLO",
 				preview: "FULL",
 				listToFilter: [1, "test"],
+				listToNotFilter: [1, "test"],
 				foo: { bar: "foo", toRemove: true },
 			};
 
@@ -111,20 +112,96 @@ describe('Filter', () => {
 				language: "fr",
 				duration: 123,
 				preview: "FULL",
-				listToFilter: ["test"],
+				listToNotFilter: [1, "test"],
 				foo: { bar: "foo" },
 			};
 
 			const filter = new Filter();
 
 			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).outRule({
-				properties: {
-					language: { type: 'string' },
-					duration: { type: 'unsigned integer' },
-					preview: { type: "string" },
-					listToFilter: { type: "array", properties: { type: "string" } },
-					foo: { type: "object", properties: { bar: { type: "string" } } },
-				},
+				type: "object",
+				properties: [
+					{ name: "language" },
+					{ name: "duration" },
+					{ name: "preview" },
+					{ name: "listToNotFilter" },
+					{
+						name: "foo",
+						type: "object",
+						properties: [
+							{ name: "bar" },
+						],
+					},
+				],
+			})).not.toThrow();
+			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();
+			expect(data).toStrictEqual(dataCleaned);
+		});
+
+
+		it('Test cleanOut case #2', async () => {
+			const data = {
+				item: [
+					{
+						language: "fr",
+						duration: 123,
+						titleToClean: "YOLO",
+						preview: "FULL",
+						listToFilter: [1, "test"],
+						listToNotFilter: [1, "test"],
+						foo: { bar: "foo", toRemove: true },
+					},
+					{
+						language: "en",
+						duration: 123,
+						titleToClean: "YOLO 2",
+						preview: "none",
+					},
+				],
+			};
+
+			const dataCleaned = {
+				item: [
+					{
+						language: "fr",
+						duration: 123,
+						preview: "FULL",
+						listToNotFilter: [1, "test"],
+						foo: { bar: "foo" },
+					},
+					{
+						language: "en",
+						duration: 123,
+						preview: "none",
+					},
+				],
+			};
+
+			const filter = new Filter();
+			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).outRule({
+				type: "object",
+				properties: [
+					{
+						name: "item",
+						type: "array",
+						content: {
+							type: "object",
+							properties: [
+								{ name: "language" },
+								{ name: "duration" },
+								{ name: "preview" },
+								{ name: "listToNotFilter" },
+								{
+									name: "foo",
+									type: "object",
+									properties: [
+										{ name: "bar" },
+									],
+								},
+							],
+						},
+					},
+				],
 			})).not.toThrow();
 			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();
 			expect(data).toStrictEqual(dataCleaned);

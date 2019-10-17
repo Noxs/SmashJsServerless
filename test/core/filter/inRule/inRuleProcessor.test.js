@@ -14,7 +14,7 @@ describe('RuleProcessor', () => {
 		});
 
 		it('Test constructor', () => {
-			expect(() => new RuleProcessor("inRule")).not.toThrow();
+			expect(() => new RuleProcessor()).not.toThrow();
 		});
 
 		it('Test validate case #1', () => {
