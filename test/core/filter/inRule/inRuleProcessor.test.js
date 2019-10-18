@@ -4,8 +4,8 @@ describe('RuleProcessor', () => {
 
 		beforeAll(() => {
 			jest.resetAllMocks();
-			require('../../../../smash');
 			jest.mock("../../../../lib/core/filter/util/moduleLoader");
+			require('../../../../smash');
 			RuleProcessor = require("../../../../lib/core/filter/inRule/inRuleProcessor");
 		});
 

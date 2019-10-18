@@ -1,118 +1,476 @@
 describe('RuleProcessor', () => {
-	describe('RuleProcessor mocked', () => {
-		let RuleProcessor = null;
+	let RuleProcessor = null;
 
-		beforeAll(() => {
-			jest.resetAllMocks();
-			require('../../../../smash');
-			jest.mock("../../../../lib/core/filter/util/moduleLoader");
-			RuleProcessor = require("../../../../lib/core/filter/mergeRule/mergeRuleProcessor");
-		});
+	beforeAll(() => {
+		jest.resetAllMocks();
+		require('../../../../smash');
+		RuleProcessor = require("../../../../lib/core/filter/mergeRule/mergeRuleProcessor");
+	});
 
-		beforeEach(() => {
+	beforeEach(() => {
 
-		});
+	});
 
-		it('Test constructor', () => {
-			expect(() => new RuleProcessor()).not.toThrow();
-		});
-
-		it('Test validate case #1', () => {
-			const rule = { test: {} };
-			Object.defineProperty(rule, "_currentConfig", {
-				enumerable: false,
-				configurable: true,
-				writable: true,
-				value: { version: "01-2019" },
-			});
-			const processor = new RuleProcessor();
-			const mockFunction = jest.fn(({ current, parents, rule, processor, ruleConfig }) => {
-				expect(current).not.toBeUndefined();
-				expect(parents).toStrictEqual([{ name: "none", value: rule }]);
-				expect(rule).toStrictEqual(rule);
-				expect(processor).toStrictEqual(processor);
-				expect(ruleConfig).toStrictEqual({ version: "01-2019" });
-			});
-			processor.modules = [
+	it('Test validate case #1', () => {
+		const processor = new RuleProcessor();
+		const rule = {
+			type: "object",
+			properties: [
 				{
-					name: "test",
-					validate: mockFunction,
+					name: "item",
+					type: "array",
+					content: {
+						type: "object",
+						properties: [
+							{ name: "language" },
+							{ name: "duration" },
+							{ name: "preview" },
+							{ name: "listToFilter" },
+							{ name: "listToNotFilter" },
+							{
+								name: "foo",
+								type: "object",
+								properties: [
+									{ name: "bar" },
+								],
+							},
+						],
+					},
 				},
-			];
-			expect(() => processor.validate(rule)).not.toThrow();
-			expect(mockFunction.mock.calls.length).toBe(1);
+			],
+		};
+		Object.defineProperty(rule, "_currentConfig", {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: { version: "01-2019" },
 		});
+		expect(() => processor.validate(rule)).not.toThrow();
+	});
 
-		it('Test validate case #2', () => {
-			const rule = { test: {}, foobar: "", foobar2: { foo: "bar" } };
-			Object.defineProperty(rule, "_currentConfig", {
-				enumerable: false,
-				configurable: true,
-				writable: true,
-				value: { version: "01-2019" },
-			});
-			const processor = new RuleProcessor();
-			const mockFunction = jest.fn(({ current, parents, rule, processor, ruleConfig }) => {
-				expect(current).not.toBeUndefined();
-				expect(parents).toStrictEqual([{ name: "none", value: rule }]);
-				expect(rule).toStrictEqual(rule);
-				expect(processor).toStrictEqual(processor);
-				expect(ruleConfig).toStrictEqual({ version: "01-2019" });
-			});
-			const mockFunction2 = jest.fn(({ current, parents, rule, processor, ruleConfig }) => {
-				expect(current).toStrictEqual({ name: "foobar2", value: { foo: "bar" } });
-				expect(parents).toStrictEqual([{ name: "none", value: rule }]);
-				expect(rule).toStrictEqual(rule);
-				expect(processor).toStrictEqual(processor);
-				expect(ruleConfig).toStrictEqual({ version: "01-2019" });
-			});
-			processor.modules = [
-				{
-					name: "test",
-					validate: mockFunction,
-				},
-				{
-					name: "foobar",
-					validate: mockFunction,
-				},
-				{
-					name: "foobar2",
-					validate: mockFunction2,
-				},
-			];
-			expect(() => processor.validate(rule)).not.toThrow();
-			expect(mockFunction.mock.calls.length).toBe(2);
+	it('Test validate case #2', () => {
+		const processor = new RuleProcessor();
+		const rule = {
+			type: "object",
+			properties: [
+				{ name: "item" },
+			],
+		};
+		Object.defineProperty(rule, "_currentConfig", {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: { version: "01-2019" },
 		});
+		expect(() => processor.validate(rule)).not.toThrow();
+	});
 
-		it('Test validate case #3', () => {
-			const rule = { test: {}, notfound: "" };
-			Object.defineProperty(rule, "_currentConfig", {
-				enumerable: false,
-				configurable: true,
-				writable: true,
-				value: { version: "01-2019" },
-			});
-			const processor = new RuleProcessor();
-			const mockFunction = jest.fn(({ current, parents, rule, processor, ruleConfig }) => {
-				expect(current).toStrictEqual({});
-				expect(parents).toStrictEqual([{ name: "none", value: rule }]);
-				expect(rule).toStrictEqual(rule);
-				expect(processor).toStrictEqual(processor);
-				expect(ruleConfig).toStrictEqual({ version: "01-2019" });
-			});
-			processor.modules = [
-				{
-					name: "test",
-					validate: mockFunction,
-				},
-				{
-					name: "foobar",
-					validate: mockFunction,
-				},
-			];
-			expect(() => processor.validate(rule)).toThrow();
-			expect(mockFunction.mock.calls.length).toBe(1);
+	it('Test validate case #3', () => {
+		const processor = new RuleProcessor();
+		const rule = {
+			type: "object",
+		};
+		Object.defineProperty(rule, "_currentConfig", {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: { version: "01-2019" },
 		});
+		expect(() => processor.validate(rule)).toThrow();
+	});
+
+
+	it('Test validate case #4', () => {
+		const processor = new RuleProcessor();
+		const rule = {
+			type: "object",
+			properties: [
+				{
+					name: "item",
+					type: "array",
+					content: {
+						type: "object",
+						properties: [
+							{ name: "language" },
+							{ name: "duration" },
+							{ name: "preview" },
+							{
+								name: "listToFilter",
+								type: "array",
+							},
+							{
+								name: "listToNotFilter",
+								type: "array",
+								content: {},
+							},
+							{
+								name: "foo",
+								type: "object",
+								properties: [
+									{ name: "bar" },
+								],
+							},
+						],
+					},
+				},
+			],
+		};
+		Object.defineProperty(rule, "_currentConfig", {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: { version: "01-2019" },
+		});
+		expect(() => processor.validate(rule)).toThrow();
+	});
+
+	it('Test identify case #1', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				type: "object",
+				properties: [],
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(processor.identify(param).name).toStrictEqual("object");
+	});
+
+	it('Test identify case #2', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				type: "object",
+				properties: {},
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(() => processor.identify(param)).toThrow();
+	});
+
+	it('Test identify case #3', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				type: "array",
+				content: {},
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(processor.identify(param).name).toStrictEqual("array");
+	});
+
+	it('Test identify case #4', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				type: "array",
+				content: [],
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(() => processor.identify(param)).toThrow();
+	});
+
+	it('Test identify case #5', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				name: "foo",
+				type: "object",
+				properties: [],
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(processor.identify(param).name).toStrictEqual("namedObject");
+	});
+
+	it('Test identify case #6', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				name: "foo",
+				type: "array",
+				properties: [],
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(() => processor.identify(param)).toThrow();
+	});
+
+	it('Test identify case #7', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				name: "foo",
+				type: "array",
+				content: {},
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(processor.identify(param).name).toStrictEqual("namedArray");
+	});
+
+	it('Test identify case #8', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				name: "foo",
+				type: "object",
+				content: {},
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(() => processor.identify(param)).toThrow();
+	});
+
+	it('Test identify case #9', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				name: "foo",
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(processor.identify(param).name).toStrictEqual("name");
+	});
+
+	it('Test identify case #10', () => {
+		const processor = new RuleProcessor();
+		const param = {
+			current: {
+				name: "foo",
+				name2: "foo",
+			},
+			ruleConfig: {
+				version: "01-2019",
+			},
+		};
+		expect(() => processor.identify(param)).toThrow();
+	});
+
+	it('Test process case #1', async () => {
+		const processor = new RuleProcessor();
+		const source = {
+			language: "fr",
+			notPreview: true,
+			listToFilter: [
+				{
+					keep: "yes",
+					remove: "yes",
+				},
+				{
+					keep: "yes",
+					remove: "no",
+				},
+				{
+					keep: "yesYES",
+					remove: "no",
+				},
+			],
+			listToNotFilter: [
+				"yes",
+				"yes",
+			],
+			foo: { bar: "troll" },
+		};
+		const target = {
+			language: "en",
+			duration: "123456789",
+			preview: true,
+			notPreview: false,
+			listToFilter: [
+				{
+					keep: "yes",
+					remove: "yes",
+				},
+				{
+					keep: "no",
+					remove: "no",
+				},
+			],
+			listToNotFilter: [
+				"yes",
+				"no",
+			],
+			foo: { bar: "foobar" },
+		};
+		const rule = {
+			type: "object",
+			properties: [
+				{ name: "language" },
+				{ name: "duration" },
+				{ name: "preview" },
+				{
+					name: "listToFilter",
+					type: "array",
+					content: {
+						type: "object",
+						properties: [
+							{ name: "keep" },
+						],
+					},
+				},
+				{ name: "listToNotFilter" },
+				{
+					name: "foo",
+					type: "object",
+					properties: [
+						{ name: "bar" },
+					],
+				},
+			],
+		};
+		const result = {
+			language: "fr",
+			duration: "123456789",
+			preview: true,
+			notPreview: false,
+
+			listToFilter: [
+				{
+					keep: "yes",
+					remove: "yes",
+				},
+				{
+					keep: "yes",
+					remove: "no",
+				},
+				{
+					keep: "yesYES",
+				},
+			],
+			listToNotFilter: [
+				"yes",
+				"yes",
+			],
+			foo: { bar: "troll" },
+		};
+		Object.defineProperty(rule, "_currentConfig", {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: { version: "01-2019" },
+		});
+		const data = await processor.process(rule, { outData: target, inData: source });
+		expect(data).toStrictEqual(result);
+	});
+
+	it('Test process case #2', async () => {
+		const processor = new RuleProcessor();
+		const source = {
+			language: "fr",
+			notPreview: true,
+			listToFilter: [
+				{
+					keep: "yes",
+					remove: "yes",
+				},
+				{
+					keep: "yes",
+					remove: "no",
+				},
+			],
+			listToNotFilter: [
+				"yes",
+				"yes",
+			],
+			foo: { bar: "foobar" },
+		};
+		const target = {
+			language: "en",
+			duration: "123456789",
+			preview: true,
+			notPreview: false,
+			listToFilter: [
+				{
+					keep: "yes",
+					remove: "yes",
+				},
+				{
+					keep: "no",
+					remove: "no",
+				},
+			],
+			listToNotFilter: [
+				"yes",
+				"no",
+			],
+			foo: { bar: "foobar" },
+		};
+		const rule = {
+			type: "object",
+			properties: [
+				{ name: "language", beforeMerge: () => "FR" },
+				{ name: "duration" },
+				{ name: "preview" },
+				{
+					name: "listToFilter",
+					type: "array",
+					content: {
+						type: "object",
+						properties: [
+							{ name: "keep" },
+						],
+					},
+				},
+				{ name: "listToNotFilter" },
+				{
+					name: "foo",
+					type: "object",
+					properties: [
+						{ name: "bar" },
+					],
+				},
+			],
+		};
+		const result = {
+			language: "FR",
+			duration: "123456789",
+			preview: true,
+			notPreview: false,
+
+			listToFilter: [
+				{
+					keep: "yes",
+					remove: "yes",
+				},
+				{
+					keep: "yes",
+					remove: "no",
+				},
+			],
+			listToNotFilter: [
+				"yes",
+				"yes",
+			],
+			foo: { bar: "foobar" },
+		};
+		Object.defineProperty(rule, "_currentConfig", {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: { version: "01-2019" },
+		});
+		const data = await processor.process(rule, { outData: target, inData: source });
+		expect(data).toStrictEqual(result);
 	});
 });
-
