@@ -262,6 +262,13 @@ class Smash {
 		return this.loadModule(PATHS.UTIL, module);
 	}
 
+	api(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of api must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.API, module);
+	}
+
 	helper(module) {
 		if (typeof module !== 'string' || module.length === 0) {
 			throw new Error("First parameter of helper must be a valid string, " + Logger.typeOf(module));
