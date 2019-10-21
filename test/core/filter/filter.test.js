@@ -79,7 +79,7 @@ describe('Filter', () => {
 							validate: validateDeliveryMocked,
 							properties: {
 								sender: { type: "string", optional: true },
-								receiver: { type: "array", optional: true, properties: { type: "string" } },
+								receiver: { type: "array", optional: true, content: { type: "string" } },
 							},
 						},
 						preview: { type: "string", optional: true, match: "^(NONE|FULL)$" },
@@ -94,6 +94,74 @@ describe('Filter', () => {
 			})).not.toThrow();
 
 			await expect(filter.cleanIn({ action: "MyFooBarAction", version: "01-2019" }, request)).resolves.not.toBeUndefined();
+			expect(request).toStrictEqual(requestCleaned);
+		});
+
+		it('Test cleanIn case #2', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: {
+					bars: [
+						{
+							foo: "bar",
+							bar: "foo",
+							number: 1,
+						},
+						{
+							foo: "foo",
+							bar: "bar",
+							number: 2,
+						},
+					],
+				},
+			};
+
+			const requestCleaned = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: {
+					bars: [
+						{
+							foo: "bar",
+							bar: "foo",
+							number: 1,
+						},
+						{
+							foo: "foo",
+							bar: "bar",
+							number: 2,
+						},
+					],
+				},
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true },
+								},
+							},
+						},
+					},
+					optional: true,
+				},
+			})).not.toThrow();
+
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).resolves.not.toBeUndefined();
 			expect(request).toStrictEqual(requestCleaned);
 		});
 

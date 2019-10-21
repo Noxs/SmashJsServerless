@@ -116,34 +116,36 @@ describe('Properties', () => {
 				validate: mockedFunction,
 			},
 		];
-		expect(properties.validate({
-			current: {
-				name: "properties",
-				value: { type: "string", optional: true },
-			},
-			rule: { body: { properties: { test: { type: "array", properties: { type: "string", optional: true } } }, optional: true } },
-			parents: [
-				{
-					name: "none",
-					value: { body: { properties: { test: { type: "array", properties: { type: "string", optional: true } } }, optional: true } },
-				},
-				{
-					name: "body",
-					value: { properties: { test: { type: "array", properties: { type: "string", optional: true } } }, optional: true },
-				},
-				{
+		expect(() => {
+			return properties.validate({
+				current: {
 					name: "properties",
-					value: { test: { type: "array", properties: { type: "string", optional: true } } },
+					value: { type: "string", optional: true },
 				},
-				{
-					name: "test",
-					value: { type: "array", properties: { type: "string", optional: true } },
-					type: "userInput",
-				},
-			],
-			processor,
-			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
-		})).toBe(true);
+				rule: { body: { properties: { test: { type: "array", properties: { type: "string", optional: true } } }, optional: true } },
+				parents: [
+					{
+						name: "none",
+						value: { body: { properties: { test: { type: "array", properties: { type: "string", optional: true } } }, optional: true } },
+					},
+					{
+						name: "body",
+						value: { properties: { test: { type: "array", properties: { type: "string", optional: true } } }, optional: true },
+					},
+					{
+						name: "properties",
+						value: { test: { type: "array", properties: { type: "string", optional: true } } },
+					},
+					{
+						name: "test",
+						value: { type: "array", properties: { type: "string", optional: true } },
+						type: "userInput",
+					},
+				],
+				processor,
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+			});
+		}).toThrow();
 	});
 
 	it('Test validate case #4', () => {
