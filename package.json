@@ -1,11 +1,13 @@
 {
   "name": "smash-js-serverless",
-  "version": "5.1.0",
+  "version": "6.0.0",
   "description": "Javascript lambda framework",
   "main": "smash.js",
   "scripts": {
-    "test": "mocha --recursive",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha  --reporter=lcovonly -- test --recursive"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "codecov": "codecov"
   },
   "repository": {
     "type": "git",
@@ -22,20 +24,34 @@
   },
   "homepage": "https://github.com/Noxs/SmashJsServerless#readme",
   "devDependencies": {
-    "chai": "^4.2.0",
-    "codecov": "^3.5.0",
-    "coveralls": "^3.0.6",
     "eslint": "^5.16.0",
-    "istanbul": "^1.1.0-alpha.1",
-    "mocha": "^5.0.0",
-    "mocha-lcov-reporter": "^1.3.0",
-    "sinon": "^7.4.2"
+    "eslint-plugin-jest": "^22.14.1",
+    "jest": "^24.8.0",
+    "jest-extended": "^0.11.2",
+    "codecov": "^3.6.1"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-extended"
+    ],
+    "testPathIgnorePatterns": [
+      "^/controller/",
+      "^/database/",
+      "^/helper/",
+      "^/util/",
+      "^/api/"
+    ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "lib/**/*.js",
+      "smash.js"
+    ]
   },
   "dependencies": {
     "aws4": "^1.8.0",
     "dynamodb-data-types": "^3.0.1",
     "glob": "^7.1.4",
-    "lodash": "^4.17.15",
     "request": "^2.88.0"
   }
 }
