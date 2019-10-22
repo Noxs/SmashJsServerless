@@ -1,10 +1,9 @@
-require("./lib/core/js/array");
-require("./lib/core/js/object");
 const glob = require('glob');
 const path = require('path');
 const Logger = require("./lib/util/smashLogger");
 const Config = require("./lib/core/config");
 const Filter = require("./lib/core/filter/filter");
+const extend = require("./lib/core/js/extend");
 const SmashError = require("./lib/util/smashError");
 const DEEP_EXT_JS = "**/*.js";
 const FILE_EXT_JS = "*.js";
@@ -389,6 +388,10 @@ class Smash {
 
 	get SmashError() {
 		return SmashError;
+	}
+
+	extend(...args) {
+		return extend(...args);
 	}
 
 	errorUtil(namepace = SmashError.getNamespace()) {
