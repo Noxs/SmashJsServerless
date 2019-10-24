@@ -93,7 +93,9 @@ describe('Filter', () => {
 				},
 			})).not.toThrow();
 
-			await expect(filter.cleanIn({ action: "MyFooBarAction", version: "01-2019" }, request)).resolves.not.toBeUndefined();
+			const result = await filter.cleanIn({ action: "MyFooBarAction", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
 			expect(request).toStrictEqual(requestCleaned);
 		});
 
@@ -160,8 +162,9 @@ describe('Filter', () => {
 					optional: true,
 				},
 			})).not.toThrow();
-
-			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).resolves.not.toBeUndefined();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
 			expect(request).toStrictEqual(requestCleaned);
 		});
 
@@ -253,8 +256,11 @@ describe('Filter', () => {
 					},
 				],
 			})).not.toThrow();
-			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();
+
+			const result = await filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data);
+			expect(result).not.toBeUndefined();
 			expect(data).toStrictEqual(dataCleaned);
+			expect(result).toStrictEqual(dataCleaned);
 		});
 
 
@@ -275,6 +281,7 @@ describe('Filter', () => {
 						duration: 123,
 						titleToClean: "YOLO 2",
 						preview: "none",
+						key: "omg",
 					},
 				],
 			};
@@ -322,8 +329,10 @@ describe('Filter', () => {
 					},
 				],
 			})).not.toThrow();
-			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();
+			const result = await filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data);
+			expect(result).not.toBeUndefined();
 			expect(data).toStrictEqual(dataCleaned);
+			expect(result).toStrictEqual(dataCleaned);
 		});
 	});
 
