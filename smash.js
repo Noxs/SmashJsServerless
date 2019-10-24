@@ -371,7 +371,7 @@ class Smash {
 	}
 
 	merge(...args) {
-		return this.filter.merge(this._currentEvent.request.route, ...args);
+		return this.filter.merge(this.getCurrentEvent().route, ...args);
 	}
 
 	cleanOut(...args) {
