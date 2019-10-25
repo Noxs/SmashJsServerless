@@ -168,6 +168,72 @@ describe('Filter', () => {
 			expect(request).toStrictEqual(requestCleaned);
 		});
 
+		it('Test cleanIn case #3', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: undefined,
+			};
+			const filter = new Filter();
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true },
+								},
+							},
+						},
+					},
+					optional: true,
+				},
+			})).not.toThrow();
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
+		});
+
+		it('Test cleanIn case #4', async () => {
+			const request = {
+				parameters: undefined,
+				body: undefined,
+			};
+			const filter = new Filter();
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true },
+								},
+							},
+						},
+					},
+					optional: true,
+				},
+			})).not.toThrow();
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
+		});
+
 		it('Test merge case #1', async () => {
 			const source = {
 				duration: 123,
