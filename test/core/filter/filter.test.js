@@ -93,7 +93,9 @@ describe('Filter', () => {
 				},
 			})).not.toThrow();
 
-			await expect(filter.cleanIn({ action: "MyFooBarAction", version: "01-2019" }, request)).resolves.not.toBeUndefined();
+			const result = await filter.cleanIn({ action: "MyFooBarAction", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
 			expect(request).toStrictEqual(requestCleaned);
 		});
 
@@ -160,9 +162,76 @@ describe('Filter', () => {
 					optional: true,
 				},
 			})).not.toThrow();
-
-			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).resolves.not.toBeUndefined();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
 			expect(request).toStrictEqual(requestCleaned);
+		});
+
+		it('Test cleanIn case #3', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: undefined,
+			};
+			const filter = new Filter();
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true },
+								},
+							},
+						},
+					},
+					optional: true,
+				},
+			})).not.toThrow();
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
+		});
+
+		it('Test cleanIn case #4', async () => {
+			const request = {
+				parameters: undefined,
+				body: undefined,
+			};
+			const filter = new Filter();
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true },
+								},
+							},
+						},
+					},
+					optional: true,
+				},
+			})).not.toThrow();
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
 		});
 
 		it('Test merge case #1', async () => {
@@ -188,6 +257,56 @@ describe('Filter', () => {
 				duration: 123,
 				titleToClean: "YOLO",
 				preview: "FULL",
+				listToFilter: [1, "test"],
+				listToNotFilter: [1, "test", "3", 2],
+				foo: { bar: "troll", toRemove: true },
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).mergeRule({
+				type: "object",
+				properties: [
+					{ name: "language" },
+					{ name: "duration" },
+					{ name: "preview" },
+					{ name: "listToNotFilter" },
+					{
+						name: "foo",
+						type: "object",
+						properties: [
+							{ name: "bar" },
+						],
+					},
+				],
+			})).not.toThrow();
+			const data = await filter.merge({ action: "MyFooBarAction", version: "01-2019" }, target, source);
+			expect(data).toStrictEqual(result);
+		});
+
+		it('Test merge case #2', async () => {
+			const source = {
+				duration: null,
+				preview: undefined,
+				listToNotFilter: [1, "test", "3", 2],
+				foo: { bar: "troll" },
+			};
+
+			const target = {
+				language: "fr",
+				duration: 456,
+				titleToClean: "YOLO",
+				preview: "NONE",
+				listToFilter: [1, "test"],
+				listToNotFilter: [1, "test"],
+				foo: { bar: "foo", toRemove: true },
+			};
+
+			const result = {
+				language: "fr",
+				duration: null,
+				titleToClean: "YOLO",
+				preview: "NONE",
 				listToFilter: [1, "test"],
 				listToNotFilter: [1, "test", "3", 2],
 				foo: { bar: "troll", toRemove: true },
@@ -253,8 +372,11 @@ describe('Filter', () => {
 					},
 				],
 			})).not.toThrow();
-			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();
+
+			const result = await filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data);
+			expect(result).not.toBeUndefined();
 			expect(data).toStrictEqual(dataCleaned);
+			expect(result).toStrictEqual(dataCleaned);
 		});
 
 
@@ -271,10 +393,11 @@ describe('Filter', () => {
 						foo: { bar: "foo", toRemove: true },
 					},
 					{
-						language: "en",
-						duration: 123,
+						language: null,
+						duration: undefined,
 						titleToClean: "YOLO 2",
 						preview: "none",
+						key: "omg",
 					},
 				],
 			};
@@ -289,8 +412,8 @@ describe('Filter', () => {
 						foo: { bar: "foo" },
 					},
 					{
-						language: "en",
-						duration: 123,
+						language: null,
+						duration: undefined,
 						preview: "none",
 					},
 				],
@@ -322,8 +445,10 @@ describe('Filter', () => {
 					},
 				],
 			})).not.toThrow();
-			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).resolves.not.toBeUndefined();
+			const result = await filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data);
+			expect(result).not.toBeUndefined();
 			expect(data).toStrictEqual(dataCleaned);
+			expect(result).toStrictEqual(dataCleaned);
 		});
 	});
 
