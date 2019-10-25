@@ -284,6 +284,56 @@ describe('Filter', () => {
 			expect(data).toStrictEqual(result);
 		});
 
+		it('Test merge case #2', async () => {
+			const source = {
+				duration: null,
+				preview: undefined,
+				listToNotFilter: [1, "test", "3", 2],
+				foo: { bar: "troll" },
+			};
+
+			const target = {
+				language: "fr",
+				duration: 456,
+				titleToClean: "YOLO",
+				preview: "NONE",
+				listToFilter: [1, "test"],
+				listToNotFilter: [1, "test"],
+				foo: { bar: "foo", toRemove: true },
+			};
+
+			const result = {
+				language: "fr",
+				duration: null,
+				titleToClean: "YOLO",
+				preview: "NONE",
+				listToFilter: [1, "test"],
+				listToNotFilter: [1, "test", "3", 2],
+				foo: { bar: "troll", toRemove: true },
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).mergeRule({
+				type: "object",
+				properties: [
+					{ name: "language" },
+					{ name: "duration" },
+					{ name: "preview" },
+					{ name: "listToNotFilter" },
+					{
+						name: "foo",
+						type: "object",
+						properties: [
+							{ name: "bar" },
+						],
+					},
+				],
+			})).not.toThrow();
+			const data = await filter.merge({ action: "MyFooBarAction", version: "01-2019" }, target, source);
+			expect(data).toStrictEqual(result);
+		});
+
 
 		it('Test cleanOut case #1', async () => {
 			const data = {
@@ -343,8 +393,8 @@ describe('Filter', () => {
 						foo: { bar: "foo", toRemove: true },
 					},
 					{
-						language: "en",
-						duration: 123,
+						language: null,
+						duration: undefined,
 						titleToClean: "YOLO 2",
 						preview: "none",
 						key: "omg",
@@ -362,8 +412,8 @@ describe('Filter', () => {
 						foo: { bar: "foo" },
 					},
 					{
-						language: "en",
-						duration: 123,
+						language: null,
+						duration: undefined,
 						preview: "none",
 					},
 				],
