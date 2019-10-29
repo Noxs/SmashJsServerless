@@ -249,7 +249,7 @@ class Smash {
 		try {
 			return require(path.resolve(path.join(this._path, dir, module)));
 		} catch (error) {
-			this._logger.error("Failed to load " + dir + " module " + module, error, error.stack);
+			this.logger().error("Failed to load " + dir + " module " + module, error, error.stack);
 			throw error;
 		}
 	}
