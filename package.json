@@ -1,6 +1,6 @@
 {
   "name": "smash-js-serverless",
-  "version": "6.0.2",
+  "version": "6.0.3",
   "description": "Javascript lambda framework",
   "main": "smash.js",
   "scripts": {
@@ -24,11 +24,11 @@
   },
   "homepage": "https://github.com/Noxs/SmashJsServerless#readme",
   "devDependencies": {
+    "codecov": "^3.6.1",
     "eslint": "^5.16.0",
-    "eslint-plugin-jest": "^22.14.1",
+    "eslint-plugin-jest": "^22.21.0",
     "jest": "^24.8.0",
-    "jest-extended": "^0.11.2",
-    "codecov": "^3.6.1"
+    "jest-extended": "^0.11.2"
   },
   "jest": {
     "setupFilesAfterEnv": [
@@ -51,7 +51,7 @@
   "dependencies": {
     "aws4": "^1.8.0",
     "dynamodb-data-types": "^3.0.1",
-    "glob": "^7.1.4",
+    "glob": "^7.1.5",
     "request": "^2.88.0"
   }
 }
