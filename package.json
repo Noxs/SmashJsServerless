@@ -1,6 +1,6 @@
 {
   "name": "smash-js-serverless",
-  "version": "6.0.4",
+  "version": "6.0.5",
   "description": "Javascript lambda framework",
   "main": "smash.js",
   "scripts": {
