@@ -24,19 +24,19 @@ describe('Filter', () => {
 		});
 
 		it('Test cleanIn case #1', async () => {
-			const validateDurationMocked = jest.fn(({ name, value }) => {
+			const validateDurationMocked = jest.fn(() => {
 				return true;
 			});
 
-			const validateDeliveryMocked = jest.fn(({ name, value }) => {
+			const validateDeliveryMocked = jest.fn(() => {
 				return true;
 			});
 
-			const validateCustomUrlMocked = jest.fn(({ name, value }) => {
+			const validateCustomUrlMocked = jest.fn(() => {
 				return true;
 			});
 
-			const defaultDomainMocked = jest.fn(({ name, value }) => {
+			const defaultDomainMocked = jest.fn(() => {
 				return "myDomain";
 			});
 
@@ -442,6 +442,58 @@ describe('Filter', () => {
 								},
 							],
 						},
+					},
+				],
+			})).not.toThrow();
+			const result = await filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data);
+			expect(result).not.toBeUndefined();
+			expect(data).toStrictEqual(dataCleaned);
+			expect(result).toStrictEqual(dataCleaned);
+		});
+
+		it('Test cleanOut case #3', async () => {
+			const data = {
+				item: {
+					language: "fr",
+					duration: 123,
+					titleToClean: "YOLO",
+					preview: "FULL",
+					listToFilter: [1, "test"],
+					listToNotFilter: [1, "test"],
+					foo: { bar: "test", toRemove: true, lolilol: "omg" },
+				},
+			};
+
+			const dataCleaned = {
+				item: {
+					language: "fr",
+					duration: 123,
+					preview: "FULL",
+					listToNotFilter: [1, "test"],
+					foo: { bar: "test" },
+				},
+			};
+
+			const filter = new Filter();
+			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).outRule({
+				type: "object",
+				properties: [
+					{
+						name: "item",
+						type: "object",
+						properties: [
+							{ name: "language" },
+							{ name: "duration" },
+							{ name: "preview" },
+							{ name: "listToNotFilter" },
+							{
+								name: "foo",
+								type: "object",
+								properties: [
+									{ name: "bar" },
+								],
+							},
+						],
 					},
 				],
 			})).not.toThrow();
