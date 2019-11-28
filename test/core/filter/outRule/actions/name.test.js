@@ -43,7 +43,7 @@ describe('Name', () => {
 		const current = {
 			foo: "bar",
 		};
-		await expect(name.execute({ data: { current } })).resolves.toStrictEqual(current);
+		await expect(name.execute({ data: { current }, rule: { current } })).resolves.toStrictEqual(current);
 	});
 });
 
