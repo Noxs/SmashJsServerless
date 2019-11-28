@@ -90,6 +90,7 @@ describe('Filter', () => {
 						customUrl: { type: 'string', optional: true, match: "^.+$", validate: validateCustomUrlMocked },
 					},
 					optional: true,
+					validate: () => true,
 				},
 			})).not.toThrow();
 
