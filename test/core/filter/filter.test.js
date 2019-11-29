@@ -450,7 +450,6 @@ describe('Filter', () => {
 					},
 					{
 						language: null,
-						duration: undefined,
 						preview: "none",
 					},
 				],
