@@ -88,6 +88,7 @@ describe('Filter', () => {
 						description: { type: 'string', optional: true, match: "^.+$" },
 						domain: { type: 'string', match: "^.+$", optional: true, default: defaultDomainMocked },
 						customUrl: { type: 'string', optional: true, match: "^.+$", validate: validateCustomUrlMocked },
+						test: { type: 'object', optional: true, validate: ({ passing }) => true },
 					},
 					optional: true,
 					validate: () => true,
@@ -115,6 +116,10 @@ describe('Filter', () => {
 							bar: "bar",
 							number: 2,
 						},
+						{
+							foo: "foo",
+							bar: "bar",
+						},
 					],
 				},
 			};
@@ -132,6 +137,10 @@ describe('Filter', () => {
 							foo: "foo",
 							bar: "bar",
 							number: 2,
+						},
+						{
+							foo: "foo",
+							bar: "bar",
 						},
 					],
 				},
@@ -155,7 +164,7 @@ describe('Filter', () => {
 								properties: {
 									foo: { type: 'string' },
 									bar: { type: 'string' },
-									number: { type: 'integer', optional: true },
+									number: { type: 'integer', optional: true, validate: ({ number }) => true },
 								},
 							},
 						},
