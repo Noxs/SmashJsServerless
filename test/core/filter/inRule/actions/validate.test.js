@@ -96,7 +96,7 @@ describe('Validate', () => {
 	it('Test execute case #1', async () => {
 		const initialData = { parameters: {}, body: {} };
 		const current = { name: "myVar", value: undefined };
-		const mockFunction = jest.fn(({ name, value }) => {
+		const mockFunction = jest.fn(() => {
 			return new Promise((resolve, reject) => {
 				resolve("newValue");
 			});
