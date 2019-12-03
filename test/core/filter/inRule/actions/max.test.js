@@ -361,4 +361,78 @@ describe('MaxValue', () => {
 			},
 		})).rejects.toThrow();
 	});
+
+	it('Test execute case #7', async () => {
+		await expect(max.execute({
+			rule: {
+				current: {
+					name: "max",
+					value: 3,
+				},
+				initalRule: { body: { properties: { myVar: { max: 3, type: "string" } } } },
+				parents: [
+					{
+						name: "none",
+						value: { body: { properties: { myVar: { max: 3, type: "string" } } } },
+					},
+					{
+						name: "body",
+						value: { properties: { myVar: { max: 3, type: "string" } } },
+					},
+					{
+						name: "properties",
+						value: { myVar: { max: 3, type: "string" } },
+					},
+					{
+						name: "myVar",
+						value: { max: 3, type: "string" },
+						type: "userInput",
+					},
+				],
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+			},
+			data: {
+				current: { name: "myVar", value: "bar" },
+				initialData: { parameters: {}, body: { myVar: "bar" } },
+				parents: [{ name: "none", value: { parameters: {}, body: { myVar: "bar" } } }, { name: "body", value: { myVar: "bar" } }],
+			},
+		})).resolves.toBe(true);
+	});
+
+	it('Test execute case #8', async () => {
+		await expect(max.execute({
+			rule: {
+				current: {
+					name: "max",
+					value: 1,
+				},
+				initalRule: { body: { properties: { myVar: { max: 1, type: "string" } } } },
+				parents: [
+					{
+						name: "none",
+						value: { body: { properties: { myVar: { max: 1, type: "string" } } } },
+					},
+					{
+						name: "body",
+						value: { properties: { myVar: { max: 1, type: "string" } } },
+					},
+					{
+						name: "properties",
+						value: { myVar: { max: 1, type: "string" } },
+					},
+					{
+						name: "myVar",
+						value: { max: 1, type: "string" },
+						type: "userInput",
+					},
+				],
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+			},
+			data: {
+				current: { name: "myVar", value: "fooooobaaaarrrrr" },
+				initialData: { parameters: {}, body: { myVar: "fooooobaaaarrrrr" } },
+				parents: [{ name: "none", value: { parameters: {}, body: { myVar: "fooooobaaaarrrrr" } } }, { name: "body", value: { myVar: "fooooobaaaarrrrr" } }],
+			},
+		})).rejects.toThrow();
+	});
 });

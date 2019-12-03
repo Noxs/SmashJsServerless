@@ -361,5 +361,79 @@ describe('MinValue', () => {
 			},
 		})).rejects.toThrow();
 	});
+
+	it('Test execute case #7', async () => {
+		await expect(min.execute({
+			rule: {
+				current: {
+					name: "min",
+					value: 1,
+				},
+				initalRule: { body: { properties: { myVar: { min: 1, type: "string" } } } },
+				parents: [
+					{
+						name: "none",
+						value: { body: { properties: { myVar: { min: 1, type: "object" } } } },
+					},
+					{
+						name: "body",
+						value: { properties: { myVar: { min: 1, type: "object" } } },
+					},
+					{
+						name: "properties",
+						value: { myVar: { min: 1, type: "object" } },
+					},
+					{
+						name: "myVar",
+						value: { min: 1, type: "object" },
+						type: "userInput",
+					},
+				],
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+			},
+			data: {
+				current: { name: "myVar", value: { foo: "bar" } },
+				initialData: { parameters: {}, body: { myVar: { foo: "bar" } } },
+				parents: [{ name: "none", value: { parameters: {}, body: { myVar: "" } } }, { name: "body", value: { myVar: "bar" } }],
+			},
+		})).resolves.toBe(true);
+	});
+
+	it('Test execute case #8', async () => {
+		await expect(min.execute({
+			rule: {
+				current: {
+					name: "min",
+					value: 1,
+				},
+				initalRule: { body: { properties: { myVar: { min: 1, type: "string" } } } },
+				parents: [
+					{
+						name: "none",
+						value: { body: { properties: { myVar: { min: 1, type: "string" } } } },
+					},
+					{
+						name: "body",
+						value: { properties: { myVar: { min: 1, type: "string" } } },
+					},
+					{
+						name: "properties",
+						value: { myVar: { min: 1, type: "string" } },
+					},
+					{
+						name: "myVar",
+						value: { min: 1, type: "string" },
+						type: "userInput",
+					},
+				],
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+			},
+			data: {
+				current: { name: "myVar", value: "" },
+				initialData: { parameters: {}, body: { myVar: "" } },
+				parents: [{ name: "none", value: { parameters: {}, body: { myVar: "" } } }, { name: "body", value: { myVar: "" } }],
+			},
+		})).rejects.toThrow();
+	});
 });
 
