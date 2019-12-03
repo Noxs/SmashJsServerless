@@ -367,25 +367,25 @@ describe('MaxValue', () => {
 			rule: {
 				current: {
 					name: "max",
-					value: 1,
+					value: 3,
 				},
-				initalRule: { body: { properties: { myVar: { max: 2, type: "string" } } } },
+				initalRule: { body: { properties: { myVar: { max: 3, type: "string" } } } },
 				parents: [
 					{
 						name: "none",
-						value: { body: { properties: { myVar: { max: 1, type: "object" } } } },
+						value: { body: { properties: { myVar: { max: 3, type: "string" } } } },
 					},
 					{
 						name: "body",
-						value: { properties: { myVar: { max: 1, type: "object" } } },
+						value: { properties: { myVar: { max: 3, type: "string" } } },
 					},
 					{
 						name: "properties",
-						value: { myVar: { max: 1, type: "object" } },
+						value: { myVar: { max: 3, type: "string" } },
 					},
 					{
 						name: "myVar",
-						value: { max: 1, type: "object" },
+						value: { max: 3, type: "string" },
 						type: "userInput",
 					},
 				],
@@ -399,7 +399,7 @@ describe('MaxValue', () => {
 		})).resolves.toBe(true);
 	});
 
-	it('Test execute case #7', async () => {
+	it('Test execute case #8', async () => {
 		await expect(max.execute({
 			rule: {
 				current: {
