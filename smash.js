@@ -18,6 +18,7 @@ const PATHS = {
 	API: "api",
 };
 const AWS_REGION = "AWS_REGION";
+const VERBOSE_LEVEL = "VERBOSE_LEVEL";
 
 class Smash {
 	constructor() {
@@ -198,9 +199,20 @@ class Smash {
 		this._filter = new Filter();
 		this.loadGlobals(global);
 		this._buildContainerEnv(env);
+		this._setupVerbose(verbose);
 		this._registerMiddlewares();
 		this._setupSingletonOptions(singleton);
 		this._registerHandlers();
+	}
+
+	_setupVerbose(verbose) {
+		if (!verbose.level) {
+			const level = this.getEnv(VERBOSE_LEVEL);
+			if (level) {
+				Logger.verbose({ ...verbose, level });
+			}
+		}
+		return this;
 	}
 
 	handleEvent(event, context, callback) {
