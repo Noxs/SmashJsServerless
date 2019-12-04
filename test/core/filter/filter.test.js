@@ -336,6 +336,7 @@ describe('Filter', () => {
 				preview: undefined,
 				listToNotFilter: [1, "test", "3", 2],
 				foo: { bar: "troll" },
+				default: false,
 			};
 
 			const target = {
@@ -346,6 +347,7 @@ describe('Filter', () => {
 				listToFilter: [1, "test"],
 				listToNotFilter: [1, "test"],
 				foo: { bar: "foo", toRemove: true },
+				default: true,
 			};
 
 			const result = {
@@ -356,6 +358,7 @@ describe('Filter', () => {
 				listToFilter: [1, "test"],
 				listToNotFilter: [1, "test", "3", 2],
 				foo: { bar: "troll", toRemove: true },
+				default: false,
 			};
 
 			const filter = new Filter();
@@ -374,6 +377,7 @@ describe('Filter', () => {
 							{ name: "bar" },
 						],
 					},
+					{ name: "default" },
 				],
 			})).not.toThrow();
 			const data = await filter.merge({ action: "MyFooBarAction", version: "01-2019" }, target, source);
