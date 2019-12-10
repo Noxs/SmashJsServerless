@@ -507,7 +507,7 @@ describe('Filter', () => {
 					duration: 123,
 					titleToClean: "YOLO",
 					preview: "FULL",
-					listToFilter: [1, "test"],
+					listToFilter: [{ name: "lol1" }, { name: "lol2" }, undefined, null],
 					listToNotFilter: [1, "test"],
 					foo: { bar: "test", toRemove: true, lolilol: "omg" },
 				},
@@ -518,6 +518,7 @@ describe('Filter', () => {
 					language: "fr",
 					duration: 123,
 					preview: "FULL",
+					listToFilter: [{ name: "lol1" }, { name: "lol2" }],
 					listToNotFilter: [1, "test"],
 					foo: { bar: "test" },
 				},
@@ -535,6 +536,16 @@ describe('Filter', () => {
 							{ name: "duration" },
 							{ name: "preview" },
 							{ name: "listToNotFilter" },
+							{
+								name: "listToFilter",
+								type: "array",
+								content: {
+									type: "object",
+									properties: [
+										{ name: "name" },
+									],
+								},
+							},
 							{
 								name: "foo",
 								type: "object",
