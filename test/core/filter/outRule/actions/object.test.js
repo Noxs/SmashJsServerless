@@ -127,7 +127,7 @@ describe('Object', () => {
 				},
 			},
 			processor,
-		})).resolves.toStrictEqual({});
+		})).resolves.toStrictEqual(undefined);
 	});
 });
 
