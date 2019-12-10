@@ -76,15 +76,15 @@ describe('SmashError', () => {
 
 		let error = errorUtil.notFoundError({ name: "User", primary: 42 });
 		expect(error.code).toBe(404);
-		expect(error.body).toStrictEqual({ code: 404, error: "User 42 not found", requestId: undefined });
+		expect(error.body).toStrictEqual({ code: 404, error: "User 42 not found", details: { name: "User", primary: 42 }, requestId: undefined });
 
 		error = errorUtil.notFoundError({ name: "User" });
 		expect(error.code).toBe(404);
-		expect(error.body).toStrictEqual({ code: 404, error: "User not found", requestId: undefined });
+		expect(error.body).toStrictEqual({ code: 404, error: "User not found", details: { name: "User" }, requestId: undefined });
 
 		error = errorUtil.notFoundError({ name: "User", primary: 42, secondary: "foobar" });
 		expect(error.code).toBe(404);
-		expect(error.body).toStrictEqual({ code: 404, error: "User 42 - foobar not found", requestId: undefined });
+		expect(error.body).toStrictEqual({ code: 404, error: "User 42 - foobar not found", details: { name: "User", primary: 42, secondary: "foobar" }, requestId: undefined });
 
 		error = errorUtil.notFoundError();
 		expect(error.code).toBe(404);
@@ -96,15 +96,15 @@ describe('SmashError', () => {
 
 		let error = errorUtil.conflictError({ name: "User", primary: 42 });
 		expect(error.code).toBe(409);
-		expect(error.body).toStrictEqual({ code: 409, error: "User 42 already exist", requestId: undefined });
+		expect(error.body).toStrictEqual({ code: 409, error: "User 42 already exist", details: { name: "User", primary: 42 }, requestId: undefined });
 
 		error = errorUtil.conflictError({ name: "User" });
 		expect(error.code).toBe(409);
-		expect(error.body).toStrictEqual({ code: 409, error: "User already exist", requestId: undefined });
+		expect(error.body).toStrictEqual({ code: 409, error: "User already exist", details: { name: "User" }, requestId: undefined });
 
 		error = errorUtil.conflictError({ name: "User", primary: 42, secondary: "foobar" });
 		expect(error.code).toBe(409);
-		expect(error.body).toStrictEqual({ code: 409, error: "User 42 - foobar already exist", requestId: undefined });
+		expect(error.body).toStrictEqual({ code: 409, error: "User 42 - foobar already exist", details: { name: "User", primary: 42, secondary: "foobar" }, requestId: undefined });
 
 		error = errorUtil.conflictError();
 		expect(error.code).toBe(409);
