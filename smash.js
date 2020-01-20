@@ -16,6 +16,9 @@ const PATHS = {
 	SINGLETON: "singleton",
 	GLOBAL: "global",
 	API: "api",
+	VALIDATOR: "validator",
+	MERGER: "merger",
+	TRANSFROMER: "transformer",
 };
 const AWS_REGION = "AWS_REGION";
 const VERBOSE_LEVEL = "VERBOSE_LEVEL";
@@ -285,6 +288,27 @@ class Smash {
 			throw new Error("First parameter of helper must be a valid string, " + Logger.typeOf(module));
 		}
 		return this.loadModule(PATHS.HELPER, module);
+	}
+
+	validator(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of validator must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.VALIDATOR, module);
+	}
+
+	merger(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of merger must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.MERGER, module);
+	}
+
+	transformer(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of transformer must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.TRANSFROMER, module);
 	}
 
 	_loadSingletonModule(module) {
