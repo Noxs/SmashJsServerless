@@ -12,7 +12,7 @@ describe('ModuleLoader', () => {
 
 	it('Test constructor', () => {
 		const moduleLoader = new ModuleLoader(__dirname + "/../../../../lib/core/filter/inRule/actions");
-		expect(moduleLoader.modules.length).toBe(14);
+		expect(moduleLoader.modules.length).toBe(15);
 	});
 
 	it('Test getModuleByName case #1', () => {
