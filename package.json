@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Noxs/SmashJsServerless#readme",
   "devDependencies": {
-    "codecov": "^3.6.2",
+    "codecov": "^3.6.5",
     "eslint": "^5.16.0",
     "eslint-plugin-jest": "^22.21.0",
     "jest": "^24.8.0",
@@ -52,6 +52,6 @@
     "aws4": "^1.9.1",
     "dynamodb-data-types": "^3.0.1",
     "glob": "^7.1.6",
-    "request": "^2.88.0"
+    "request": "^2.88.2"
   }
 }
