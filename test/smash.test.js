@@ -26,9 +26,9 @@ describe('Smash', () => {
 
 	it('Test smash register middleware', () => {
 		expect(() => smash.boot({ verbose: { level: "disable" } })).not.toThrow();
-		expect(smash._middlewares.length).toBe(10);
+		expect(smash._middlewares.length).toBe(11);
 		smash.boot({ verbose: { level: "disable" } });
-		expect(smash._middlewares.length).toBe(10);
+		expect(smash._middlewares.length).toBe(11);
 	});
 
 	it('Test smash register handlers', () => {
