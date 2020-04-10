@@ -71,6 +71,15 @@ describe('RuleUtil', () => {
 		expect(ruleUtil.isString({ value: 1 })).toBe(false);
 	});
 
+	it('Test isRegexp', () => {
+		expect(ruleUtil.isRegexp({ value: {} })).toBe(false);
+		expect(ruleUtil.isRegexp({ value: [] })).toBe(false);
+		expect(ruleUtil.isRegexp({ value: /^test$/ })).toBe(true);
+		expect(ruleUtil.isRegexp({ value: false })).toBe(false);
+		expect(ruleUtil.isRegexp({ value: () => { } })).toBe(false);
+		expect(ruleUtil.isRegexp({ value: 1 })).toBe(false);
+	});
+
 	it('Test typeError', () => {
 		expect(ruleUtil.typeError({ current: { name: { value: "" }, value: { value: {} } }, ruleConfig: { value: {} }, expected: { value: "" } })).toBeObject();
 		expect(() => ruleUtil.typeError({ current: { name: { value: "" }, value: { value: {} } }, ruleConfig: { value: {} }, expected: { value: "" } })).not.toThrow();
@@ -83,6 +92,9 @@ describe('RuleUtil', () => {
 
 	it('Test isSameType', () => {
 		expect(ruleUtil.isSameType({ value: "test" }, "string")).toBe(true);
+		expect(ruleUtil.isSameType({ value: /^test$/ }, RegExp)).toBe(true);
+		expect(ruleUtil.isSameType({ value: {} }, RegExp)).toBe(false);
+		expect(ruleUtil.isSameType({ value: /^test$/ }, Object)).toBe(false);
 		expect(ruleUtil.isSameType({ value: {} }, "string")).toBe(false);
 	});
 
