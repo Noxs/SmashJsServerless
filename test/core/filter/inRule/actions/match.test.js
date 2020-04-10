@@ -90,7 +90,7 @@ describe('Match', () => {
 		}).toThrow();
 	});
 
-	it('Test validate case #3', () => {
+	it('Test validate case #4', () => {
 		expect(() => {
 			return match.validate({
 				current: {
@@ -114,6 +114,28 @@ describe('Match', () => {
 		}).toThrow();
 	});
 
+	it('Test validate case #5', () => {
+		expect(match.validate({
+			current: {
+				name: "match",
+				value: /^test$/,
+			},
+			rule: { parameters: { test: { type: "string", match: "^myValueMatch$" } } },
+			parents: [
+				{
+					name: "parameters",
+					value: { test: { type: "string", match: "^myValueMatch$" } },
+				},
+				{
+					name: "test",
+					value: { type: "string", match: "^myValueMatch$" },
+					type: "userInput",
+				},
+			],
+			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+		})).toBe(true);
+	});
+
 	it('Test execute case #1', async () => {
 		await expect(match.execute({
 			rule: {
@@ -121,23 +143,23 @@ describe('Match', () => {
 					name: "match",
 					value: "^yolo$",
 				},
-				initalRule: { body: { properties: { myVar: { match: 1, type: "string" } } } },
+				initalRule: { body: { properties: { myVar: { match: "^yolo$", type: "string" } } } },
 				parents: [
 					{
 						name: "none",
-						value: { body: { properties: { myVar: { match: 1, type: "string" } } } },
+						value: { body: { properties: { myVar: { match: "^yolo$", type: "string" } } } },
 					},
 					{
 						name: "body",
-						value: { properties: { myVar: { match: 1, type: "string" } } },
+						value: { properties: { myVar: { match: "^yolo$", type: "string" } } },
 					},
 					{
 						name: "properties",
-						value: { myVar: { match: 1, type: "string" } },
+						value: { myVar: { match: "^yolo$", type: "string" } },
 					},
 					{
 						name: "myVar",
-						value: { match: 1, type: "string" },
+						value: { match: "^yolo$", type: "string" },
 						type: "userInput",
 					},
 				],
@@ -186,6 +208,43 @@ describe('Match', () => {
 				parents: [{ name: "none", value: { parameters: { myVar: "foobar" }, body: {} } }, { body: "parameters", value: { myVar: "foobar" } }],
 			},
 		})).rejects.toThrow();
+	});
+
+	it('Test execute case #3', async () => {
+		await expect(match.execute({
+			rule: {
+				current: {
+					name: "match",
+					value: /^yolo$/,
+				},
+				initalRule: { body: { properties: { myVar: { match: /^yolo$/, type: "string" } } } },
+				parents: [
+					{
+						name: "none",
+						value: { body: { properties: { myVar: { match: /^yolo$/, type: "string" } } } },
+					},
+					{
+						name: "body",
+						value: { properties: { myVar: { match: /^yolo$/, type: "string" } } },
+					},
+					{
+						name: "properties",
+						value: { myVar: { match: /^yolo$/, type: "string" } },
+					},
+					{
+						name: "myVar",
+						value: { match: /^yolo$/, type: "string" },
+						type: "userInput",
+					},
+				],
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+			},
+			data: {
+				current: { name: "myVar", value: "yolo" },
+				initialData: { parameters: {}, body: { myVar: "yolo" } },
+				parents: [{ name: "none", value: { parameters: {}, body: { myVar: "yolo" } } }, { name: "body", value: { myVar: "yolo" } }],
+			},
+		})).resolves.toBe(true);
 	});
 });
 
