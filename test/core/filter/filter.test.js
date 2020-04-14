@@ -107,6 +107,7 @@ describe('Filter', () => {
 				body: {
 					bars: [
 						{
+							yolo: "you shall not pass",
 							foo: "bar",
 							bar: "foo",
 							number: 1,
@@ -120,6 +121,12 @@ describe('Filter', () => {
 							foo: "foo",
 							bar: "bar",
 						},
+					],
+					foos: [
+						"you shall not pass",
+						"you shall not pass",
+						"you shall not pass",
+						"you shall not pass",
 					],
 				},
 			};
@@ -142,6 +149,12 @@ describe('Filter', () => {
 							foo: "foo",
 							bar: "bar",
 						},
+					],
+					foos: [
+						"you shall not pass",
+						"you shall not pass",
+						"you shall not pass",
+						"you shall not pass",
 					],
 				},
 			};
@@ -166,6 +179,12 @@ describe('Filter', () => {
 									bar: { type: 'string' },
 									number: { type: 'integer', optional: true, validate: ({ number }) => true },
 								},
+							},
+						},
+						foos: {
+							type: "array",
+							content: {
+								type: "string",
 							},
 						},
 					},
@@ -590,7 +609,6 @@ describe('Filter', () => {
 			filter.for(config);
 			expect(filter.currentConfig).toStrictEqual(config);
 		});
-
 
 		it('Test _createKeyIfNotExist', () => {
 			const key = "action";
