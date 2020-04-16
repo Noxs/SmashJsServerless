@@ -179,7 +179,7 @@ describe('content', () => {
 						},
 						type: "userInput",
 					});
-					expect(data.current.value).toStrictEqual({ foo: "bar", bar: "foo" });
+					expect(data.current.value).toStrictEqual({ yolo: "you shall not pass", foo: "bar", bar: "foo" });
 				} else {
 					expect(rule.current).toStrictEqual({
 						name: 1,
@@ -208,7 +208,10 @@ describe('content', () => {
 					name: "content",
 					value: {
 						type: "object",
-						properties: { foo: { type: "string" }, bar: { type: "string" } },
+						properties: {
+							foo: { type: "string" },
+							bar: { type: "string" },
+						},
 					},
 				},
 				initalRule: {
@@ -218,7 +221,10 @@ describe('content', () => {
 								type: "array",
 								content: {
 									type: "object",
-									properties: { foo: { type: "string" }, bar: { type: "string" } },
+									properties: {
+										foo: { type: "string" },
+										bar: { type: "string" },
+									},
 								},
 							},
 						},
@@ -247,11 +253,11 @@ describe('content', () => {
 				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
 			},
 			data: {
-				current: { name: "test", value: [{ foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] },
-				initialData: { parameters: {}, body: { test: [{ foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] } },
+				current: { name: "test", value: [{ yolo: "you shall not pass", foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] },
+				initialData: { parameters: {}, body: { test: [{ yolo: "you shall not pass", foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] } },
 				parents: [
-					{ name: "none", value: { parameters: {}, body: { test: [{ foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] } } },
-					{ name: "body", value: { test: [{ foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] } },
+					{ name: "none", value: { parameters: {}, body: { test: [{ yolo: "you shall not pass", foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] } } },
+					{ name: "body", value: { test: [{ yolo: "you shall not pass", foo: "bar", bar: "foo" }, { foo: "foo", bar: "bar" }] } },
 				],
 			},
 		})).resolves.toBe(true);
