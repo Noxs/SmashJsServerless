@@ -88,7 +88,7 @@ describe('Filter', () => {
 						description: { type: 'string', optional: true, match: "^.+$" },
 						domain: { type: 'string', match: "^.+$", optional: true, default: defaultDomainMocked },
 						customUrl: { type: 'string', optional: true, match: "^.+$", validate: validateCustomUrlMocked },
-						test: { type: 'object', optional: true, validate: ({ passing }) => true },
+						test: { type: 'object', optional: true, validate: () => true },
 					},
 					optional: true,
 					validate: () => true,
@@ -177,7 +177,7 @@ describe('Filter', () => {
 								properties: {
 									foo: { type: 'string' },
 									bar: { type: 'string' },
-									number: { type: 'integer', optional: true, validate: ({ number }) => true },
+									number: { type: 'integer', optional: true, validate: () => true },
 								},
 							},
 						},
@@ -620,6 +620,92 @@ describe('Filter', () => {
 			expect(result).not.toBeUndefined();
 			expect(data).toStrictEqual(dataCleaned);
 			expect(result).toStrictEqual(dataCleaned);
+		});
+
+		it('Test cleanOut case #4', async () => {
+			const data = {
+				item: [
+					{
+						language: "fr",
+						duration: 123,
+						titleToClean: "YOLO",
+						preview: "FULL",
+						listToFilter: [1, "test"],
+						listObject: [{ bar: "foo", toRemove: true }, "test", { bar: "foo", toRemove: true }],
+						listToNotFilter: [1, "test"],
+						foo: { bar: "foo", toRemove: true },
+						foolol: { bar: "foo", toRemove: true },
+					},
+					{
+						language: null,
+						duration: undefined,
+						titleToClean: "YOLO 2",
+						preview: "none",
+						key: "omg",
+					},
+				],
+			};
+			
+			const filter = new Filter();
+			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).outRule({
+				type: "object",
+				properties: [
+					{
+						name: "item",
+						type: "array",
+						content: {
+							type: "object",
+							transform: obj => {
+								obj.added = "property";
+								obj.invisible = "property";
+								return obj;
+							},
+							properties: [
+								{ name: "language" },
+								{ name: "duration" },
+								{ name: "preview" },
+								{ name: "listToNotFilter" },
+								{
+									name: "listObject",
+									type: "array",
+									content: {
+										type: "object",
+										transform: () => ({}),
+										properties: [
+											{ name: "bar" },
+											{ name: "foo" },
+										],
+									},
+								},
+								{
+									name: "foo",
+									type: "object",
+									transform: () => null,
+									properties: [
+										{ name: "bar" },
+										{ name: "foo" },
+									],
+								},
+								{
+									name: "foolol",
+									type: "object",
+									transform: obj => {
+										obj.foo = "bar";
+										obj.foofoo = "barbar";
+										return obj;
+									},
+									properties: [
+										{ name: "bar" },
+										{ name: "foo" },
+									],
+								},
+								{ name: "added" },
+							],
+						},
+					},
+				],
+			})).not.toThrow();
+			await expect(filter.cleanOut({ action: "MyFooBarAction", version: "01-2019" }, data)).rejects.not.toBeUndefined();
 		});
 	});
 
