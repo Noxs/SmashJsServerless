@@ -448,7 +448,6 @@ describe('Filter', () => {
 			expect(result).toStrictEqual(dataCleaned);
 		});
 
-
 		it('Test cleanOut case #2', async () => {
 			const data = {
 				item: [
@@ -458,8 +457,10 @@ describe('Filter', () => {
 						titleToClean: "YOLO",
 						preview: "FULL",
 						listToFilter: [1, "test"],
+						listObject: [{ bar: "foo", toRemove: true }, "test", { bar: "foo", toRemove: true }],
 						listToNotFilter: [1, "test"],
 						foo: { bar: "foo", toRemove: true },
+						foolol: { bar: "foo", toRemove: true },
 					},
 					{
 						language: null,
@@ -478,11 +479,15 @@ describe('Filter', () => {
 						duration: 123,
 						preview: "FULL",
 						listToNotFilter: [1, "test"],
-						foo: { bar: "foo" },
+						listObject: [{ bar: "foo", foo: "bar" }, { bar: "foo", foo: "bar" }],
+						foo: { bar: "foo", foo: "bar" },
+						foolol: { bar: "foo", foo: "bar" },
+						added: "property",
 					},
 					{
 						language: null,
 						preview: "none",
+						added: "property",
 					},
 				],
 			};
@@ -496,18 +501,53 @@ describe('Filter', () => {
 						type: "array",
 						content: {
 							type: "object",
+							transform: obj => {
+								obj.added = "property";
+								obj.invisible = "property";
+								return obj;
+							},
 							properties: [
 								{ name: "language" },
 								{ name: "duration" },
 								{ name: "preview" },
 								{ name: "listToNotFilter" },
 								{
+									name: "listObject",
+									type: "array",
+									content: {
+										type: "object",
+										transform: obj => ({ ...obj, foo: "bar", foofoo: "barbar" }),
+										properties: [
+											{ name: "bar" },
+											{ name: "foo" },
+										],
+									},
+								},
+								{
 									name: "foo",
 									type: "object",
+									transform: obj => {
+										return { ...obj, foo: "bar", foofoo: "barbar" };
+									},
 									properties: [
 										{ name: "bar" },
+										{ name: "foo" },
 									],
 								},
+								{
+									name: "foolol",
+									type: "object",
+									transform: obj => {
+										obj.foo = "bar";
+										obj.foofoo = "barbar";
+										return obj;
+									},
+									properties: [
+										{ name: "bar" },
+										{ name: "foo" },
+									],
+								},
+								{ name: "added" },
 							],
 						},
 					},
