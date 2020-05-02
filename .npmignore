@@ -5,6 +5,13 @@
 .jshintrc
 .npmignore
 .tesselinclude
+.vs
+/controller
+/database
+/helper
+/util
+/templates
+/config.json
 configuration
 configuration.sample
 codecov.yml
