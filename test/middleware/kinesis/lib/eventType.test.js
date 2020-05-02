@@ -14,20 +14,20 @@ describe('EventType', () => {
 	});
 
 	it('Test event instance success', () => {
-		const kinesisStream = { name: "foobar" };
+		const kinesisStream = { stream: "foobar" };
 		const callback = param => param;
 		expect(() => new EventType(kinesisStream, callback)).not.toThrow();
 	});
 
-	it('Test event get name', () => {
-		const kinesisStream = { name: "foobar" };
+	it('Test event get stream', () => {
+		const kinesisStream = { stream: "foobar" };
 		const callback = param => param;
 		const eventType = new EventType(kinesisStream, callback);
-		expect(eventType.name).toBe("foobar");
+		expect(eventType.stream).toBe("foobar");
 	});
 
 	it('Test event match success not match', () => {
-		const kinesisStream = { name: "" };
+		const kinesisStream = { stream: "" };
 		const callback = param => param;
 		const eventType = new EventType(kinesisStream, callback);
 		const event = {};
@@ -35,15 +35,15 @@ describe('EventType', () => {
 	});
 
 	it('Test event match success match', () => {
-		const kinesisStream = { name: "TestAction" };
+		const kinesisStream = { stream: "TestAction" };
 		const callback = param => param;
 		const eventType = new EventType(kinesisStream, callback);
-		const event = { name: "TestAction" };
+		const event = { stream: "TestAction" };
 		expect(eventType.match(event)).toBeTrue();
 	});
 
 	it('Test event callback', () => {
-		const kinesisStream = { name: "" };
+		const kinesisStream = { stream: "" };
 		const callback = param => param;
 		const eventType = new EventType(kinesisStream, callback);
 		expect(eventType.callback).toBeFunction();
