@@ -26,9 +26,9 @@ describe('Smash', () => {
 
 	it('Test smash register middleware', () => {
 		expect(() => smash.boot({ verbose: { level: "disable" } })).not.toThrow();
-		expect(smash._middlewares.length).toBe(11);
+		expect(smash._middlewares.length).toBe(13);
 		smash.boot({ verbose: { level: "disable" } });
-		expect(smash._middlewares.length).toBe(11);
+		expect(smash._middlewares.length).toBe(13);
 	});
 
 	it('Test smash register handlers', () => {
@@ -169,6 +169,7 @@ describe('Smash', () => {
 					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
 				},
 				body: '{"data":{"foo":"bar"}}',
+				isBase64Encoded: false,
 			});
 			expect(mockedFunction.mock.calls.length).toBe(1);
 			done();
@@ -192,6 +193,7 @@ describe('Smash', () => {
 					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
 				},
 				body: '{"code":404,"error":"Route GET /notfound not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef","details":{"name":"Route","primary":"GET /notfound"}}',
+				isBase64Encoded: false,
 			});
 			expect(mockedFunction.mock.calls.length).toBe(1);
 			done();
@@ -215,6 +217,7 @@ describe('Smash', () => {
 					'Access-Control-Allow-Origin': '*',
 					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
 				},
+				isBase64Encoded: false,
 			});
 			expect(mockedFunction.mock.calls.length).toBe(1);
 			done();
