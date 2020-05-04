@@ -47,6 +47,9 @@ describe('Filter', () => {
 					duration: 123,
 					titleToClean: "YOLO",
 					preview: "FULL",
+					delivery: {
+						test: "to be removed",
+					},
 				},
 			};
 
@@ -57,6 +60,7 @@ describe('Filter', () => {
 					duration: 123,
 					preview: "FULL",
 					domain: "myDomain",
+					delivery: {},
 				},
 			};
 
@@ -174,6 +178,7 @@ describe('Filter', () => {
 							type: "array",
 							content: {
 								type: "object",
+								validate: () => true,
 								properties: {
 									foo: { type: 'string' },
 									bar: { type: 'string' },
@@ -216,6 +221,7 @@ describe('Filter', () => {
 							type: "array",
 							content: {
 								type: "object",
+								validate: () => true,
 								properties: {
 									foo: { type: 'string' },
 									bar: { type: 'string' },
@@ -227,7 +233,7 @@ describe('Filter', () => {
 					optional: true,
 				},
 			})).not.toThrow();
-			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).resolves.not.toBeUndefined();
 		});
 
 		it('Test cleanIn case #4', async () => {
@@ -298,6 +304,253 @@ describe('Filter', () => {
 			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.toThrow();
 		});
 
+		it('Test cleanIn case #6', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: undefined,
+			};
+
+			const requestCleaned = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: undefined,
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true, validate: () => true },
+								},
+							},
+						},
+						foos: {
+							type: "array",
+							content: {
+								type: "string",
+							},
+						},
+					},
+					optional: true,
+				},
+			})).not.toThrow();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
+			expect(request).toStrictEqual(requestCleaned);
+		});
+
+		it('Test cleanIn case #7', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: undefined,
+			};
+
+			const requestCleaned = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: { foos: ["alive"] },
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true, validate: () => true },
+								},
+							},
+							optional: true,
+						},
+						foos: {
+							type: "array",
+							content: {
+								type: "string",
+							},
+						},
+					},
+					optional: true,
+					default: { test: "removedProperty", foos: ["alive"] },
+				},
+			})).not.toThrow();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
+			expect(request).toStrictEqual(requestCleaned);
+		});
+
+		it('Test cleanIn case #8', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: undefined,
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true, validate: () => true },
+								},
+							},
+						},
+						foos: {
+							type: "array",
+							content: {
+								type: "string",
+							},
+						},
+					},
+				},
+			})).not.toThrow();
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
+		});
+
+		it('Test cleanIn case #9', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: undefined,
+			};
+
+			const requestCleaned = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: { foos: ["alive"] },
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						bars: {
+							type: "array",
+							content: {
+								type: "object",
+								properties: {
+									foo: { type: 'string' },
+									bar: { type: 'string' },
+									number: { type: 'integer', optional: true, validate: () => true },
+								},
+							},
+							optional: true,
+						},
+						foos: {
+							type: "array",
+							content: {
+								type: "string",
+							},
+						},
+					},
+					default: { test: "removedProperty", foos: ["alive"] },
+				},
+			})).not.toThrow();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
+			expect(request).toStrictEqual(requestCleaned);
+		});
+
+		it('Test cleanIn case #10', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: ["yolo"],
+			};
+
+			const requestCleaned = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: ["yolo"],
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					content: {
+						type: "string",
+					},
+					type: "array",
+				},
+			})).not.toThrow();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
+			expect(request).toStrictEqual(requestCleaned);
+		});
+
+		it('Test cleanIn case #11', async () => {
+			const request = {
+				parameters: { one: "123456789", two: "987654321" },
+				body: ["yolo"],
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						one: { castTo: "string" },
+						two: { castTo: "string" },
+					},
+				},
+				body: {
+					properties: {
+						one: { type: "string" },
+						two: { type: "string" },
+					},
+				},
+			})).not.toThrow();
+			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
+		});
 
 		it('Test merge case #1', async () => {
 			const source = {
@@ -645,7 +898,7 @@ describe('Filter', () => {
 					},
 				],
 			};
-			
+
 			const filter = new Filter();
 			expect(() => filter.for({ action: "MyFooBarAction", version: "01-2019" }).outRule({
 				type: "object",
