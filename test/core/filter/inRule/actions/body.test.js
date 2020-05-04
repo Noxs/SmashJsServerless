@@ -42,6 +42,10 @@ describe('Body', () => {
 				name: "clean",
 				validate: mockedFunction,
 			},
+			{
+				name: "type",
+				validate: mockedFunction,
+			},
 		];
 		expect(body.validate({
 			current: {
@@ -76,6 +80,10 @@ describe('Body', () => {
 			},
 			{
 				name: "clean",
+				validate: mockedFunction,
+			},
+			{
+				name: "type",
 				validate: mockedFunction,
 			},
 		];

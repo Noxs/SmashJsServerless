@@ -353,6 +353,41 @@ describe('RuleUtil', () => {
 		expect(() => ruleUtil.getLatestFromNames(config, parents, depth, "foobar")).not.toThrow();
 	});
 
+	it('Test getLatestFromNames case #6', () => {
+		const config = {
+			skip: {
+				none: {
+					body: {
+						siblings: [
+							{ name: "type" },
+							{ name: "min" },
+							{ name: "max" },
+							{ name: "validate" },
+						],
+						children: {
+							types: ["string"],
+						},
+					},
+				},
+			},
+		};
+		const parents = [
+			{ name: 'none', value: { body: { properties: { id: { type: 'string' } }, type: "string" } } },
+			{ name: 'body', value: { properties: { id: { type: 'string' } }, type: "string" } },
+		];
+		expect(ruleUtil.getLatestFromNames(config, parents, 3)).toStrictEqual({
+			siblings: [
+				{ name: "type" },
+				{ name: "min" },
+				{ name: "max" },
+				{ name: "validate" },
+			],
+			children: {
+				types: ["string"],
+			},
+		});
+	});
+
 	it('Test loadCurrentValue case #1', () => {
 		const current = { name: "myObject", value: undefined };
 		const parents = [

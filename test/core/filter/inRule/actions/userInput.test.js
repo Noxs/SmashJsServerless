@@ -58,7 +58,7 @@ describe('UserInput', () => {
 			processor,
 			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
 		})).toBe(true);
-		expect(mockedFunction.mock.calls.length).toBe(1);
+		expect(mockedFunction.mock.calls.length).toBe(2);
 	});
 
 	it('Test validate case #2', () => {
