@@ -552,6 +552,93 @@ describe('Filter', () => {
 			await expect(filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request)).rejects.not.toBeUndefined();
 		});
 
+		it('Test cleanIn case #12', async () => {
+			const request = {
+				parameters: {},
+				body: {
+					source: {
+						url: "https://myfakeurl.com",
+						method: "GET",
+						headers: {},
+					},
+					target: {
+						url: "https://myfakeurl.com",
+						method: "POST",
+						headers: { Encryption: "AES256" },
+					},
+					width: 100,
+					height: 100,
+					fit: "inside",
+					format: "auto",
+					foo: "bar",
+				},
+			};
+
+			const requestCleaned = {
+				parameters: {},
+				body: {
+					source: {
+						url: "https://myfakeurl.com",
+						method: "GET",
+						headers: {},
+					},
+					target: {
+						url: "https://myfakeurl.com",
+						method: "POST",
+						headers: { Encryption: "AES256" },
+					},
+					width: 100,
+					height: 100,
+					fit: "inside",
+					format: "auto",
+					async: true,
+				},
+			};
+
+			const filter = new Filter();
+
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				body: {
+					properties: {
+						source: {
+							type: 'object',
+							properties: {
+								url: { type: "string", match: "^https://.+$" },
+								method: { type: "string", match: "^(GET|POST|PUT)$" },
+								headers: { type: "object", optional: true },
+							},
+						},
+						target: {
+							type: 'object',
+							properties: {
+								url: { type: "string", match: "^https://.+$" },
+								method: { type: "string", match: "^(POST|PUT)$" },
+								headers: { type: "object", optional: true },
+							},
+						},
+						width: { type: 'unsigned integer' },
+						height: { type: 'unsigned integer' },
+						fit: { type: 'string', optional: true, default: "inside", match: "^(inside|outside)$" },
+						format: { type: 'string', optional: true, default: "auto", match: "^(jpeg|jpg|png|auto)$" },
+						async: { type: "boolean", optional: true, default: true },
+					},
+				},
+			})).not.toThrow();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
+			expect(request).toStrictEqual(requestCleaned);
+		});
+
+
+
+
+
+
+
+
+
+
 		it('Test merge case #1', async () => {
 			const source = {
 				duration: 123,
