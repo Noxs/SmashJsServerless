@@ -19,6 +19,7 @@ const PATHS = {
 	VALIDATOR: "validator",
 	MERGER: "merger",
 	TRANSFROMER: "transformer",
+	PERMISSION: "permission",
 };
 const AWS_REGION = "AWS_REGION";
 const VERBOSE_LEVEL = "VERBOSE_LEVEL";
@@ -309,6 +310,13 @@ class Smash {
 			throw new Error("First parameter of transformer must be a valid string, " + Logger.typeOf(module));
 		}
 		return this.loadModule(PATHS.TRANSFROMER, module);
+	}
+
+	permission(module) {
+		if (typeof module !== 'string' || module.length === 0) {
+			throw new Error("First parameter of permission must be a valid string, " + Logger.typeOf(module));
+		}
+		return this.loadModule(PATHS.PERMISSION, module);
 	}
 
 	_loadSingletonModule(module) {
