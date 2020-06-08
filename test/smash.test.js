@@ -249,8 +249,34 @@ describe('Smash', () => {
 	});
 
 	it('Test smash getHandlers', () => {
+		smash.shutdown();
 		smash.boot({ verbose: { level: "disable" } });
 		expect(() => smash.getHandlers()).not.toThrow();
 		expect(smash.getHandlers()).toBeArray();
+	});
+
+	it('Test smash extend', () => {
+		expect(() => smash.extend({})).not.toThrow();
+	});
+
+	it('Test smash get env()', () => {
+		expect(() => smash.env).not.toThrow();
+		expect(smash.env).toStrictEqual(smash._env);
+	});
+
+	it('Test smash setEnv(key, value)', () => {
+		expect(() => smash.setEnv("test", "test")).not.toThrow();
+		expect(smash.env.test).toStrictEqual("test");
+	});
+
+	it('Test smash getRegion()', () => {
+		expect(() => smash.setEnv("AWS_REGION", "eu-west-1")).not.toThrow();
+		expect(smash.env.AWS_REGION).toStrictEqual("eu-west-1");
+	});
+
+	it('Test smash getEnvs(keys)', () => {
+		expect(() => smash.setEnv("AWS_REGION", "eu-west-1")).not.toThrow();
+		expect(() => smash.setEnv("test", "test")).not.toThrow();
+		expect(smash.getEnvs(["AWS_REGION", "test"])).toStrictEqual(["eu-west-1", "test"]);
 	});
 });
