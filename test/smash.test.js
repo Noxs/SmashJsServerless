@@ -266,12 +266,14 @@ describe('Smash', () => {
 
 	it('Test smash setEnv(key, value)', () => {
 		expect(() => smash.setEnv("test", "test")).not.toThrow();
+		smash._env = null;
+		expect(() => smash.setEnv("test", "test")).not.toThrow();
 		expect(smash.env.test).toStrictEqual("test");
 	});
 
 	it('Test smash getRegion()', () => {
 		expect(() => smash.setEnv("AWS_REGION", "eu-west-1")).not.toThrow();
-		expect(smash.env.AWS_REGION).toStrictEqual("eu-west-1");
+		expect(smash.getRegion()).toStrictEqual("eu-west-1");
 	});
 
 	it('Test smash getEnvs(keys)', () => {
