@@ -1,12 +1,12 @@
-const { VALIDATE } = require("../../../../../lib/core/filter/constant");
+const { PERMISSION } = require("../../../../../lib/core/filter/constant");
 
-describe('Validate', () => {
-	let validate = null;
+describe('Permission', () => {
+	let permission = null;
 
 	beforeAll(() => {
 		jest.resetAllMocks();
 		require('../../../../../smash');
-		validate = require("../../../../../lib/core/filter/inRule/actions/validate");
+		permission = require("../../../../../lib/core/filter/inRule/actions/permission");
 	});
 
 	beforeEach(() => {
@@ -14,31 +14,26 @@ describe('Validate', () => {
 	});
 
 	it('Test initial', () => {
-		expect(validate.name).toBe(VALIDATE);
-		expect(validate.execute).toBeFunction();
-		expect(validate.validate).toBeFunction();
-		expect(validate.config).toBeObject();
+		expect(permission.name).toBe(PERMISSION);
+		expect(permission.execute).toBeFunction();
+		expect(permission.validate).toBeFunction();
+		expect(permission.config).toBeObject();
 	});
 
 	it('Test validate case #1', () => {
 		const mockedFunction = jest.fn(() => {
 			return true;
 		});
-		expect(validate.validate({
+		expect(permission.validate({
 			current: {
-				name: "validate",
+				name: "permission",
 				value: mockedFunction,
 			},
-			rule: { parameters: { test: { validate: mockedFunction } } },
+			rule: { permission: mockedFunction },
 			parents: [
 				{
-					name: "parameters",
-					value: { test: { validate: mockedFunction } },
-				},
-				{
-					name: "test",
-					value: { validate: mockedFunction },
-					type: "userInput",
+					name: "none",
+					value: { permission: mockedFunction },
 				},
 			],
 			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
@@ -47,21 +42,16 @@ describe('Validate', () => {
 
 	it('Test validate case #2', () => {
 		expect(() => {
-			return validate.validate({
+			return permission.validate({
 				current: {
-					name: "validate",
+					name: "permission",
 					value: 1,
 				},
-				rule: { parameters: { test: { type: 1 } } },
+				rule: { permission: 1 },
 				parents: [
 					{
-						name: "parameters",
-						value: { test: { validate: 1 } },
-					},
-					{
-						name: "test",
-						value: { validate: 1 },
-						type: "userInput",
+						name: "none",
+						value: { permission: 1 },
 					},
 				],
 				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
@@ -71,21 +61,16 @@ describe('Validate', () => {
 
 	it('Test validate case #3', () => {
 		expect(() => {
-			return validate.validate({
+			return permission.validate({
 				current: {
-					name: "validate",
+					name: "permission",
 					value: "foobar",
 				},
-				rule: { parameters: { test: { validate: 1 } } },
+				rule: { permission: "foobar" },
 				parents: [
 					{
-						name: "parameters",
-						value: { test: { validate: "foobar" } },
-					},
-					{
-						name: "test",
-						value: { validate: "foobar" },
-						type: "userInput",
+						name: "none",
+						value: { permission: "foobar" },
 					},
 				],
 				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
@@ -101,30 +86,17 @@ describe('Validate', () => {
 				resolve("newValue");
 			});
 		});
-		await expect(validate.execute({
+		await expect(permission.execute({
 			rule: {
 				current: {
-					name: "validate",
+					name: "permission",
 					value: mockFunction,
 				},
-				initalRule: { body: { properties: { myVar: { validate: mockFunction, type: "string" } } } },
+				initalRule: { permission: mockFunction },
 				parents: [
 					{
 						name: "none",
-						value: { body: { properties: { myVar: { validate: mockFunction, type: "string" } } } },
-					},
-					{
-						name: "body",
-						value: { properties: { myVar: { validate: mockFunction, type: "string" } } },
-					},
-					{
-						name: "properties",
-						value: { myVar: { validate: mockFunction, type: "string" } },
-					},
-					{
-						name: "myVar",
-						value: { validate: mockFunction, type: "string" },
-						type: "userInput",
+						value: { permission: mockFunction },
 					},
 				],
 				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
@@ -145,30 +117,17 @@ describe('Validate', () => {
 				reject(new Error());
 			});
 		});
-		await expect(validate.execute({
+		await expect(permission.execute({
 			rule: {
 				current: {
-					name: "validate",
+					name: "permission",
 					value: mockFunction,
 				},
-				initalRule: { body: { properties: { myVar: { validate: mockFunction, type: "string" } } } },
+				initalRule: { permission: mockFunction },
 				parents: [
 					{
 						name: "none",
-						value: { body: { properties: { myVar: { validate: mockFunction, type: "string" } } } },
-					},
-					{
-						name: "body",
-						value: { properties: { myVar: { validate: mockFunction, type: "string" } } },
-					},
-					{
-						name: "properties",
-						value: { myVar: { validate: mockFunction, type: "string" } },
-					},
-					{
-						name: "myVar",
-						value: { validate: mockFunction, type: "string" },
-						type: "userInput",
+						value: { permission: mockFunction },
 					},
 				],
 				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
