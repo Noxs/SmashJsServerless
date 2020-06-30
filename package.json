@@ -52,6 +52,7 @@
     "dynamodb-data-types": "^3.0.1",
     "glob": "^7.1.6",
     "query-string": "^6.12.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "xml-js": "^1.6.11"
   }
 }
