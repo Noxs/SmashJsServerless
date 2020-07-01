@@ -51,6 +51,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -110,6 +111,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -172,6 +174,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -234,6 +237,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -299,6 +303,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -308,5 +313,5 @@ module.exports = {
 			"baz": "qux",
 		},
 		"path": "/foo/number/1",
-	}
+	},
 };

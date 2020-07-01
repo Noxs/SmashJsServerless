@@ -55,6 +55,7 @@ const lambdaEventSuccess = {
 		"User-Agent": "Custom User Agent String",
 		"CloudFront-Forwarded-Proto": "https",
 		"Accept-Encoding": "gzip, deflate, sdch",
+		"Content-Type": "application/json",
 	},
 	"pathParameters": {
 		"proxy": "path/to/resource",
