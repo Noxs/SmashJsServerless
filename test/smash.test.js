@@ -1,9 +1,8 @@
+const Headers = require('../lib/middleware/apiGatewayProxyRest/lib/headers');
 const badModule = "badModule";
 
 const overwriteModule = {
-	expose: () => {
-		return ["foobar", "foobar"];
-	},
+	expose: () => ["foobar", "foobar"],
 };
 
 describe('Smash', () => {
@@ -163,11 +162,12 @@ describe('Smash', () => {
 			expect(data).toBeObject();
 			expect(data).toStrictEqual({
 				statusCode: 200,
-				headers: {
+				headers: new Headers({
 					'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
 					'Access-Control-Allow-Origin': '*',
 					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
-				},
+					"content-type": "application/json",
+				}).toRawObject(),
 				body: '{"data":{"foo":"bar"}}',
 				isBase64Encoded: false,
 			});
@@ -187,11 +187,12 @@ describe('Smash', () => {
 			expect(data).toBeObject();
 			expect(data).toStrictEqual({
 				statusCode: 404,
-				headers: {
+				headers: new Headers({
 					'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
 					'Access-Control-Allow-Origin': '*',
 					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
-				},
+					"content-type": "application/json",
+				}).toRawObject(),
 				body: '{"code":404,"error":"Route GET /notfound not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef","details":{"name":"Route","primary":"GET /notfound"}}',
 				isBase64Encoded: false,
 			});
@@ -212,11 +213,12 @@ describe('Smash', () => {
 			expect(data).toStrictEqual({
 				statusCode: 500,
 				body: '{"code":500,"error":"Internal Server Error","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef"}',
-				headers: {
+				headers: new Headers({
 					'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
 					'Access-Control-Allow-Origin': '*',
 					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
-				},
+					"content-type": "application/json",
+				}).toRawObject(),
 				isBase64Encoded: false,
 			});
 			expect(mockedFunction.mock.calls.length).toBe(1);
@@ -249,8 +251,36 @@ describe('Smash', () => {
 	});
 
 	it('Test smash getHandlers', () => {
+		smash.shutdown();
 		smash.boot({ verbose: { level: "disable" } });
 		expect(() => smash.getHandlers()).not.toThrow();
 		expect(smash.getHandlers()).toBeArray();
+	});
+
+	it('Test smash extend', () => {
+		expect(() => smash.extend({})).not.toThrow();
+	});
+
+	it('Test smash get env()', () => {
+		expect(() => smash.env).not.toThrow();
+		expect(smash.env).toStrictEqual(smash._env);
+	});
+
+	it('Test smash setEnv(key, value)', () => {
+		expect(() => smash.setEnv("test", "test")).not.toThrow();
+		smash._env = null;
+		expect(() => smash.setEnv("test", "test")).not.toThrow();
+		expect(smash.env.test).toStrictEqual("test");
+	});
+
+	it('Test smash getRegion()', () => {
+		expect(() => smash.setEnv("AWS_REGION", "eu-west-1")).not.toThrow();
+		expect(smash.getRegion()).toStrictEqual("eu-west-1");
+	});
+
+	it('Test smash getEnvs(keys)', () => {
+		expect(() => smash.setEnv("AWS_REGION", "eu-west-1")).not.toThrow();
+		expect(() => smash.setEnv("test", "test")).not.toThrow();
+		expect(smash.getEnvs(["AWS_REGION", "test"])).toStrictEqual(["eu-west-1", "test"]);
 	});
 });

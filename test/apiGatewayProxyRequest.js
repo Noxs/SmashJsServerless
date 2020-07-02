@@ -40,7 +40,7 @@ module.exports = {
 			"CloudFront-Is-Mobile-Viewer": "false",
 			"X-Forwarded-For": "127.0.0.1, 127.0.0.2",
 			"CloudFront-Viewer-Country": "US",
-			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
+			"Accept": "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
 			"Upgrade-Insecure-Requests": "1",
 			"X-Forwarded-Port": "443",
 			"Host": "1234567890.execute-api.us-east-1.amazonaws.com",
@@ -51,6 +51,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -99,7 +100,7 @@ module.exports = {
 			"CloudFront-Is-Mobile-Viewer": "false",
 			"X-Forwarded-For": "127.0.0.1, 127.0.0.2",
 			"CloudFront-Viewer-Country": "US",
-			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
+			"Accept": "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
 			"Upgrade-Insecure-Requests": "1",
 			"X-Forwarded-Port": "443",
 			"Host": "1234567890.execute-api.us-east-1.amazonaws.com",
@@ -110,6 +111,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -161,7 +163,7 @@ module.exports = {
 			"CloudFront-Is-Mobile-Viewer": "false",
 			"X-Forwarded-For": "127.0.0.1, 127.0.0.2",
 			"CloudFront-Viewer-Country": "US",
-			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
+			"Accept": "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
 			"Upgrade-Insecure-Requests": "1",
 			"X-Forwarded-Port": "443",
 			"Host": "1234567890.execute-api.us-east-1.amazonaws.com",
@@ -172,6 +174,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -223,7 +226,7 @@ module.exports = {
 			"CloudFront-Is-Mobile-Viewer": "false",
 			"X-Forwarded-For": "127.0.0.1, 127.0.0.2",
 			"CloudFront-Viewer-Country": "US",
-			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
+			"Accept": "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
 			"Upgrade-Insecure-Requests": "1",
 			"X-Forwarded-Port": "443",
 			"Host": "1234567890.execute-api.us-east-1.amazonaws.com",
@@ -234,6 +237,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -288,7 +292,7 @@ module.exports = {
 			"CloudFront-Is-Mobile-Viewer": "false",
 			"X-Forwarded-For": "127.0.0.1, 127.0.0.2",
 			"CloudFront-Viewer-Country": "US",
-			"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
+			"Accept": "application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*//*;q=0.8",
 			"Upgrade-Insecure-Requests": "1",
 			"X-Forwarded-Port": "443",
 			"Host": "1234567890.execute-api.us-east-1.amazonaws.com",
@@ -299,6 +303,7 @@ module.exports = {
 			"User-Agent": "Custom User Agent String",
 			"CloudFront-Forwarded-Proto": "https",
 			"Accept-Encoding": "gzip, deflate, sdch",
+			"Content-Type": "application/json",
 		},
 		"pathParameters": {
 			"proxy": "path/to/resource",
@@ -308,5 +313,5 @@ module.exports = {
 			"baz": "qux",
 		},
 		"path": "/foo/number/1",
-	}
+	},
 };
