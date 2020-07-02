@@ -2,6 +2,7 @@ const SmashLogger = require('../../../lib/util/smashLogger');
 SmashLogger.verbose({ level: "disable" });
 const smash = require('../../../smash');
 const ApiGatewayProxyRest = require('../../../lib/middleware/apiGatewayProxyRest/apiGatewayProxyRest');
+const Headers = require('../../../lib/middleware/apiGatewayProxyRest/lib/headers');
 
 const lambdaEventSuccess = {
 	"body": "{\"test\":\"body\"}",
@@ -87,7 +88,7 @@ describe('apiGatewayProxyRest', () => {
 			expect(terminate.mock.calls.length).toBe(1);
 			done();
 		});
-		apiGatewayProxyRest.handleEvent(lambdaEventSuccess, {}, terminate);
+		apiGatewayProxyRest.handleEvent(lambdaEventSuccess, { headers: {} }, terminate);
 	});
 
 	it('Test handle event failure', done => {
@@ -114,7 +115,7 @@ describe('apiGatewayProxyRest', () => {
 			expect(apiGatewayProxyRest._callback.mock.calls.length).toBe(1);
 			done();
 		});
-		expect(() => apiGatewayProxyRest.handleResponse({ code: "200", headers: {}, stringifiedBody: "fooBar" })).not.toThrow();
+		expect(() => apiGatewayProxyRest.handleResponse({ code: "200", headers: new Headers({}), stringifiedBody: "fooBar" })).not.toThrow();
 	});
 
 	it('Test handle response failure', done => {
@@ -123,7 +124,7 @@ describe('apiGatewayProxyRest', () => {
 			expect(apiGatewayProxyRest._callback.mock.calls.length).toBe(1);
 			done();
 		});
-		expect(() => apiGatewayProxyRest.handleResponse({})).not.toThrow();
+		expect(() => apiGatewayProxyRest.handleResponse({ headers: new Headers({}) })).not.toThrow();
 		expect(() => apiGatewayProxyRest.handleResponse()).toThrow();
 	});
 

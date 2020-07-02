@@ -10,7 +10,7 @@ const defaultHeaders = {
 
 describe('Response', () => {
 	it('Test response instance success', () => {
-		expect(() => new Response(new ApiGatewayProxyRest(), {})).not.toThrow();
+		expect(() => new Response(new ApiGatewayProxyRest(), { headers: {} })).not.toThrow();
 	});
 
 	it('Test response instance failure', () => {
@@ -20,14 +20,14 @@ describe('Response', () => {
 	it('Test response handleError', () => {
 		const apiGatewayProxyRest = new ApiGatewayProxyRest();
 		apiGatewayProxyRest._callback = () => { };
-		const response = new Response(apiGatewayProxyRest, {});
+		const response = new Response(apiGatewayProxyRest, { headers: {} });
 		expect(() => response.handleError(new Error())).not.toThrow();
 	});
 
 	it('Test response handleError with error code', () => {
 		const apiGatewayProxyRest = new ApiGatewayProxyRest();
 		apiGatewayProxyRest._callback = () => { };
-		const response = new Response(apiGatewayProxyRest, {});
+		const response = new Response(apiGatewayProxyRest, { headers: {} });
 		expect(() => {
 			const error = new Error("FOOBAR");
 			error.statusCode = 500;
