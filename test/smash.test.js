@@ -193,7 +193,7 @@ describe('Smash', () => {
 					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
 					"content-type": "application/json",
 				}).toRawObject(),
-				body: '{"code":404,"error":"Route GET /notfound not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef","details":{"name":"Route","primary":"GET /notfound"}}',
+				body: '{"code":404,"error":"Route not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef","details":{"name":"Route","method":"GET","path":"/notfound","type":"Route","version":"default"}}',
 				isBase64Encoded: false,
 			});
 			expect(mockedFunction.mock.calls.length).toBe(1);
