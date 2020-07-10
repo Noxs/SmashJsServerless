@@ -43,51 +43,47 @@ describe('CastTo', () => {
 	});
 
 	it('Test validate case #2', () => {
-		expect(() => {
-			return castTo.validate({
-				current: {
-					name: "castTo",
-					value: 1,
+		expect(() => castTo.validate({
+			current: {
+				name: "castTo",
+				value: 1,
+			},
+			rule: { parameters: { test: { castTo: 1 } } },
+			parents: [
+				{
+					name: "parameters",
+					value: { test: { castTo: 1 } },
 				},
-				rule: { parameters: { test: { castTo: 1 } } },
-				parents: [
-					{
-						name: "parameters",
-						value: { test: { castTo: 1 } },
-					},
-					{
-						name: "test",
-						value: { castTo: 1 },
-						type: "userInput",
-					},
-				],
-				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
-			});
-		}).toThrow();
+				{
+					name: "test",
+					value: { castTo: 1 },
+					type: "userInput",
+				},
+			],
+			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+		})).toThrow();
 	});
 
 	it('Test validate case #3', () => {
-		expect(() => {
-			return castTo.validate({
-				current: {
-					name: "castTo",
-					value: "foobar",
+		expect(() => castTo.validate({
+			current: {
+				name: "castTo",
+				value: "foobar",
+			},
+			rule: { parameters: { test: { castTo: 1 } } },
+			parents: [
+				{
+					name: "parameters",
+					value: { test: { castTo: "foobar" } },
 				},
-				rule: { parameters: { test: { castTo: 1 } } },
-				parents: [
-					{
-						name: "parameters",
-						value: { test: { castTo: "foobar" } },
-					},
-					{
-						name: "test",
-						value: { castTo: "foobar" },
-						type: "userInput",
-					},
-				],
-				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
-			});
-		}).toThrow();
+				{
+					name: "test",
+					value: { castTo: "foobar" },
+					type: "userInput",
+				},
+			],
+			ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+		})).toThrow();
 	});
 
 	it('Test execute case #1', async () => {
@@ -211,6 +207,49 @@ describe('CastTo', () => {
 			},
 		})).resolves.toBe(true);
 		expect(current).toStrictEqual({ name: "myVar", value: 123456 });
+	});
+
+	it('Test execute case #4', async () => {
+		const initialData = { parameters: {}, body: {} };
+		const current = { name: "myVar", value: undefined };
+		await expect(castTo.execute({
+			rule: {
+				current: {
+					name: "castTo",
+					value: "string",
+				},
+				initalRule: { body: { properties: { myVar: { castTo: "string" } } } },
+				parents: [
+					{
+						name: "none",
+						value: { body: { properties: { myVar: { castTo: "string" } } } },
+					},
+					{
+						name: "body",
+						value: { properties: { myVar: { castTo: "string" } } },
+					},
+					{
+						name: "properties",
+						value: { myVar: { castTo: "string" } },
+					},
+					{
+						name: "myVar",
+						value: { castTo: "string" },
+						type: "userInput",
+					},
+				],
+				ruleConfig: { version: "01-2019", action: "MyFooBarAction", type: "inRule" },
+			},
+			data: {
+				current,
+				initialData,
+				parents: [
+					{ name: "none", value: { parameters: {}, body: {} } },
+					{ name: "body", value: {} },
+				],
+			},
+		})).resolves.toBe(true);
+		expect(current).toStrictEqual({ name: "myVar", value: undefined });
 	});
 });
 
