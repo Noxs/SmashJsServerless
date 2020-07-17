@@ -19,7 +19,7 @@ describe('Smash', () => {
 		apiGatewayProxyRequest = require('./apiGatewayProxyRequest');
 	});
 
-/* 	it('Test smash boot', () => {
+	it('Test smash boot', () => {
 		expect(() => smash.boot({ verbose: { level: "disable" } })).not.toThrow();
 	});
 
@@ -176,7 +176,7 @@ describe('Smash', () => {
 		});
 		smash.handleEvent(event, context, mockedFunction);
 	});
- */
+
 	it('Test smash handle event api gateway proxy event not found', done => {
 		smash.shutdown();
 		smash.boot({ verbose: { level: "disable" } });
@@ -206,7 +206,7 @@ describe('Smash', () => {
 		smash.handleEvent(event, context, mockedFunction);
 	});
 
-/* 	it('Test smash handle event api gateway proxy event incorrect', done => {
+	it('Test smash handle event api gateway proxy event incorrect', done => {
 		smash.shutdown();
 		smash.boot({ verbose: { level: "disable" } });
 		const event = apiGatewayProxyRequest.bad;
@@ -286,5 +286,5 @@ describe('Smash', () => {
 		expect(() => smash.setEnv("AWS_REGION", "eu-west-1")).not.toThrow();
 		expect(() => smash.setEnv("test", "test")).not.toThrow();
 		expect(smash.getEnvs(["AWS_REGION", "test"])).toStrictEqual(["eu-west-1", "test"]);
-	}); */
+	});
 });
