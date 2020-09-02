@@ -24,21 +24,13 @@ describe('Filter', () => {
 		});
 
 		it('Test cleanIn case #1', async () => {
-			const validateDurationMocked = jest.fn(() => {
-				return true;
-			});
+			const validateDurationMocked = jest.fn(() => true);
 
-			const validateDeliveryMocked = jest.fn(() => {
-				return true;
-			});
+			const validateDeliveryMocked = jest.fn(() => true);
 
-			const validateCustomUrlMocked = jest.fn(() => {
-				return true;
-			});
+			const validateCustomUrlMocked = jest.fn(() => true);
 
-			const defaultDomainMocked = jest.fn(() => {
-				return "myDomain";
-			});
+			const defaultDomainMocked = jest.fn(() => "myDomain");
 
 			const request = {
 				parameters: { id: "123456789" },
@@ -631,12 +623,31 @@ describe('Filter', () => {
 		});
 
 
+		it('Test cleanIn case #13', async () => {
+			const request = {
+				parameters: { count: "1", startIndex: "1" },
+			};
 
+			const requestCleaned = {
+				parameters: { count: 1, startIndex: 1 },
+			};
 
+			const filter = new Filter();
 
-
-
-
+			expect(() => filter.for({ action: "MyFooBarAction2", version: "01-2019" }).inRule({
+				parameters: {
+					properties: {
+						startIndex: { castTo: "number", type: "unsigned integer", default: 1, min: 1, optional: true },
+						count: { castTo: "number", type: "unsigned integer", default: 9, min: 1, optional: true },
+						filter: { castTo: "string", type: "string", optional: true },
+					},
+				},
+			})).not.toThrow();
+			const result = await filter.cleanIn({ action: "MyFooBarAction2", version: "01-2019" }, request);
+			expect(result).not.toBeUndefined();
+			expect(result).toStrictEqual(requestCleaned);
+			expect(request).toStrictEqual(requestCleaned);
+		});
 
 
 		it('Test merge case #1', async () => {
@@ -866,9 +877,7 @@ describe('Filter', () => {
 								{
 									name: "foo",
 									type: "object",
-									transform: obj => {
-										return { ...obj, foo: "bar", foofoo: "barbar" };
-									},
+									transform: obj => ({ ...obj, foo: "bar", foofoo: "barbar" }),
 									properties: [
 										{ name: "bar" },
 										{ name: "foo" },
