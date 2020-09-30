@@ -225,6 +225,7 @@ class Smash {
 			callback(new Error("Smash has not been booted, you must call boot() first"));
 		} else {
 			this._buildEnv(context);
+			this._clearSingleton();
 			for (let i = 0, length = this._middlewares.length; i < length; i++) {
 				if (this._middlewares[i].isEvent(event)) {
 					this._middlewares[i].handleEvent(event, context, callback);
@@ -336,9 +337,16 @@ class Smash {
 
 	_bootSingletonModule(module) {
 		if (this._singletons[module].load) {
-			this._singletons[module].load().catch(error => {
+			try {
+				const value = this._singletons[module].load();
+				if (value.catch) {
+					value.catch(error => {
+						this._logger.error("Failed to boot singleton module " + module, error);
+					});
+				}
+			} catch (error) {
 				this._logger.error("Failed to boot singleton module " + module, error);
-			});
+			}
 		}
 	}
 
@@ -361,6 +369,24 @@ class Smash {
 			this._bootSingletonModule(module);
 		}
 		return this._singletons[module];
+	}
+
+	_clearSingleton() {
+		for (const singletonName in this._singletons) {
+			if (this._singletons[singletonName].clear) {
+				try {
+					const value = this._singletons[singletonName].clear();
+					if (value.catch) {
+						value.catch(error => {
+							this._logger.error("Failed to clear singleton module " + singletonName, error);
+						});
+					}
+				} catch (error) {
+					this._logger.error("Failed to clear singleton module " + singletonName, error);
+				}
+			}
+		}
+		return this;
 	}
 
 	global(module) {
