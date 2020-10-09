@@ -421,30 +421,37 @@ class Smash {
 	}
 
 	for(action) {
+		this._logger.deprecated("Method for is deprecated");
 		return this.filter.for(action);
 	}
 
 	inRule(item) {
+		this._logger.deprecated("Method inRule is deprecated");
 		return this.filter.inRule(item);
 	}
 
 	mergeRule(item) {
+		this._logger.deprecated("Method mergeRule is deprecated");
 		return this.filter.mergeRule(item);
 	}
 
 	outRule(item) {
+		this._logger.deprecated("Method outRule is deprecated");
 		return this.filter.outRule(item);
 	}
 
 	cleanIn(...args) {
-		return this.filter.cleanOut(...args);
+		this._logger.deprecated("Method cleanIn is deprecated");
+		return this.filter.cleanIn(...args);
 	}
 
 	merge(...args) {
+		this._logger.deprecated("Method merge is deprecated");
 		return this.filter.merge(this.getCurrentEvent().route, ...args);
 	}
 
 	cleanOut(...args) {
+		this._logger.deprecated("Method cleanOut is deprecated");
 		return this.filter.cleanOut(...args);
 	}
 

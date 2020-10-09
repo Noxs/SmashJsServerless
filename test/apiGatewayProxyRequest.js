@@ -91,6 +91,7 @@ module.exports = {
 			"in": "/signupfree",
 			"out": "/domain",
 			"source": "fubiz",
+			"version": "10-2019",
 		},
 		"headers": {
 			"Via": "1.1 wxcvbn.cloudfront.net (CloudFront)",
@@ -217,6 +218,7 @@ module.exports = {
 			"in": "/signupfree",
 			"out": "/domain",
 			"source": "fubiz",
+			"version": "10-2019",
 		},
 		"headers": {
 			"Via": "1.1 wxcvbn.cloudfront.net (CloudFront)",

@@ -185,21 +185,17 @@ describe('Smash', () => {
 		const mockedFunction = jest.fn((error, data) => {
 			expect(error).toBe(null);
 			expect(data).toBeObject();
-			try {
-				expect(data).toStrictEqual({
-					statusCode: 404,
-					headers: new Headers({
-						'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
-						'Access-Control-Allow-Origin': '*',
-						'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
-						"content-type": "application/json",
-					}).toRawObject(),
-					body: '{"code":404,"error":"Route not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef","details":{"name":"Route","method":"GET","path":"/notfound","type":"Route","version":"default"}}',
-					isBase64Encoded: false,
-				});
-			} catch (error) {
-				console.log(error);
-			}
+			expect(data).toStrictEqual({
+				statusCode: 404,
+				headers: new Headers({
+					'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token',
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+					"content-type": "application/json",
+				}).toRawObject(),
+				body: '{"code":404,"error":"Route not found","requestId":"c6af9ac6-7b61-11e6-9a41-93e8deadbeef","details":{"name":"Route","method":"GET","path":"/notfound","type":"Route","version":"default"}}',
+				isBase64Encoded: false,
+			});
 			expect(mockedFunction.mock.calls.length).toBe(1);
 			done();
 		});
