@@ -79,7 +79,6 @@ describe('RuleProcessor', () => {
 		expect(() => processor.validate(rule)).toThrow();
 	});
 
-
 	it('Test validate case #4', () => {
 		const processor = new RuleProcessor();
 		const rule = {
@@ -113,6 +112,23 @@ describe('RuleProcessor', () => {
 						],
 					},
 				},
+			],
+		};
+		Object.defineProperty(rule, "_currentConfig", {
+			enumerable: false,
+			configurable: true,
+			writable: true,
+			value: { version: "01-2019" },
+		});
+		expect(() => processor.validate(rule)).toThrow();
+	});
+
+	it('Test validate case #5', () => {
+		const processor = new RuleProcessor();
+		const rule = {
+			type: "object",
+			properties: [
+				{},
 			],
 		};
 		Object.defineProperty(rule, "_currentConfig", {
