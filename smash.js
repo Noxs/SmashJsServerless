@@ -416,6 +416,10 @@ class Smash {
 		return this._currentEvent;
 	}
 
+	getRemainingTimeInMillis() {
+		return this.getCurrentEvent().context.getRemainingTimeInMillis();
+	}
+
 	get filter() {
 		return this._filter;
 	}
