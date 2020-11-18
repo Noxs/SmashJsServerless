@@ -157,6 +157,17 @@ class Smash {
 		return this;
 	}
 
+	_postRegisterHandlers() {
+		if (Array.isArray(this._middlewares)) {
+			for (let i = 0, length = this._middlewares.length; i < length; i++) {
+				if (this._middlewares[i].postRegisterHandler) {
+					return this._middlewares[i].postRegisterHandler();
+				}
+			}
+		}
+		return this;
+	}
+
 	getHandlers() {
 		let handlers = [];
 		for (let i = 0, length = this._middlewares.length; i < length; i++) {
@@ -207,6 +218,8 @@ class Smash {
 		this._registerMiddlewares();
 		this._setupSingletonOptions(singleton);
 		this._registerHandlers();
+		this._postRegisterHandlers();
+		return this;
 	}
 
 	_setupVerbose(verbose) {
