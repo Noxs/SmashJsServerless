@@ -160,8 +160,8 @@ class Smash {
 	_postRegisterHandlers() {
 		if (Array.isArray(this._middlewares)) {
 			for (let i = 0, length = this._middlewares.length; i < length; i++) {
-				if (this._middlewares[i].postRegisterHandler) {
-					return this._middlewares[i].postRegisterHandler();
+				if (this._middlewares[i].postRegisterHandlers) {
+					return this._middlewares[i].postRegisterHandlers();
 				}
 			}
 		}
