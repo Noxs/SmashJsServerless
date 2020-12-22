@@ -467,6 +467,10 @@ class Smash {
 		return this.filter.merge(this.getCurrentEvent().route, ...args);
 	}
 
+	update(...args) {
+		return this.getCurrentEvent().update(...args);
+	}
+
 	cleanOut(...args) {
 		this._logger.deprecated("Method cleanOut is deprecated");
 		return this.filter.cleanOut(...args);
