@@ -1,5 +1,6 @@
 const glob = require('glob');
 const path = require('path');
+const fs = require("fs");
 const Logger = require("./lib/util/smashLogger");
 const Config = require("./lib/core/config");
 const Filter = require("./lib/core/filter/filter");
@@ -11,6 +12,7 @@ const PATHS = {
 	MIDDLEWARE: "lib/middleware/*",
 	HANDLER: "controller",
 	DATABASE: "database",
+	DATABASE_EXTENDED: "database/extended",
 	UTIL: "util",
 	HELPER: "helper",
 	SINGLETON: "singleton",
@@ -413,7 +415,11 @@ class Smash {
 		if (typeof module !== 'string' || module.length === 0) {
 			throw new Error("First parameter of database must be a valid string, " + Logger.typeOf(module));
 		}
-		return this.loadModule(PATHS.DATABASE, module);
+		if (fs.existsSync(path.resolve(path.join(this._path, PATHS.DATABASE_EXTENDED, module)))) {
+			return this.loadModule(PATHS.DATABASE_EXTENDED, module);
+		} else {
+			return this.loadModule(PATHS.DATABASE, module)
+		}
 	}
 
 	get config() {
