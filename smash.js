@@ -238,7 +238,7 @@ class Smash {
 			callback(new Error("Smash has not been booted, you must call boot() first"));
 		} else {
 			this._buildEnv(context);
-			this._clearSingleton();
+			this.clearSingleton();
 			for (let i = 0, length = this._middlewares.length; i < length; i++) {
 				if (this._middlewares[i].isEvent(event)) {
 					this._middlewares[i].handleEvent(event, context, callback);
@@ -384,7 +384,7 @@ class Smash {
 		return this._singletons[module];
 	}
 
-	_clearSingleton() {
+	clearSingleton() {
 		for (const singletonName in this._singletons) {
 			if (this._singletons[singletonName].clear) {
 				try {
