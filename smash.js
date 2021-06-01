@@ -389,7 +389,7 @@ class Smash {
 			if (this._singletons[singletonName].clear) {
 				try {
 					const value = this._singletons[singletonName].clear();
-					if (value.catch) {
+					if (value && value.catch) {
 						value.catch(error => {
 							this._logger.error("Failed to clear singleton module " + singletonName, error);
 						});
