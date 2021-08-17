@@ -1,6 +1,6 @@
 {
   "name": "smash-js-serverless",
-  "version": "12.0.0-alpha-23",
+  "version": "12.1.1",
   "description": "Javascript lambda framework",
   "main": "smash.js",
   "scripts": {
@@ -54,7 +54,6 @@
     "dynamodb-data-types": "^3.0.1",
     "fast-xml-parser": "^3.17.4",
     "glob": "^7.1.6",
-    "joi": "^17.2.1",
     "request": "^2.88.2"
   }
 }
