@@ -175,6 +175,7 @@ describe('Filter', () => {
 									foo: { type: 'string' },
 									bar: { type: 'string' },
 									number: { type: 'integer', optional: true, validate: () => true },
+									highValue: { type: 'unsigned integer', optional: true },
 								},
 							},
 						},
@@ -706,6 +707,8 @@ describe('Filter', () => {
 				preview: undefined,
 				listToNotFilter: [1, "test", "3", 2],
 				foo: { bar: "troll" },
+				step1: { step2: { step3: "ok" } },
+				step10: { step20: { step30: "ok" } },
 				default: false,
 			};
 
@@ -728,6 +731,8 @@ describe('Filter', () => {
 				listToFilter: [1, "test"],
 				listToNotFilter: [1, "test", "3", 2],
 				foo: { bar: "troll", toRemove: true },
+				step1: { step2: { step3: "ok" } },
+				step10: { step20: {} },
 				default: false,
 			};
 
@@ -745,6 +750,31 @@ describe('Filter', () => {
 						type: "object",
 						properties: [
 							{ name: "bar" },
+						],
+					},
+					{
+						name: "step1",
+						type: "object",
+						properties: [
+							{
+								name: "step2",
+								type: "object",
+								properties: [
+									{ name: "step3" },
+								],
+							},
+						],
+					},
+					{
+						name: "step10",
+						type: "object",
+						properties: [
+							{
+								name: "step20",
+								type: "object",
+								properties: [
+								],
+							},
 						],
 					},
 					{ name: "default" },
